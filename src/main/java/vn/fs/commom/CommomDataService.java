@@ -23,10 +23,6 @@ import vn.fs.repository.FavoriteRepository;
 import vn.fs.repository.ProductRepository;
 import vn.fs.service.ShoppingCartService;
 
-/**
- * @author DongTHD
- *
- */
 @Service
 public class CommomDataService {
 	

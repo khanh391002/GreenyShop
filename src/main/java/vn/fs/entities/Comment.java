@@ -3,6 +3,7 @@ package vn.fs.entities;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,15 +14,13 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * @author DongTHD
- *
- */
 @SuppressWarnings("serial")
 @Data
 @AllArgsConstructor
@@ -33,9 +32,15 @@ public class Comment implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
 	private Double rating;
+	
+	@Size(max = 225, message = "Content's length should be less than 255 characters")
+	@Column(length = 225)
 	private String content;
+	
 	@Temporal(TemporalType.DATE)
+	@Column(name = "rate_date")
 	private Date rateDate;
 
 	@ManyToOne

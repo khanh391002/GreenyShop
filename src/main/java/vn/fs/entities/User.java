@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,14 +17,19 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.JoinColumn;
 
-/**
- * @author DongTHD
- *
- */
 @SuppressWarnings("serial")
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 @Entity
 @Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class User implements Serializable{
@@ -31,12 +37,23 @@ public class User implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
+	
+	@Size(max = 225, message = "Product_Name's length should be less than 255 characters")
 	private String name;
+	
+	@Size(max = 225, message = "Email's length should be less than 255 characters")
 	private String email;
+	
+	@Size(max = 225, message = "Password's length should be less than 255 characters")
 	private String password;
+	
+	@Size(max = 2048, message = "Avatar length should be less than 2048 characters")
 	private String avatar;
+	
 	@Temporal(TemporalType.DATE)
+	@Column(name = "register_date")
 	private Date registerDate;
+	
 	private Boolean status;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -46,86 +63,5 @@ public class User implements Serializable{
 		inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
 
 	private Collection<Role> roles;
-
-	public User() {
-		super();
-	}
-
-	public User(Long userId, String name, String email, String password, String avatar, Date registerDate,
-			Boolean status, Collection<Role> roles) {
-		super();
-		this.userId = userId;
-		this.name = name;
-		this.email = email;
-		this.password = password;
-		this.avatar = avatar;
-		this.registerDate = registerDate;
-		this.status = status;
-		this.roles = roles;
-	}
-
-	public Long getUserId() {
-		return userId;
-	}
-
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getAvatar() {
-		return avatar;
-	}
-
-	public void setAvatar(String avatar) {
-		this.avatar = avatar;
-	}
-
-	public Date getRegisterDate() {
-		return registerDate;
-	}
-
-	public void setRegisterDate(Date registerDate) {
-		this.registerDate = registerDate;
-	}
-
-	public Boolean getStatus() {
-		return status;
-	}
-
-	public void setStatus(Boolean status) {
-		this.status = status;
-	}
-
-	public Collection<Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(Collection<Role> roles) {
-		this.roles = roles;
-	}
 
 }

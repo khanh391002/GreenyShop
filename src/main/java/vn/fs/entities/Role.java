@@ -6,11 +6,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-/**
- * @author DongTHD
- *
- */
+import lombok.Data;
+
 @Entity
+@Data
 @Table(name = "role")
 public class Role {
 
@@ -25,22 +24,6 @@ public class Role {
 
 	public Role(String name) {
 		super();
-		this.name = name;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
 		this.name = name;
 	}
 }

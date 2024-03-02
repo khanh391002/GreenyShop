@@ -25,6 +25,7 @@ import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
 
 import vn.fs.commom.CommomDataService;
+import vn.fs.commom.utils.Utils;
 import vn.fs.config.PaypalPaymentIntent;
 import vn.fs.config.PaypalPaymentMethod;
 import vn.fs.entities.CartItem;
@@ -36,12 +37,8 @@ import vn.fs.repository.OrderDetailRepository;
 import vn.fs.repository.OrderRepository;
 import vn.fs.service.PaypalService;
 import vn.fs.service.ShoppingCartService;
-import vn.fs.util.Utils;
 
-/**
- * @author DongTHD
- *
- */
+
 @Controller
 public class CartController extends CommomController {
 

@@ -94,13 +94,13 @@ public class ProductController{
 			@RequestParam("file") MultipartFile file, HttpServletRequest httpServletRequest) {
 
 		try {
-
 			File convFile = new File(pathUploadImage + "/" + file.getOriginalFilename());
 			FileOutputStream fos = new FileOutputStream(convFile);
 			fos.write(file.getBytes());
 			fos.close();
 		} catch (IOException e) {
-
+			e.printStackTrace();
+			return "error";
 		}
 
 		product.setProductImage(file.getOriginalFilename());
