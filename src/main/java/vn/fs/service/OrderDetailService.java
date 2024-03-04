@@ -8,10 +8,6 @@ import org.springframework.stereotype.Service;
 import vn.fs.entities.Order;
 import vn.fs.repository.OrderRepository;
 
-/**
- * @author DongTHD
- *
- */
 @Service
 public class OrderDetailService {
 

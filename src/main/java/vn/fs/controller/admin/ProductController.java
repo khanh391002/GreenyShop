@@ -33,10 +33,6 @@ import vn.fs.repository.CategoryRepository;
 import vn.fs.repository.ProductRepository;
 import vn.fs.repository.UserRepository;
 
-/**
- * @author DongTHD
- *
- */
 @Controller
 @RequestMapping("/admin")
 public class ProductController{

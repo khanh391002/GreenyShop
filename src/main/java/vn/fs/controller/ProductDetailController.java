@@ -13,10 +13,6 @@ import vn.fs.entities.Product;
 import vn.fs.entities.User;
 import vn.fs.repository.ProductRepository;
 
-/**
- * @author DongTHD
- *
- */
 @Controller
 public class ProductDetailController extends CommomController{
 	

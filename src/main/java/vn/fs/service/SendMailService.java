@@ -8,10 +8,6 @@ import org.springframework.stereotype.Service;
 
 import vn.fs.dto.MailInfo;
 
-/**
- * @author DongTHD
- *
- */
 @Service
 public interface SendMailService {
 	void run();

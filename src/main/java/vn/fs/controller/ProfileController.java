@@ -29,10 +29,6 @@ import vn.fs.repository.OrderDetailRepository;
 import vn.fs.repository.OrderRepository;
 import vn.fs.repository.UserRepository;
 
-/**
- * @author DongTHD
- *
- */
 @Controller
 public class ProfileController extends CommomController{
 

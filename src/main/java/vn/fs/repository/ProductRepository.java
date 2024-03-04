@@ -9,10 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import vn.fs.entities.Product;
 
-/**
- * @author DongTHD
- *
- */
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
@@ -33,19 +29,19 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	public List<Product> searchProduct(String productName);
 	
 	// count quantity by product
-	@Query(value = "SELECT c.category_id,c.category_name,\r\n"
-			+ "COUNT(*) AS SoLuong\r\n"
-			+ "FROM products p\r\n"
-			+ "JOIN categories c ON p.category_id = c.category_id\r\n"
+	@Query(value = "SELECT c.category_id,c.category_name, "
+			+ "COUNT(*) AS SoLuong "
+			+ "FROM products p "
+			+ "JOIN categories c ON p.category_id = c.category_id "
 			+ "GROUP BY c.category_id, c.category_name;" , nativeQuery = true)
 	List<Object[]> listCategoryByProductName();
 	
 	// Top 20 product best sale
-	@Query(value = "SELECT p.product_id,\r\n"
-			+ "COUNT(*) AS SoLuong\r\n"
-			+ "FROM order_details p\r\n"
-			+ "JOIN products c ON p.product_id = c.product_id\r\n"
-			+ "GROUP BY p.product_id\r\n"
+	@Query(value = "SELECT p.product_id, "
+			+ "COUNT(*) AS SoLuong "
+			+ "FROM order_details p "
+			+ "JOIN products c ON p.product_id = c.product_id "
+			+ "GROUP BY p.product_id "
 			+ "ORDER by SoLuong DESC limit 20;", nativeQuery = true)
 	public List<Object[]> bestSaleProduct20();
 	

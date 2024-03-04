@@ -29,10 +29,6 @@ import vn.fs.repository.UserRepository;
 import vn.fs.service.OrderDetailService;
 import vn.fs.service.SendMailService;
 
-/**
- * @author DongTHD
- *
- */
 @Controller
 @RequestMapping("/admin")
 public class OrderController {

@@ -7,10 +7,6 @@ import org.springframework.stereotype.Service;
 import vn.fs.entities.CartItem;
 import vn.fs.entities.Product;
 
-/**
- * @author DongTHD
- *
- */
 @Service
 public interface ShoppingCartService {
 

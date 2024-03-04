@@ -12,10 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import vn.fs.entities.User;
 import vn.fs.repository.UserRepository;
 
-/**
- * @author DongTHD
- *
- */
 @Controller
 @RequestMapping("/admin")
 public class IndexAdminController{

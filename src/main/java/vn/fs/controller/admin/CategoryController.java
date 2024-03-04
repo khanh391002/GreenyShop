@@ -20,11 +20,6 @@ import vn.fs.entities.User;
 import vn.fs.repository.CategoryRepository;
 import vn.fs.repository.UserRepository;
 
-
-/**
- * @author DongTHD
- *
- */
 @Controller
 @RequestMapping("/admin")
 public class CategoryController {

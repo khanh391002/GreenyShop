@@ -10,10 +10,6 @@ import vn.fs.entities.CartItem;
 import vn.fs.entities.Product;
 import vn.fs.service.ShoppingCartService;
 
-/**
- * @author DongTHD
- *
- */
 @Service
 public class ShoppingCartServiceImpl implements ShoppingCartService {
 

@@ -25,10 +25,6 @@ import vn.fs.entities.User;
 import vn.fs.repository.FavoriteRepository;
 import vn.fs.repository.ProductRepository;
 
-/**
- * @author DongTHD
- *
- */
 @Controller
 public class ShopController extends CommomController {
 
