@@ -22,9 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import vn.fs.commom.CommomDataService;
-import vn.fs.entities.Order;
-import vn.fs.entities.OrderDetail;
-import vn.fs.entities.User;
+import vn.fs.model.entities.Order;
+import vn.fs.model.entities.OrderDetail;
+import vn.fs.model.entities.User;
 import vn.fs.repository.OrderDetailRepository;
 import vn.fs.repository.OrderRepository;
 import vn.fs.repository.UserRepository;
@@ -118,7 +118,7 @@ public class ProfileController extends CommomController{
 	@RequestMapping("/order/cancel/{order_id}")
 	public ModelAndView cancel(ModelMap model, @PathVariable("order_id") Long id) {
 		Optional<Order> o = orderRepository.findById(id);
-		if (o.isEmpty()) {
+		if (o.isPresent()) {
 			return new ModelAndView("redirect:/profile", model);
 		}
 		Order oReal = o.get();

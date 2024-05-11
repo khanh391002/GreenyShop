@@ -1,4 +1,4 @@
-package vn.fs.entities;
+package vn.fs.model.entities;
 
 import java.io.Serializable;
 import java.util.Collection;

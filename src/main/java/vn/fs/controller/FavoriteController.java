@@ -1,6 +1,7 @@
 package vn.fs.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,9 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import vn.fs.commom.CommomDataService;
-import vn.fs.entities.Favorite;
-import vn.fs.entities.Product;
-import vn.fs.entities.User;
+import vn.fs.model.entities.Favorite;
+import vn.fs.model.entities.Product;
+import vn.fs.model.entities.User;
 import vn.fs.repository.FavoriteRepository;
 import vn.fs.repository.ProductRepository;
 
@@ -48,10 +49,12 @@ public class FavoriteController extends CommomController {
 
 	@GetMapping(value = "/doUnFavorite")
 	public String doUnFavorite(Model model, Product product, User user, @RequestParam("id") Long id) {
-		Favorite favorite = favoriteRepository.selectSaves(id, user.getUserId());
+		Optional<Favorite> favorite = favoriteRepository.selectSaves(id, user.getUserId());
 		product = productRepository.findById(id).orElse(null);
 		product.setFavorite(false);
-		favoriteRepository.delete(favorite);
+		if (favorite.isPresent()) {
+			favoriteRepository.delete(favorite.get());
+		}
 		commomDataService.commonData(model, user);
 		return "redirect:/products";
 	}

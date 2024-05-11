@@ -1,4 +1,4 @@
-package vn.fs.entities;
+package vn.fs.model.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

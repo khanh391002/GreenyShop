@@ -16,6 +16,7 @@ import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -26,9 +27,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import vn.fs.entities.Category;
-import vn.fs.entities.Product;
-import vn.fs.entities.User;
+import vn.fs.model.entities.Category;
+import vn.fs.model.entities.Product;
+import vn.fs.model.entities.User;
 import vn.fs.repository.CategoryRepository;
 import vn.fs.repository.ProductRepository;
 import vn.fs.repository.UserRepository;
@@ -70,7 +71,7 @@ public class ProductController{
 	// show list product - table list
 	@ModelAttribute("products")
 	public List<Product> showProduct(Model model) {
-		List<Product> products = productRepository.findAll();
+		List<Product> products = productRepository.findAllByOrderByEnteredDateAsc();
 		model.addAttribute("products", products);
 
 		return products;
@@ -87,7 +88,7 @@ public class ProductController{
 	// add product
 	@PostMapping(value = "/addProduct")
 	public String addProduct(@ModelAttribute("product") Product product, ModelMap model,
-			@RequestParam("file") MultipartFile file, HttpServletRequest httpServletRequest) {
+			@RequestParam("file") MultipartFile file, BindingResult result, HttpServletRequest httpServletRequest) {
 
 		try {
 			File convFile = new File(pathUploadImage + "/" + file.getOriginalFilename());
@@ -98,9 +99,18 @@ public class ProductController{
 			e.printStackTrace();
 			return "error";
 		}
+//		Optional<Product> productOpt = productRepository.findByProductCodeAndIsDeletedIsFalse(product.getProductCode());
+//		if (productOpt.isPresent()) {
+//			result.addError(new FieldError("product", "productCode", "Product Code is existed!"));
+//		}
+//  		if (result.hasErrors()) {
+//  			model.addAttribute("message", "Product Code is existed!");
+//			model.addAttribute("product", product);
+// 			return "error";
+//  	    }
 
 		product.setProductImage(file.getOriginalFilename());
-		Product p = productRepository.save(product);
+ 		Product p = productRepository.save(product);
 		if (null != p) {
 			model.addAttribute("message", "Update success");
 			model.addAttribute("product", product);

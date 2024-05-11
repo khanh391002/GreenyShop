@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import vn.fs.entities.Category;
-import vn.fs.entities.User;
+import vn.fs.model.entities.Category;
+import vn.fs.model.entities.User;
 import vn.fs.repository.CategoryRepository;
 import vn.fs.repository.UserRepository;
 

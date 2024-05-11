@@ -2,6 +2,7 @@ package vn.fs.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import vn.fs.commom.CommomDataService;
-import vn.fs.entities.Favorite;
-import vn.fs.entities.Product;
-import vn.fs.entities.User;
+import vn.fs.model.entities.Favorite;
+import vn.fs.model.entities.Product;
+import vn.fs.model.entities.User;
 import vn.fs.repository.FavoriteRepository;
 import vn.fs.repository.ProductRepository;
 
@@ -64,9 +65,9 @@ public class HomeController extends CommomController {
 
 				BeanUtils.copyProperties(product, productEntity);
 
-				Favorite save = favoriteRepository.selectSaves(productEntity.getProductId(), customer.getUserId());
+				Optional<Favorite> save = favoriteRepository.selectSaves(productEntity.getProductId(), customer.getUserId());
 
-				if (save != null) {
+				if (save.isPresent()) {
 					productEntity.favorite = true;
 				} else {
 					productEntity.favorite = false;

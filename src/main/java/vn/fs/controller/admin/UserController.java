@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import vn.fs.entities.User;
+import vn.fs.model.entities.User;
 import vn.fs.repository.UserRepository;
 
 @Controller

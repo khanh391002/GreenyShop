@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import vn.fs.commom.CommomDataService;
-import vn.fs.entities.Favorite;
-import vn.fs.entities.Product;
-import vn.fs.entities.User;
+import vn.fs.model.entities.Favorite;
+import vn.fs.model.entities.Product;
+import vn.fs.model.entities.User;
 import vn.fs.repository.FavoriteRepository;
 import vn.fs.repository.ProductRepository;
 
@@ -30,10 +30,10 @@ public class ShopController extends CommomController {
 
 	@Autowired
 	ProductRepository productRepository;
-	
+
 	@Autowired
 	FavoriteRepository favoriteRepository;
-	
+
 	@Autowired
 	CommomDataService commomDataService;
 
@@ -74,17 +74,17 @@ public class ShopController extends CommomController {
 			list = productPage.subList(startItem, toIndex);
 		}
 
-		Page<Product> productPages = new PageImpl<Product>(list, PageRequest.of(currentPage, pageSize),productPage.size());
+		Page<Product> productPages = new PageImpl<Product>(list, PageRequest.of(currentPage, pageSize),
+				productPage.size());
 
 		return productPages;
 	}
-	
+
 	// search product
 	@GetMapping(value = "/searchProduct")
 	public String showsearch(Model model, Pageable pageable, @RequestParam("keyword") String keyword,
-			@RequestParam("size") Optional<Integer> size, @RequestParam("page") Optional<Integer> page,
-			User user) {
-	
+			@RequestParam("size") Optional<Integer> size, @RequestParam("page") Optional<Integer> page, User user) {
+
 		int currentPage = page.orElse(1);
 		int pageSize = size.orElse(12);
 
@@ -100,7 +100,7 @@ public class ShopController extends CommomController {
 		model.addAttribute("products", productPage);
 		return "web/shop";
 	}
-	
+
 	// search product
 	public Page<Product> findPaginatSearch(Pageable pageable, @RequestParam("keyword") String keyword) {
 
@@ -118,11 +118,12 @@ public class ShopController extends CommomController {
 			list = productPage.subList(startItem, toIndex);
 		}
 
-		Page<Product> productPages = new PageImpl<Product>(list, PageRequest.of(currentPage, pageSize),productPage.size());
+		Page<Product> productPages = new PageImpl<Product>(list, PageRequest.of(currentPage, pageSize),
+				productPage.size());
 
 		return productPages;
 	}
-	
+
 	// list books by category
 	@GetMapping(value = "/productByCategory")
 	public String listProductbyid(Model model, @RequestParam("id") Long id, User user) {
@@ -136,15 +137,14 @@ public class ShopController extends CommomController {
 
 			BeanUtils.copyProperties(product, productEntity);
 
-			Favorite save = favoriteRepository.selectSaves(productEntity.getProductId(), user.getUserId());
+			Optional<Favorite> save = favoriteRepository.selectSaves(productEntity.getProductId(), user.getUserId());
 
-			if (save != null) {
+			if (save.isPresent()) {
 				productEntity.favorite = true;
 			} else {
 				productEntity.favorite = false;
 			}
 			listProductNew.add(productEntity);
-
 		}
 
 		model.addAttribute("products", listProductNew);

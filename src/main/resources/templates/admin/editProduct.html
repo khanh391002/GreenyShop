@@ -76,7 +76,13 @@
 						           <div class="col-9 offset-1">
 						             <form th:action="@{/admin/addProduct}" th:object="${product}" method="post" enctype="multipart/form-data">
 										<div class="row">
-											<div class="col-sm-12">
+											<div class="col-md-6 pr-0">
+												<div class="form-group form-group-default">
+													<label>Mã sản phẩm</label>
+													<input th:field="*{productCode}" id="productCode" type="text" class="form-control" placeholder="Mã sản phẩm" disabled>
+												</div>
+											</div>
+											<div class="col-md-6 pr-0">
 												<div class="form-group form-group-default">
 													<label>Tên sản phẩm</label>
 													<input th:field="*{productName}" id="productName" type="text" class="form-control" placeholder="Tên sản phẩm...">
@@ -101,19 +107,19 @@
 													<input th:field="*{price}" id="price" min = 0 type="number" class="form-control" placeholder="Đơn giá">
 												</div>
 											</div>
-											<div class="col-md-6 pr-0">
+											<div class="col-md-4 pr-0">
 												<div class="form-group form-group-default">
 													<label>Số lượng</label>
 													<input th:field="*{quantity}" id="quantity" min = 0 type="number" class="form-control" placeholder="Số lượng">
 												</div>
 											</div>
-											<div class="col-md-6 pr-0">
+											<div class="col-md-4 pr-0">
 												<div class="form-group form-group-default">
 													<label>Giảm giá</label>
 													<input th:field="*{discount}" id="discount" min = 0 type="number" class="form-control" placeholder="giảm giá">
 												</div>
 											</div>
-											<div class="col-md-6 pr-0">
+											<div class="col-md-4 pr-0">
 												<div class="form-group form-group-default">
 													<label>Ngày thêm</label>
 													<input th:field="*{enteredDate}" id="enteredDate" type="date" class="form-control" placeholder="ngày thêm">
@@ -123,6 +129,7 @@
 												<div class="form-group form-group-default">
 													<label>Images</label>
 													<input type="file" id="productImage" name="file" class="form-control">
+													<!-- <input th:field="*{productImage}" type="file" id="productImage" name="file" class="form-control"> -->
 												</div>
 											</div>
 											<div class="col-sm-12">
@@ -167,7 +174,7 @@
 					</ul>
 				</nav>
 				<div class="copyright ml-auto">
-					2021, made with <i class="fa fa-heart heart text-danger"></i> by <a href="javascript:void(0);">GREENY-SHOP</a>
+					2024, made with <i class="fa fa-heart heart text-danger"></i> by <a href="javascript:void(0);">GREENY-SHOP</a>
 				</div>				
 			</div>
 		</footer>

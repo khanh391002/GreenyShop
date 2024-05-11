@@ -6,8 +6,8 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import vn.fs.entities.CartItem;
-import vn.fs.entities.Product;
+import vn.fs.model.entities.CartItem;
+import vn.fs.model.entities.Product;
 import vn.fs.service.ShoppingCartService;
 
 @Service

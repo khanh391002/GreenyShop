@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import vn.fs.commom.CommomDataService;
-import vn.fs.entities.Product;
-import vn.fs.entities.User;
+import vn.fs.model.entities.Product;
+import vn.fs.model.entities.User;
 import vn.fs.repository.ProductRepository;
 
 @Controller

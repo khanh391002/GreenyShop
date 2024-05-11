@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import vn.fs.entities.User;
+import vn.fs.model.entities.User;
 import vn.fs.repository.UserRepository;
 
 @Controller

@@ -1,4 +1,4 @@
-package vn.fs.dto;
+package vn.fs.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

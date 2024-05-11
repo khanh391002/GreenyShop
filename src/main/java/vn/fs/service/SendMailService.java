@@ -6,7 +6,7 @@ import javax.mail.MessagingException;
 
 import org.springframework.stereotype.Service;
 
-import vn.fs.dto.MailInfo;
+import vn.fs.model.dto.MailInfo;
 
 @Service
 public interface SendMailService {

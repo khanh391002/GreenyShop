@@ -1,4 +1,4 @@
-package vn.fs.dto;
+package vn.fs.model.dto;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,7 +12,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import lombok.Data;
-import vn.fs.entities.Order;
+import vn.fs.model.entities.Order;
 
 @Data
 public class OrderExcelExporter {

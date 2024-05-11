@@ -16,9 +16,9 @@ import org.springframework.ui.Model;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import vn.fs.entities.CartItem;
-import vn.fs.entities.Order;
-import vn.fs.entities.User;
+import vn.fs.model.entities.CartItem;
+import vn.fs.model.entities.Order;
+import vn.fs.model.entities.User;
 import vn.fs.repository.FavoriteRepository;
 import vn.fs.repository.ProductRepository;
 import vn.fs.service.ShoppingCartService;

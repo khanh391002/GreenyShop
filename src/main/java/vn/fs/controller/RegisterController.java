@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import vn.fs.commom.logging.FXLogger;
-import vn.fs.entities.Role;
-import vn.fs.entities.User;
+import vn.fs.model.entities.Role;
+import vn.fs.model.entities.User;
 import vn.fs.repository.RoleRepository;
 import vn.fs.repository.UserRepository;
 import vn.fs.service.SendMailService;

@@ -1,4 +1,4 @@
-package vn.fs.entities;
+package vn.fs.model.entities;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

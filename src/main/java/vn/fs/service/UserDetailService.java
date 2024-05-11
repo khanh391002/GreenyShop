@@ -11,8 +11,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import vn.fs.entities.Role;
-import vn.fs.entities.User;
+import vn.fs.model.entities.Role;
+import vn.fs.model.entities.User;
 import vn.fs.repository.UserRepository;
 
 @Service

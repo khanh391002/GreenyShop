@@ -1,17 +1,20 @@
 package vn.fs.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import vn.fs.entities.Product;
+import vn.fs.model.entities.Product;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
+	List<Product> findAllByOrderByEnteredDateAsc();
+	
 	// List product by category
 	@Query(value = "SELECT * FROM products WHERE category_id = ?", nativeQuery = true)
 	public List<Product> listProductByCategory(Long categoryId);
@@ -47,5 +50,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	
 	@Query(value = "select * from products o where product_id in :ids", nativeQuery = true)
 	List<Product> findByInventoryIds(@Param("ids") List<Integer> listProductId);
+	
+	Optional<Product> findByProductCodeAndIsDeletedIsFalse(String productCode);
 
 }

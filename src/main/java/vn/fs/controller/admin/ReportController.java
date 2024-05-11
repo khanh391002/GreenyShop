@@ -10,8 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import vn.fs.entities.OrderDetail;
-import vn.fs.entities.User;
+import vn.fs.model.entities.OrderDetail;
+import vn.fs.model.entities.User;
 import vn.fs.repository.OrderDetailRepository;
 import vn.fs.repository.UserRepository;
 
@@ -108,6 +108,6 @@ public class ReportController {
 		return "admin/statistical";
 	}
 	
-	// end task developer by DongTHD
+	// end task developer by Khanh.NguyenQuoc
 
 }
