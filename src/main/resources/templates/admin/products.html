@@ -69,10 +69,15 @@
 							<div class="card-header">
 								<div class="d-flex align-items-center">
 									<h4 class="card-title" style="text-decoration: underline;">Quản lý sản phẩm</h4>
-									<button class="btn btn-primary btn-round ml-auto" data-toggle="modal" data-target="#addRowModal">
+									<!-- <button class="btn btn-primary btn-round ml-auto" data-toggle="modal" data-target="#addRowModal">
 										<i class="fa fa-plus"></i>
 										Thêm mới
-									</button>
+									</button> -->
+
+									<a class="btn btn-primary btn-round ml-auto" th:href="@{/admin/addProduct}">
+										<i class="fa fa-plus"></i>
+										Thêm mới
+									</a>
 								</div>
 							</div>
 							<div class="card-body">
@@ -200,6 +205,7 @@
 												<td>[[${item.productCode}]]</td>
 												<td>
 													<img th:src="@{'/loadImage?imageName='+${item.productImage}}" width="80px" alt="product" />
+													<!-- <img th:src="@{'static/images/product/' + ${item.productImage}}" width="80px" alt="product" /> -->
 												</td>
 												<td>[[${item.productName}]]</td>
 												<td>[[${item.category.categoryName}]]</td>

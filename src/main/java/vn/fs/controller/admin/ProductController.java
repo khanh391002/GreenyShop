@@ -7,6 +7,7 @@ import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,14 +31,15 @@ import org.springframework.web.multipart.MultipartFile;
 import vn.fs.model.entities.Category;
 import vn.fs.model.entities.Product;
 import vn.fs.model.entities.User;
+import vn.fs.model.request.ProductRequest;
 import vn.fs.repository.CategoryRepository;
 import vn.fs.repository.ProductRepository;
 import vn.fs.repository.UserRepository;
 
 @Controller
 @RequestMapping("/admin")
-public class ProductController{
-	
+public class ProductController {
+
 	@Value("${upload.path}")
 	private String pathUploadImage;
 
@@ -46,10 +48,10 @@ public class ProductController{
 
 	@Autowired
 	CategoryRepository categoryRepository;
-	
+
 	@Autowired
 	UserRepository userRepository;
-	
+
 	@ModelAttribute(value = "user")
 	public User user(Model model, Principal principal, User user) {
 
@@ -62,8 +64,7 @@ public class ProductController{
 		return user;
 	}
 
-	public ProductController(CategoryRepository categoryRepository,
-			ProductRepository productRepository) {
+	public ProductController(CategoryRepository categoryRepository, ProductRepository productRepository) {
 		this.productRepository = productRepository;
 		this.categoryRepository = categoryRepository;
 	}
@@ -85,9 +86,16 @@ public class ProductController{
 		return "admin/products";
 	}
 
+	@GetMapping(value = "/addProduct")
+	public String showPopUpAddProduct(Model model) {
+		ProductRequest productRequest = new ProductRequest();
+		model.addAttribute("productRequest", productRequest);
+		return "admin/createProduct";
+	}
+
 	// add product
 	@PostMapping(value = "/addProduct")
-	public String addProduct(@ModelAttribute("product") Product product, ModelMap model,
+	public String addProduct(@ModelAttribute("productRequest") ProductRequest productRequest, ModelMap model,
 			@RequestParam("file") MultipartFile file, BindingResult result, HttpServletRequest httpServletRequest) {
 
 		try {
@@ -99,19 +107,25 @@ public class ProductController{
 			e.printStackTrace();
 			return "error";
 		}
-//		Optional<Product> productOpt = productRepository.findByProductCodeAndIsDeletedIsFalse(product.getProductCode());
-//		if (productOpt.isPresent()) {
-//			result.addError(new FieldError("product", "productCode", "Product Code is existed!"));
-//		}
-//  		if (result.hasErrors()) {
-//  			model.addAttribute("message", "Product Code is existed!");
-//			model.addAttribute("product", product);
-// 			return "error";
-//  	    }
-
+//			if (productRequest.getProductImage().isEmpty()) {
+//				result.addError(new FieldError("productRequest", "productImage", "The product image is required!"));
+//			}
+//			
+//			if (result.hasErrors()) {
+//				return "admin/createProduct";
+//	  	    }
+		Product product = new Product();
+		product.setProductCode(productRequest.getProductCode());
+		product.setProductName(productRequest.getProductName());
+		product.setPrice(productRequest.getPrice());
+		product.setDiscount(productRequest.getDiscount());
+		product.setDescription(productRequest.getDescription());
+		product.setEnteredDate(productRequest.getEnteredDate());
+		product.setQuantity(productRequest.getQuantity());
+		product.setCategory(productRequest.getCategory());
 		product.setProductImage(file.getOriginalFilename());
- 		Product p = productRepository.save(product);
-		if (null != p) {
+		product = productRepository.save(product);
+		if (null != product) {
 			model.addAttribute("message", "Update success");
 			model.addAttribute("product", product);
 		} else {
@@ -121,6 +135,42 @@ public class ProductController{
 		return "redirect:/admin/products";
 	}
 
+//	// add product
+//	@PostMapping(value = "/addProduct")
+//	public String addProduct(@ModelAttribute("product") Product product, ModelMap model,
+//			@RequestParam("file") MultipartFile file, BindingResult result, HttpServletRequest httpServletRequest) {
+//
+//		try {
+//			File convFile = new File(pathUploadImage + "/" + file.getOriginalFilename());
+//			FileOutputStream fos = new FileOutputStream(convFile);
+//			fos.write(file.getBytes());
+//			fos.close();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			return "error";
+//		}
+////		Optional<Product> productOpt = productRepository.findByProductCodeAndIsDeletedIsFalse(product.getProductCode());
+////		if (productOpt.isPresent()) {
+////			result.addError(new FieldError("product", "productCode", "Product Code is existed!"));
+////		}
+////  		if (result.hasErrors()) {
+////  			model.addAttribute("message", "Product Code is existed!");
+////			model.addAttribute("product", product);
+//// 			return "error";
+////  	    }
+//
+//		product.setProductImage(file.getOriginalFilename());
+// 		Product p = productRepository.save(product);
+//		if (null != p) {
+//			model.addAttribute("message", "Update success");
+//			model.addAttribute("product", product);
+//		} else {
+//			model.addAttribute("message", "Update failure");
+//			model.addAttribute("product", product);
+//		}
+//		return "redirect:/admin/products";
+//	}
+
 	// show select option ở add product
 	@ModelAttribute("categoryList")
 	public List<Category> showCategory(Model model) {
@@ -129,15 +179,78 @@ public class ProductController{
 
 		return categoryList;
 	}
-	
+
 	// get Edit brand
 	@GetMapping(value = "/editProduct/{id}")
-	public String editCategory(@PathVariable("id") Long id, ModelMap model) {
-		Product product = productRepository.findById(id).orElse(null);
-		
+	public String showEditPage(@PathVariable("id") Long id, ModelMap model) {
+		Optional<Product> productOpt = productRepository.findById(id);
+		if (!productOpt.isPresent()) {
+			return "error";
+		}
+		Product product = productOpt.get();
 		model.addAttribute("product", product);
 
+		ProductRequest productRequest = new ProductRequest();
+		productRequest.setProductCode(product.getProductCode());
+		productRequest.setProductName(product.getProductName());
+		productRequest.setPrice(product.getPrice());
+		productRequest.setDiscount(product.getDiscount());
+		productRequest.setDescription(product.getDescription());
+		productRequest.setEnteredDate(product.getEnteredDate());
+		productRequest.setQuantity(product.getQuantity());
+		productRequest.setCategory(product.getCategory());
+		productRequest.setProductImage(product.getProductImage());
+
+		model.addAttribute("productRequest", productRequest);
+
 		return "admin/editProduct";
+	}
+
+	// add product
+	@PostMapping(value = "/editProduct/{id}")
+	public String editProduct(@PathVariable("id") Long id,
+			@ModelAttribute("productRequest") ProductRequest productRequest, ModelMap model,
+			@RequestParam("file") MultipartFile file, BindingResult result, HttpServletRequest httpServletRequest) {
+		String productImage = null;
+		try {
+			if (file.getSize() > 0) {
+				productImage = file.getOriginalFilename();
+			} else {
+				productImage = productRequest.getProductImage();
+			}
+			File convFile = new File(pathUploadImage + "/" + (productImage));
+			FileOutputStream fos = new FileOutputStream(convFile);
+			fos.write(file.getBytes());
+			fos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "error";
+		}
+		Optional<Product> productOptional = productRepository.findById(id);
+		if (!productOptional.isPresent()) {
+			return "error";
+		}
+		Product product = productOptional.get();
+		model.addAttribute("product", product);
+
+		product.setProductCode(productRequest.getProductCode());
+		product.setProductName(productRequest.getProductName());
+		product.setPrice(productRequest.getPrice());
+		product.setDiscount(productRequest.getDiscount());
+		product.setDescription(productRequest.getDescription());
+		product.setEnteredDate(productRequest.getEnteredDate());
+		product.setQuantity(productRequest.getQuantity());
+		product.setCategory(productRequest.getCategory());
+		product.setProductImage(productImage);
+		product = productRepository.save(product);
+		if (null != product) {
+			model.addAttribute("message", "Update success");
+			model.addAttribute("product", product);
+		} else {
+			model.addAttribute("message", "Update failure");
+			model.addAttribute("product", product);
+		}
+		return "redirect:/admin/products";
 	}
 
 	// delete category

@@ -68,30 +68,26 @@
 						<div class="card">
 							<div class="card-header">
 								<div class="d-flex align-items-center">
-									<h4 class="card-title" style="text-decoration: underline;">Sửa sản phẩm</h4>
+									<h4 class="card-title" style="text-decoration: underline;">Tạo mới sản phẩm</h4>
 								</div>
 							</div>
 							<div class="card-header">
 								<section class="row">
 						           <div class="col-9 offset-1">
-						             <form th:action="@{/admin/editProduct/{id}(id=${product.productId})}" th:object="${productRequest}" method="post" enctype="multipart/form-data">
+						             <form th:action="@{/admin/addProduct}" th:object="${productRequest}" method="post" enctype="multipart/form-data">
 										<div class="row">
-											<!-- <div class="row mb-3">
-												<div class="offset-sm-4 cole-sm-8">
-													<img th:src="@{'/images/product/' + ${product.productImage}}" alt="..." width="150">
-													<input th:field="${productRequest.productImage}" type="text" class="form-control" readonly>
-												</div>
-											</div> -->
-											<div class="col-md-12 pr-0">
+											<div class="col-md-6 pr-0">
 												<div class="form-group form-group-default">
 													<label>Mã sản phẩm</label>
-													<input th:field="${productRequest.productCode}" id="productCode" type="text" class="form-control" placeholder="Mã sản phẩm" readonly>
+													<input th:field="${productRequest.productCode}" id="productCode" type="text" class="form-control" placeholder="Mã sản phẩm">
+													<p th::if="${#fields.hasErrors('productCode')}" th:errorclass="text-danger" th:errors="${productRequest.productCode}"></p>
 												</div>
 											</div>
 											<div class="col-md-6 pr-0">
 												<div class="form-group form-group-default">
 													<label>Tên sản phẩm</label>
 													<input th:field="${productRequest.productName}" id="productName" type="text" class="form-control" placeholder="Tên sản phẩm...">
+													<p th::if="${#fields.hasErrors('productName')}" th:errorclass="text-danger" th:errors="${productRequest.productName}"></p>
 												</div>
 											</div>
 											<div class="col-md-6 pr-0">
@@ -111,44 +107,47 @@
 												<div class="form-group form-group-default">
 													<label>Đơn giá</label>
 													<input th:field="${productRequest.price}" id="price" min = 0 type="number" class="form-control" placeholder="Đơn giá">
+													<p th::if="${#fields.hasErrors('price')}" th:errorclass="text-danger" th:errors="${productRequest.price}"></p>
 												</div>
 											</div>
-											<div class="col-md-6 pr-0">
+											<div class="col-md-4 pr-0">
 												<div class="form-group form-group-default">
 													<label>Số lượng</label>
 													<input th:field="${productRequest.quantity}" id="quantity" min = 0 type="number" class="form-control" placeholder="Số lượng">
+													<p th::if="${#fields.hasErrors('quantity')}" th:errorclass="text-danger" th:errors="${productRequest.quantity}"></p>
 												</div>
 											</div>
-											<div class="col-md-6 pr-0">
+											<div class="col-md-4 pr-0">
 												<div class="form-group form-group-default">
 													<label>Giảm giá</label>
 													<input th:field="${productRequest.discount}" id="discount" min = 0 type="number" class="form-control" placeholder="giảm giá">
+													<p th::if="${#fields.hasErrors('discount')}" th:errorclass="text-danger" th:errors="${productRequest.discount}"></p>
 												</div>
 											</div>
-											<div class="col-md-6 pr-0">
+											<div class="col-md-4 pr-0">
 												<div class="form-group form-group-default">
 													<label>Ngày thêm</label>
 													<input th:field="${productRequest.enteredDate}" id="enteredDate" type="date" class="form-control" placeholder="ngày thêm">
 												</div>
 											</div>
-											<div class="col-md-12 pr-0">
+											<div class="col-sm-12">
 												<div class="form-group form-group-default">
 													<label>Images</label>
-													<img th:src="@{'/images/product/' + ${product.productImage}}" alt="..." width="150">
-													<input style="background-color:white;" th:field="${productRequest.productImage}" type="text" class="form-control" readonly>
 													<input type="file" id="productImage" name="file" class="form-control">
-													<!-- <input th:field="${productRequest.productImage}" type="text" class="form-control"> -->
+													<p th::if="${#fields.hasErrors('productImage')}" th:errorclass="text-danger" th:errors="${productRequest.productImage}"></p>
+													<!-- <input th:field="*{productImage}" type="file" id="productImage" name="file" class="form-control"> -->
 												</div>
 											</div>
-											<div class="col-md-12 pr-0">
+											<div class="col-sm-12">
 												<div class="form-group form-group-default">
 													<label>Mô tả sản phẩm</label>
 													<textarea th:field="${productRequest.description}" id="description" class="form-control" placeholder="Mô tả sản phẩm"></textarea>
+													<p th::if="${#fields.hasErrors('description')}" th:errorclass="text-danger" th:errors="${productRequest.description}"></p>
 												</div>
 											</div>
 										</div>
 										<div class="modal-footer no-bd">
-											<button type="submit" id="" class="btn btn-primary">Cập nhật</button>
+											<button type="submit" id="" class="btn btn-primary">Tạo mới</button>
 											<button type="submit" class="btn btn-danger" data-dismiss="modal" formaction="/admin/products" formmethod="get">Hủy</button>
 										</div>
 									</form>
