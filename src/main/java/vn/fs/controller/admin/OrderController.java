@@ -89,7 +89,7 @@ public class OrderController {
 	@RequestMapping("/order/cancel/{order_id}")
 	public ModelAndView cancel(ModelMap model, @PathVariable("order_id") Long id) {
 		Optional<Order> o = orderRepository.findById(id);
-		if (o.isPresent()) {
+		if (!o.isPresent()) {
 			return new ModelAndView("forward:/admin/orders", model);
 		}
 		Order oReal = o.get();
@@ -102,7 +102,7 @@ public class OrderController {
 	@RequestMapping("/order/confirm/{order_id}")
 	public ModelAndView confirm(ModelMap model, @PathVariable("order_id") Long id) {
 		Optional<Order> o = orderRepository.findById(id);
-		if (o.isPresent()) {
+		if (!o.isPresent()) {
 			return new ModelAndView("forward:/admin/orders", model);
 		}
 		Order oReal = o.get();
@@ -115,7 +115,7 @@ public class OrderController {
 	@RequestMapping("/order/delivered/{order_id}")
 	public ModelAndView delivered(ModelMap model, @PathVariable("order_id") Long id) {
 		Optional<Order> o = orderRepository.findById(id);
-		if (o.isPresent()) {
+		if (!o.isPresent()) {
 			return new ModelAndView("forward:/admin/orders", model);
 		}
 		Order oReal = o.get();
