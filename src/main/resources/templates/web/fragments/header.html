@@ -3,6 +3,7 @@
 xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
 <title></title>
+<link rel="stylesheet" th:href="@{/css/main.css}" type="text/css">
 <meta charset="utf-8">
 </head>
 <body>
@@ -192,17 +193,45 @@ xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 							<label>Đơn giá :</label>
 							<p>[[${#numbers.formatDecimal(item.product.price - (item.product.price * item.product.discount/100), 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]</p>
 						</div>
-						<div class="cart-action-group">
+						<!-- <div class="cart-action-group">
 							<div class="product-action">
 								<label>Số lượng :</label>
 								<input class="action-input" title="Quantity Number" type="text"
 									name="quantity" th:value="${item.quantity}" />
 							</div>
 							<h6>[[${#numbers.formatDecimal((item.product.price - (item.product.price * item.product.discount/100)) * item.quantity, 1, 'DEFAULT', 0, 'DEFAULT')}+ ' đ']]</h6>
+						</div> -->
+						<div class="wrap-num-product flex-w">
+							<a th:href="@{'/update-cart?id='+${item.id} +'&quantity='+${1 * -1}}">
+								<div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+									<i class="fs-16 zmdi zmdi-minus"></i>
+								</div>
+							</a>
+
+							<input class="mtext-104 cl3 txt-center num-product"
+									min="1" name="num-product1"
+									th:value="${item.quantity}"
+									type="number">
+
+							<a th:href="@{'/update-cart?id='+${item.id} +'&quantity='+${1}}">
+								<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+									<i class="fs-16 zmdi zmdi-plus"></i>
+								</div>
+							</a>
 						</div>
 					</div>
 				</li>
 			</ul>
+			<div class="flex-w flex-t bor12 p-b-15">
+				<div class="size-208">
+					<span class="stext-110 cl2"> Subtotal: </span>
+				</div>
+
+				<div class="size-209">
+					<span class="mtext-110 cl2" th:if="${session.cart != null}"
+						  th:text="'$' + ${session.totalPrice}"></span>
+				</div>
+			</div>
 			<div class="cart-footer">
 				<a class="cart-checkout-btn" th:href="@{/checkout}"><span
 					class="checkout-label">Thanh Toán</span>

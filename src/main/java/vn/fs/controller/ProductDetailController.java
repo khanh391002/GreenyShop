@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import vn.fs.commom.CommomDataService;
+import vn.fs.model.dto.ProductDTO;
 import vn.fs.model.entities.Product;
 import vn.fs.model.entities.User;
 import vn.fs.repository.ProductRepository;
+import vn.fs.service.ProductService;
 
 @Controller
 public class ProductDetailController extends CommomController{
@@ -21,6 +23,9 @@ public class ProductDetailController extends CommomController{
 	
 	@Autowired
 	CommomDataService commomDataService;
+	
+	@Autowired
+	ProductService productService;
 
 	@GetMapping(value = "productDetail")
 	public String productDetail(@RequestParam("id") Long id, Model model, User user) {
@@ -36,7 +41,8 @@ public class ProductDetailController extends CommomController{
 	
 	// Gợi ý top 10 sản phẩm cùng loại
 	public void listProductByCategory10(Model model, Long categoryId) {
-		List<Product> products = productRepository.listProductByCategory10(categoryId);
-		model.addAttribute("productByCategory", products);
+//		List<Product> products = productRepository.listProductByCategory10(categoryId);
+		List<ProductDTO> productDTOs = productService.listProductByCategory10(categoryId);
+		model.addAttribute("productByCategory", productDTOs);
 	}
 }

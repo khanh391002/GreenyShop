@@ -61,35 +61,56 @@
                 <h4>Thông tin tài khoản</h4>
               </div>
               <div class="account-content">
-                <div class="row">
-                  <div class="col-lg-2">
-                    <div class="profile-image">
-                      <a href="javascript:void(0);">
-                      	<img th:src="@{'/loadImage?imageName='+${user.avatar}}" alt="user" />
-                      </a>
+                <form th:action="@{/editProfile/{id}(id=${user.userId})}" th:object="${profileRequest}" method="post" enctype="multipart/form-data"></form>
+                  <div class="row">
+                    <div class="col-lg-2">
+                      <div class="profile-image">
+                        <a href="javascript:void(0);">
+                          <img th:src="@{'/loadImage?imageName='+${profileRequest.avatar}}" alt="user" />
+                        </a>
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-lg-5">
+                      <div class="form-group">
+                        <label class="form-label">Họ và tên</label>
+                        <input
+                          class="form-control"
+                          type="text"
+                          th:value="${profileRequest.name}"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-lg-5">
+                      <div class="form-group">
+                        <label class="form-label">Email</label
+                        ><input
+                          class="form-control"
+                          type="email"
+                          th:value="${profileRequest.email}"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-lg-2">
+                      <div class="profile-image">
+                        <input style="background-color:white;border-style: hidden;margin-top: -15px;margin-left: 40px;" th:field="${profileRequest.avatar}" type="text" class="form-control" readonly>
+                        <input type="file" id="avatar" name="file" class="form-control">
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-lg-10">
+                      <div class="form-group">
+                        <label class="form-label">Địa chỉ</label>
+                        <input
+                          class="form-control"
+                          type="text"
+                          th:value="${profileRequest.address}"
+                        />
+                      </div>
                     </div>
                   </div>
-                  <div class="col-md-6 col-lg-4">
-                    <div class="form-group">
-                      <label class="form-label">Họ và tên</label>
-                      <input
-                        class="form-control"
-                        type="text"
-                        th:value="${user.name}"
-                      />
-                    </div>
+                  <div class="modal-footer no-bd">
+                    <button type="submit" id="" class="btn btn-primary">Cập nhật</button>
                   </div>
-                  <div class="col-md-6 col-lg-4">
-                    <div class="form-group">
-                      <label class="form-label">Địa chỉ Email</label
-                      ><input
-                        class="form-control"
-                        type="email"
-                        th:value="${user.email}"
-                      />
-                    </div>
-                  </div>
-                </div>
+                </form> 
               </div>
             </div>
           </div>

@@ -1,5 +1,8 @@
 package vn.fs.controller;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
@@ -7,7 +10,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -16,12 +22,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import vn.fs.commom.CommomDataService;
+import vn.fs.model.dto.ProfileDTO;
 import vn.fs.model.entities.Order;
 import vn.fs.model.entities.OrderDetail;
 import vn.fs.model.entities.User;
@@ -32,6 +42,9 @@ import vn.fs.repository.UserRepository;
 @Controller
 public class ProfileController extends CommomController{
 
+	@Value("${upload.path}")
+	private String pathUploadImage;
+	
 	@Autowired
 	UserRepository userRepository;
 
@@ -53,6 +66,7 @@ public class ProfileController extends CommomController{
 			model.addAttribute("user", new User());
 			user = userRepository.findByEmail(principal.getName());
 			model.addAttribute("user", user);
+			model.addAttribute("profileRequest", user);
 		}
 		
 		int currentPage = page.orElse(1);
@@ -69,6 +83,48 @@ public class ProfileController extends CommomController{
 		commomDataService.commonData(model, user);
 		model.addAttribute("orderByUser", orderPage);
 
+		return "web/profile";
+	}
+	
+	@PostMapping(value = "/editProfile/{id}")
+	public String editProfile(@PathVariable("id") Long id,
+			@ModelAttribute("profileRequest") ProfileDTO profileRequest, ModelMap model,
+			@RequestParam("file") MultipartFile file, HttpServletRequest httpServletRequest) {
+		String avatar = null;
+		if (file.getSize() > 0) {
+			avatar = file.getOriginalFilename();
+			try {
+				File convFile = new File(pathUploadImage + "/" + (avatar));
+				FileOutputStream fos = new FileOutputStream(convFile);
+				fos.write(file.getBytes());
+				fos.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+				return "error";
+			}
+		} else {
+			avatar = profileRequest.getAvatar();
+		}
+		
+		Optional<User> userOptional = userRepository.findById(id);
+		if (!userOptional.isPresent()) {
+			return "error";
+		}
+		User user = userOptional.get();
+		model.addAttribute("profile", user);
+
+		user.setName(profileRequest.getName());
+		user.setEmail(profileRequest.getEmail());
+		user.setAddress(profileRequest.getAddress());
+		user.setAvatar(avatar);
+		user = userRepository.save(user);
+		if (null != user) {
+			model.addAttribute("message", "Update success");
+			model.addAttribute("user", user);
+		} else {
+			model.addAttribute("message", "Update failure");
+			model.addAttribute("user", user);
+		}
 		return "web/profile";
 	}
 

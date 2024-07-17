@@ -11,20 +11,18 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.JoinColumn;
 
 @SuppressWarnings("serial")
 @AllArgsConstructor
@@ -49,6 +47,9 @@ public class User implements Serializable{
 	
 	@Size(max = 2048, message = "Avatar length should be less than 2048 characters")
 	private String avatar;
+	
+	@Size(max = 2048, message = "Address length should be less than 2048 characters")
+	private String address;
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "register_date")

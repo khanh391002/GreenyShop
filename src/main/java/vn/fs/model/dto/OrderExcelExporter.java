@@ -12,7 +12,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import lombok.Data;
-import vn.fs.model.entities.Order;
 
 @Data
 public class OrderExcelExporter {
@@ -20,9 +19,9 @@ public class OrderExcelExporter {
 	private XSSFWorkbook workbook;
 	private XSSFSheet sheet;
 
-	private List<Order> listOrDetails;
+	private List<OrderDTO> listOrDetails;
 
-	public OrderExcelExporter(List<Order> listOrDetails) {
+	public OrderExcelExporter(List<OrderDTO> listOrDetails) {
 
 		this.listOrDetails = listOrDetails;
 		workbook = new XSSFWorkbook();
@@ -58,7 +57,7 @@ public class OrderExcelExporter {
 
 	private void writeDataRows() {
 		int rowCount = 1;
-		for (Order order : listOrDetails) {
+		for (OrderDTO order : listOrDetails) {
 			Row row = sheet.createRow(rowCount++);
 
 			Cell cell = row.createCell(0);

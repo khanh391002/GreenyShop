@@ -6103,6 +6103,12 @@ tbody tr td:last-child {
   font-weight: 400;
   color: var(--text);
 }
+.btn-num-product-up,
+.btn-num-product-down {
+    width: 45px;
+    height: 100%;
+    cursor: pointer;
+}
 @media (max-width: 575px) {
   .bottom-paginate {
     margin-bottom: 30px;

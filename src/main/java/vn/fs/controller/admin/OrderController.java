@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import vn.fs.model.dto.OrderDTO;
 import vn.fs.model.dto.OrderExcelExporter;
 import vn.fs.model.entities.Order;
 import vn.fs.model.entities.OrderDetail;
@@ -26,15 +27,15 @@ import vn.fs.repository.OrderDetailRepository;
 import vn.fs.repository.OrderRepository;
 import vn.fs.repository.ProductRepository;
 import vn.fs.repository.UserRepository;
-import vn.fs.service.OrderDetailService;
 import vn.fs.service.SendMailService;
+import vn.fs.service.impl.OrderServiceImpl;
 
 @Controller
 @RequestMapping("/admin")
 public class OrderController {
 
 	@Autowired
-	OrderDetailService orderDetailService;
+	OrderServiceImpl orderDetailService;
 
 	@Autowired
 	OrderRepository orderRepository;
@@ -143,7 +144,7 @@ public class OrderController {
 
 		response.setHeader(headerKey, headerValue);
 
-		List<Order> lisOrders = orderDetailService.listAll();
+		List<OrderDTO> lisOrders = orderDetailService.listAll();
 
 		OrderExcelExporter excelExporter = new OrderExcelExporter(lisOrders);
 		excelExporter.export(response);

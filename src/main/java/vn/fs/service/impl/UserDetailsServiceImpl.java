@@ -1,8 +1,9 @@
-package vn.fs.service;
+package vn.fs.service.impl;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,10 +17,13 @@ import vn.fs.model.entities.User;
 import vn.fs.repository.UserRepository;
 
 @Service
-public class UserDetailService implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Autowired
 	UserRepository userRepository;
+	
+	@Autowired
+	ModelMapper mapper;
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -35,5 +39,4 @@ public class UserDetailService implements UserDetailsService {
 	private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
 		return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
 	}
-
 }

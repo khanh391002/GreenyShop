@@ -1,5 +1,6 @@
 package vn.fs.controller;
 
+import java.security.Principal;
 import java.util.Collection;
 import java.util.Date;
 
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
@@ -35,8 +37,8 @@ import vn.fs.model.entities.Product;
 import vn.fs.model.entities.User;
 import vn.fs.repository.OrderDetailRepository;
 import vn.fs.repository.OrderRepository;
-import vn.fs.service.PaypalService;
 import vn.fs.service.ShoppingCartService;
+import vn.fs.service.impl.PaypalServiceImpl;
 
 
 @Controller
@@ -52,7 +54,7 @@ public class CartController extends CommomController {
 	ShoppingCartService shoppingCartService;
 
 	@Autowired
-	private PaypalService paypalService;
+	private PaypalServiceImpl paypalService;
 
 	@Autowired
 	OrderRepository orderRepository;
@@ -86,7 +88,7 @@ public class CartController extends CommomController {
 
 	// add cartItem
 	@GetMapping(value = "/addToCart")
-	public String add(@RequestParam("productId") Long productId, HttpServletRequest request, Model model) {
+	public String add(@RequestParam("productId") Long productId, HttpServletRequest request, Model model, Principal principal) {
 
 		Product product = productRepository.findById(productId).orElse(null);
 
@@ -98,7 +100,7 @@ public class CartController extends CommomController {
 			item.setQuantity(1);
 			item.setProduct(product);
 			item.setId(productId);
-			shoppingCartService.add(item);
+			shoppingCartService.add(productId, item, principal);
 		}
 		session.setAttribute("cartItems", cartItems);
 		model.addAttribute("totalCartItems", shoppingCartService.getCount());
@@ -289,5 +291,10 @@ public class CartController extends CommomController {
 		return "web/checkout_paypal_success";
 
 	}
+	
+	@GetMapping("/update-cart")
+    public String updateToCart(@RequestParam(name = "id") Long id, @RequestParam(name = "quantity") int quantity, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        return shoppingCartService.updateCart(id, quantity, null, request, redirectAttributes);
+    }
 
 }

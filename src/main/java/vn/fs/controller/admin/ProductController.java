@@ -9,8 +9,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -28,10 +26,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import vn.fs.model.dto.ProductDTO;
 import vn.fs.model.entities.Category;
 import vn.fs.model.entities.Product;
 import vn.fs.model.entities.User;
-import vn.fs.model.request.ProductRequest;
 import vn.fs.repository.CategoryRepository;
 import vn.fs.repository.ProductRepository;
 import vn.fs.repository.UserRepository;
@@ -88,15 +86,15 @@ public class ProductController {
 
 	@GetMapping(value = "/addProduct")
 	public String showPopUpAddProduct(Model model) {
-		ProductRequest productRequest = new ProductRequest();
+		ProductDTO productRequest = new ProductDTO();
 		model.addAttribute("productRequest", productRequest);
 		return "admin/createProduct";
 	}
 
 	// add product
 	@PostMapping(value = "/addProduct")
-	public String addProduct(@ModelAttribute("productRequest") ProductRequest productRequest, ModelMap model,
-			@RequestParam("file") MultipartFile file, BindingResult result, HttpServletRequest httpServletRequest) {
+	public String addProduct(@ModelAttribute("productRequest") ProductDTO productRequest, ModelMap model,
+			@RequestParam("file") MultipartFile file, BindingResult result) {
 
 		try {
 			File convFile = new File(pathUploadImage + "/" + file.getOriginalFilename());
@@ -107,13 +105,7 @@ public class ProductController {
 			e.printStackTrace();
 			return "error";
 		}
-//			if (productRequest.getProductImage().isEmpty()) {
-//				result.addError(new FieldError("productRequest", "productImage", "The product image is required!"));
-//			}
-//			
-//			if (result.hasErrors()) {
-//				return "admin/createProduct";
-//	  	    }
+
 		Product product = new Product();
 		product.setProductCode(productRequest.getProductCode());
 		product.setProductName(productRequest.getProductName());
@@ -135,42 +127,6 @@ public class ProductController {
 		return "redirect:/admin/products";
 	}
 
-//	// add product
-//	@PostMapping(value = "/addProduct")
-//	public String addProduct(@ModelAttribute("product") Product product, ModelMap model,
-//			@RequestParam("file") MultipartFile file, BindingResult result, HttpServletRequest httpServletRequest) {
-//
-//		try {
-//			File convFile = new File(pathUploadImage + "/" + file.getOriginalFilename());
-//			FileOutputStream fos = new FileOutputStream(convFile);
-//			fos.write(file.getBytes());
-//			fos.close();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			return "error";
-//		}
-////		Optional<Product> productOpt = productRepository.findByProductCodeAndIsDeletedIsFalse(product.getProductCode());
-////		if (productOpt.isPresent()) {
-////			result.addError(new FieldError("product", "productCode", "Product Code is existed!"));
-////		}
-////  		if (result.hasErrors()) {
-////  			model.addAttribute("message", "Product Code is existed!");
-////			model.addAttribute("product", product);
-//// 			return "error";
-////  	    }
-//
-//		product.setProductImage(file.getOriginalFilename());
-// 		Product p = productRepository.save(product);
-//		if (null != p) {
-//			model.addAttribute("message", "Update success");
-//			model.addAttribute("product", product);
-//		} else {
-//			model.addAttribute("message", "Update failure");
-//			model.addAttribute("product", product);
-//		}
-//		return "redirect:/admin/products";
-//	}
-
 	// show select option ở add product
 	@ModelAttribute("categoryList")
 	public List<Category> showCategory(Model model) {
@@ -190,7 +146,7 @@ public class ProductController {
 		Product product = productOpt.get();
 		model.addAttribute("product", product);
 
-		ProductRequest productRequest = new ProductRequest();
+		ProductDTO productRequest = new ProductDTO();
 		productRequest.setProductCode(product.getProductCode());
 		productRequest.setProductName(product.getProductName());
 		productRequest.setPrice(product.getPrice());
@@ -209,23 +165,24 @@ public class ProductController {
 	// add product
 	@PostMapping(value = "/editProduct/{id}")
 	public String editProduct(@PathVariable("id") Long id,
-			@ModelAttribute("productRequest") ProductRequest productRequest, ModelMap model,
-			@RequestParam("file") MultipartFile file, BindingResult result, HttpServletRequest httpServletRequest) {
+			@ModelAttribute("productRequest") ProductDTO productRequest, ModelMap model,
+			@RequestParam("file") MultipartFile file, BindingResult result) {
 		String productImage = null;
-		try {
-			if (file.getSize() > 0) {
-				productImage = file.getOriginalFilename();
-			} else {
-				productImage = productRequest.getProductImage();
+		if (file.getSize() > 0) {
+			productImage = file.getOriginalFilename();
+			try {
+				File convFile = new File(pathUploadImage + "/" + (productImage));
+				FileOutputStream fos = new FileOutputStream(convFile);
+				fos.write(file.getBytes());
+				fos.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+				return "error";
 			}
-			File convFile = new File(pathUploadImage + "/" + (productImage));
-			FileOutputStream fos = new FileOutputStream(convFile);
-			fos.write(file.getBytes());
-			fos.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return "error";
+		} else {
+			productImage = productRequest.getProductImage();
 		}
+		
 		Optional<Product> productOptional = productRepository.findById(id);
 		if (!productOptional.isPresent()) {
 			return "error";

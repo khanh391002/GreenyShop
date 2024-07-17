@@ -1,4 +1,4 @@
-package vn.fs.service;
+package vn.fs.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import vn.fs.config.PaypalPaymentIntent;
 import vn.fs.config.PaypalPaymentMethod;
 
 @Service
-public class PaypalService {
+public class PaypalServiceImpl {
 	
 	@Autowired
 	private APIContext apiContext;
