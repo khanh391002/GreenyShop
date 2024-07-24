@@ -54,31 +54,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	Optional<Product> findByProductCodeAndIsDeletedIsFalse(String productCode);
 	
 	List<Product> findAllByCategoryCategoryIdAndIsDeletedIsFalse(Long cateId);
-	
-	Optional<Product> findByIdAndDeleted(Long id, Boolean deleted);
-
-    List<Product> getByDeleted(Boolean deleted);
 
     List<Product> getByQuantityGreaterThanAndIsDeletedIsFalse(Integer quantity);
 
-    List<Product> getByNameAndIsDeletedIsFalse(String name);
+    List<Product> getByProductNameAndIsDeletedIsFalse(String name);
 
-    List<Product> getByNameAndQuantityGreaterThanAndIsDeletedIsFalse(String name, Integer quantity);
+    List<Product> getByProductNameAndQuantityGreaterThanAndIsDeletedIsFalse(String name, Integer quantity);
 
-    List<Product> getByNameAndColorNotLikeAndIsDeletedIsFalse(String name, String color);
-
-    List<Product> getByNameAndColorAndIsDeletedIsFalse(String name, String color);
-
-    List<Product> getByNameAndColorAndQuantityGreaterThanAndIsDeletedIsFalse(String name, String color, Integer quantity);
-
-    Optional<Product> findByNameAndIsDeletedIsFalse(String name);
-
-    List<Product> getByCategoriesIdAndIsDeletedIsFalse(Long categoriesId);
-
-    List<Product> findByNameContainingIgnoreCaseAndIsDeletedIsFalse(String name);
-
-    List<Product> getByQuantityGreaterThanAndDeletedFalseOrderByPriceAsc(Integer quantity);
-
-    List<Product> getByQuantityGreaterThanAndDeletedFalseOrderByPriceDesc(Integer quantity);
+    Optional<Product> findByProductNameAndIsDeletedIsFalse(String name);
 
 }

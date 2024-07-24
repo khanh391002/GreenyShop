@@ -119,7 +119,7 @@ public class ProductServiceImpl implements ProductService{
 
 	@Override
     public List<ProductDTO> getRelatedByName(String name) {
-		List<Product> products = productRepository.getByNameAndQuantityGreaterThanAndIsDeletedIsFalse(name, 0);
+		List<Product> products = productRepository.getByProductNameAndQuantityGreaterThanAndIsDeletedIsFalse(name, 0);
 		List<ProductDTO> productDTOs = new ArrayList<>();
 		for(Product product : products) {
 			ProductDTO productDTO = mapper.map(product, ProductDTO.class);

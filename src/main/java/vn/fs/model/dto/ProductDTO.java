@@ -13,6 +13,8 @@ import vn.fs.model.entities.Category;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductDTO {
+	
+	private Long productId;
 
 	@NotNull(message = "Product name must not be null")
 	private String productName;
