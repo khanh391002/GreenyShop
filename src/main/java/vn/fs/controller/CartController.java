@@ -102,7 +102,7 @@ public class CartController extends CommomController {
 		}
 		session.setAttribute("cartItems", cartItems);
 		model.addAttribute("totalCartItems", shoppingCartService.getCount());
-
+		
 		return "redirect:/products";
 	}
 

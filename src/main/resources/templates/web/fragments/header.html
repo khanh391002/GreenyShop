@@ -78,7 +78,7 @@ xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 							<i class="fas fa-heart"></i><sup th:text="${totalSave}" id="totalSave">0</sup>
 						</a>
 						<button class="header-widget header-cart" title="Giỏ hàng">
-							<i class="fas fa-shopping-basket"></i> <sup th:text="${totalCartItems}" id="totalCartItems">0</sup>
+							<i id="cart-icon" class="fas fa-shopping-basket"></i> <sup th:text="${totalCartItems}" id="totalCartItems">0</sup>
 						</button>
 					</div>
 				</div>
@@ -161,7 +161,7 @@ xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 		<aside class="cart-sidebar">
 			<div class="cart-header">
 				<div class="cart-total">
-					<i class="fas fa-shopping-basket"></i><span>Tổng số lượng giỏ hàng ([[${totalCartItems}]])</span>
+					<i class="fas fa-shopping-basket"></i><span>Tổng số lượng giỏ hàng <span id="total-cart-items">([[${totalCartItems}]])</span></span>
 				</div>
 				<button class="cart-close">
 					<i class="icofont-close"></i>
@@ -169,46 +169,21 @@ xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 				
 			</div>
 			
-			<div th:unless="${totalCartItems!=0}" class="text-center">
+			<!-- <div th:unless="${totalCartItems!=0}" class="text-center">
 				<h4 style="color: #119744" class="mt-5">Hiện tại bạn chưa có sản phẩm nào trong giỏ hàng!</h4>
 				<h5 style="color: #119744">Hãy mua sắm đi nào!</h5>
 				<a th:href="@{/products}" style="text-decoration: underline;">Click tại đây!</a>
 			</div>
 			
-			<th:block th:if="${totalCartItems!=0}">
+			<th:block th:if="${totalCartItems!=0}"> -->
 			<ul class="cart-list">
-				<li class="cart-item" th:each="item : ${cartItems}">
-					<div class="cart-media">
-						<a th:href="@{/productDetail(id=${item.product.productId})}">
-							<img th:src="@{'/loadImage?imageName='+${item.product.productImage}}" alt="product" />
-						</a>
-					</div>
-					<div class="cart-info-group">
-						<div class="cart-info">
-							<h6>
-								<label>Tên sản phẩm :</label>
-								<a th:href="@{/productDetail(id=${item.product.productId})}" style="color: #119744">[[${item.product.productName}]]</a>
-							</h6>
-							<label>Đơn giá :</label>
-							<p>[[${#numbers.formatDecimal(item.product.price - (item.product.price * item.product.discount/100), 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]</p>
-						</div>
-						<div class="cart-action-group">
-							<div class="product-action">
-								<label>Số lượng :</label>
-								<input class="action-input" title="Quantity Number" type="text"
-									name="quantity" th:value="${item.quantity}" />
-							</div>
-							<h6>[[${#numbers.formatDecimal((item.product.price - (item.product.price * item.product.discount/100)) * item.quantity, 1, 'DEFAULT', 0, 'DEFAULT')}+ ' đ']]</h6>
-						</div>
-					</div>
-				</li>
 			</ul>
 			<div class="cart-footer">
 				<a class="cart-checkout-btn" th:href="@{/checkout}"><span
 					class="checkout-label">Thanh Toán</span>
 				</a>
 			</div>
-			</th:block>
+			<!-- </th:block> -->
 		</aside>
 		
 	</th:block>
