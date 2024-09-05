@@ -169,21 +169,19 @@ xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 				
 			</div>
 			
-			<!-- <div th:unless="${totalCartItems!=0}" class="text-center">
+			<div id="nothing-item" style="display: none;" class="text-center">
 				<h4 style="color: #119744" class="mt-5">Hiện tại bạn chưa có sản phẩm nào trong giỏ hàng!</h4>
 				<h5 style="color: #119744">Hãy mua sắm đi nào!</h5>
 				<a th:href="@{/products}" style="text-decoration: underline;">Click tại đây!</a>
 			</div>
 			
-			<th:block th:if="${totalCartItems!=0}"> -->
-			<ul class="cart-list">
+			<ul id="some-item-1" class="cart-list" style="display: none;">
 			</ul>
-			<div class="cart-footer">
+			<div id="some-item-2" class="cart-footer" style="display: none;">
 				<a class="cart-checkout-btn" th:href="@{/checkout}"><span
 					class="checkout-label">Thanh Toán</span>
 				</a>
 			</div>
-			<!-- </th:block> -->
 		</aside>
 		
 	</th:block>

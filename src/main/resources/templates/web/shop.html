@@ -65,17 +65,7 @@
                 });
             });
             
-            $('#cart-icon').click(function(event) {
-            	$.ajax({
-                    type: "GET",
-                    url: "/api/total-cart-items",
-                    dataType: 'json',
-                    success: function(response) {
-                    	$('#total-cart-items').text('(' + response + ')');
-                    },
-                    error: function() {}
-                });
-                
+            function addToCart() {
                 $.ajax({
                     type: "GET",
                     url: "/api/carts",
@@ -87,6 +77,28 @@
                     			let cartItem = `<li class="cart-item"> <div class="cart-media"> <a href="/productDetail?id=${item.product.productId}"> <img src="/loadImage?imageName=${item.product.productImage}" alt="product"> </a> </div> <div class="cart-info-group"> <div class="cart-info"> <h6> <label>Tên sản phẩm :</label> <a href="/productDetail?id=${item.product.productId}" style="color: #119744">${item.product.productName}</a> </h6> <label>Đơn giá :</label> <p>${item.product.price} đ</p> </div> <div class="cart-action-group"> <div class="product-action"> <label>Số lượng :</label> <input class="action-input" title="Quantity Number" type="text" name="quantity" value="${item.quantity}"> </div> <h6>${item.totalPrice} đ</h6> </div> </div> </li>`;
                     			$('.cart-list').append(cartItem)
                     		})
+                    	}
+                    },
+                    error: function() {}
+                });
+            }
+            
+            $('#cart-icon').click(function(event) {
+            	$.ajax({
+                    type: "GET",
+                    url: "/api/total-cart-items",
+                    dataType: 'json',
+                    success: function(response) {
+                    	$('#total-cart-items').text('(' + response + ')');
+                    	if (Number(response) > 0) {
+                    		document.getElementById("some-item-1").style.setProperty('display', 'block', 'important');
+                    		document.getElementById("some-item-2").style.setProperty('display', 'block', 'important');
+                    		document.getElementById("nothing-item").style.setProperty('display', 'none', 'important');
+                    		addToCart();
+                    	} else {
+                    		document.getElementById("nothing-item").style.setProperty('display', 'block', 'important');
+                    		document.getElementById("some-item-1").style.setProperty('display', 'none', 'important');
+                    		document.getElementById("some-item-2").style.setProperty('display', 'none', 'important');
                     	}
                     },
                     error: function() {}
