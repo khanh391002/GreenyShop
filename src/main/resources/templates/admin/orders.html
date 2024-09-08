@@ -88,6 +88,7 @@
 												<th>Ngày đặt hàng</th>
 												<th>Địa chỉ</th>
 												<th>Tổng tiền</th>
+												<th>Ghi chú</th>
 												<th>Chi tiết đơn hàng</th>
 												<th style="width: 10%">Hành động</th>
 											</tr>
@@ -100,6 +101,7 @@
 												<th>Ngày đặt hàng</th>
 												<th>Địa chỉ</th>
 												<th>Tổng tiền</th>
+												<th>Ghi chú</th>
 												<th>Chi tiết đơn hàng</th>
 												<th style="width: 10%">Hành động</th>
 											</tr>
@@ -112,6 +114,7 @@
 												<td>[[${item.orderDate}]]</td>
 												<td>[[${item.address}]]</td>
 												<td th:text="${#numbers.formatDecimal(item.amount, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ'"></td>
+												<td th:text="${item.note != null ? item.note : '---'}"></td>
 												<td>
 													<a th:href="@{'/admin/order/detail/'+${item.orderId}}">
 														<i class="fa fa-info-circle"> Chi tiết đơn hàng</i>

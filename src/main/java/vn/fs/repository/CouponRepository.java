@@ -1,5 +1,6 @@
 package vn.fs.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,9 @@ public interface CouponRepository extends JpaRepository<Coupon, Long>{
 	
 	Optional<Coupon> getByCodeAndExpiresFalseAndDeletedFalse(String code);
 	
+	Optional<Coupon> findByCodeAndDeletedFalse(String code);
+	
+	List<Coupon> findAllByDeletedFalse();
+	
+	Optional<Coupon> findByIdAndDeletedFalse(Long id);
 }

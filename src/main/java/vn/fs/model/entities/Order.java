@@ -48,6 +48,9 @@ public class Order implements Serializable {
 	
 	@NotNull(message = "Status must not be null")
 	private int status;
+	
+	@Size(max = 2045, message = "Note's length should be less than 2045 characters")
+	private String note;
 
 	@OneToMany(mappedBy = "order")
 	private List<OrderDetail> orderDetails;

@@ -209,7 +209,7 @@
 												</td>
 												<td>[[${item.productName}]]</td>
 												<td>[[${item.category.categoryName}]]</td>
-												<td th:text="${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ'"></td>
+												<td th:text="${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' vnđ'"></td>
 												<td>[[${#numbers.formatDecimal(item?.discount, 1, 'DEFAULT', 0, 'DEFAULT')}+' %']]</td>
 												<td>[[${item.quantity}]]</td>
 												<td>[[${item.enteredDate}]]</td>

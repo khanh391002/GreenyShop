@@ -170,6 +170,7 @@ public class CartController extends CommomController {
 		String checkOut = request.getParameter("checkOut");
 		Integer totalOfCart = (Integer) session.getAttribute("totalOfCart");
         Double totalPrice = (Double) session.getAttribute("totalPrice");
+        String couponCode = (String) session.getAttribute("couponCode");
 
 		Collection<CartItem> cartItems = shoppingCartService.getCartItems();
 
@@ -185,7 +186,7 @@ public class CartController extends CommomController {
 			String cancelUrl = Utils.getBaseURL(request) + "/" + URL_PAYPAL_CANCEL;
 			String successUrl = Utils.getBaseURL(request) + "/" + URL_PAYPAL_SUCCESS;
 			try {
-				totalPrice = totalPrice / 22;
+				totalPrice = totalPrice / 24;
 				Payment payment = paypalService.createPayment(totalPrice, "USD", PaypalPaymentMethod.paypal,
 						PaypalPaymentIntent.sale, "payment description", cancelUrl, successUrl);
 				for (Links links : payment.getLinks()) {
@@ -199,11 +200,18 @@ public class CartController extends CommomController {
 
 		}
 
-		session = request.getSession();
+//		session = request.getSession();
 		Date date = new Date();
 		order.setOrderDate(date);
 		order.setStatus(0);
 		order.getOrderId();
+//		if (!StringUtils.isEmpty(couponCode)) {
+//			Coupon couponObj = couponService.findCode(couponCode);
+//			if (!Objects.isNull(couponObj)) {
+//				totalPrice = totalPrice - (totalPrice * couponObj.getDiscount() / 100);
+//				session.setAttribute("couponCode", couponObj.getCode());
+//			}
+//		}
 		order.setAmount(totalPrice);
 		order.setUser(user);
 
@@ -215,12 +223,18 @@ public class CartController extends CommomController {
 			orderDetail.setOrder(order);
 			orderDetail.setProduct(cartItem.getProduct());
 			double unitPrice = cartItem.getProduct().getPrice();
+			if (!StringUtils.isEmpty(couponCode)) {
+				Coupon couponObj = couponService.findCode(couponCode);
+				if (!Objects.isNull(couponObj)) {
+					unitPrice = unitPrice - (unitPrice * couponObj.getDiscount() / 100);
+				}
+			}
 			orderDetail.setPrice(unitPrice);
 			orderDetailRepository.save(orderDetail);
 		}
 
 		// sendMail
-		commomDataService.sendSimpleEmail(user.getEmail(), "Greeny-Shop Xác Nhận Đơn hàng", "aaaa", cartItems,
+		commomDataService.sendSimpleEmail(user.getEmail(), "Greeny-Shop Xác Nhận Đơn hàng", "Xác nhận đặt đơn thành công", cartItems,
 				totalPrice, order);
 
 		shoppingCartService.clear();
@@ -321,6 +335,7 @@ public class CartController extends CommomController {
 			Coupon couponObj = couponService.findCode(coupon);
 			if (!Objects.isNull(couponObj)) {
 				totalPrice = totalPrice - (totalPrice * couponObj.getDiscount() / 100);
+				session.setAttribute("couponCode", couponObj.getCode());
 			}
 		}
 		model.addAttribute("totalPrice", totalPrice);

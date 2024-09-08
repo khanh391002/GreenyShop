@@ -19,6 +19,20 @@
 		});
 	</script>
 
+	<style>
+		.status-label {
+			padding: 5px 10px;
+			border: 2px solid red;
+			border-radius: 3px;
+		}
+		.expired {
+			color: red;
+		}
+		.valid {
+			color: green;
+		}
+	</style>
+
 	<!-- CSS Files -->
 	<link rel="stylesheet" href="/assets/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/assets/css/atlantis.min.css">
@@ -43,7 +57,7 @@
 		<div class="content">
 			<div class="page-inner">
 				<div class="page-header">
-					<h4 class="page-title">Quản Lý sản phẩm</h4>
+					<h4 class="page-title">Quản Lý phiếu giảm giá</h4>
 					<ul class="breadcrumbs">
 						<li class="nav-home">
 							<a href="#">
@@ -69,7 +83,7 @@
 							<div class="card-header">
 								<div class="d-flex align-items-center">
 									<h4 class="card-title" style="text-decoration: underline;">Quản Lý Phiếu Giảm Giá</h4>
-									<a class="btn btn-primary btn-round ml-auto" th:href="@{/admin/addProduct}">
+									<a class="btn btn-primary btn-round ml-auto" th:href="@{/admin/coupon/new}">
 										<i class="fa fa-plus"></i>
 										Thêm mới
 									</a>
@@ -77,50 +91,51 @@
 							</div>
 							<div class="card-body">
 								<!-- Modal -->
-								<div class="modal fade" id="addRowModal" tabindex="-1" role="dialog" aria-hidden="true">
+								<!-- <div class="modal fade" id="addRowModal" tabindex="-1" role="dialog" aria-hidden="true">
 									<div class="modal-dialog" role="document">
 										<div class="modal-content">
 											<div class="modal-header no-bd">
 												<h5 class="modal-title">
 													<span class="fw-mediumbold" style="text-decoration: underline; color: black;">
-													thêm mới phiếu giảm giá</span> 
+													Thêm mới phiếu giảm giá</span> 
 												</h5>
 												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 													<span aria-hidden="true">&times;</span>
 												</button>
 											</div>
 											<div class="modal-body">
-												<form th:action="@{/admin/addProduct}" th:object="${product}" method="post" enctype="multipart/form-data">
+												<form th:action="@{/admin/coupon/new}" th:object="${coupon}" method="post" enctype="multipart/form-data">
 													<div class="row">
-														<div class="col-sm-12">
+														<div class="col-md-6 pr-0">
 															<div class="form-group form-group-default">
-																<label>Tên sản phẩm</label>
-																<input th:field="*{productName}" id="productName" type="text" class="form-control" placeholder="Tên sản phẩm...">
-															</div>
-														</div>
-														<div class="col-sm-6 pr-0">
-															<div class="form-group form-group-default">
-																<label>Mã sản phẩm</label>
-																<input th:field="*{productCode}" id="productCode" type="text" class="form-control" placeholder="Mã sản phẩm">
+																<label>Mã Phiếu Giảm Giá</label>
+																<input th:field="${coupon.code}" id="code" type="text" class="form-control" placeholder="Mã phiếu giảm giá">
+																<p th::if="${#fields.hasErrors('code')}" th:errorclass="text-danger" th:errors="${coupon.code}"></p>
 															</div>
 														</div>
 														<div class="col-md-6 pr-0">
 															<div class="form-group form-group-default">
 																<label>Giảm giá</label>
-																<input th:field="*{discount}" id="discount" min = 0 type="number" class="form-control" placeholder="Giảm giá">
+																<input th:field="${coupon.discount}" id="discount" min = 0 type="number" class="form-control" placeholder="Giảm giá">
+																<p th::if="${#fields.hasErrors('discount')}" th:errorclass="text-danger" th:errors="${coupon.discount}"></p>
 															</div>
-														</div>
 														<div class="col-md-6 pr-0">
 															<div class="form-group form-group-default">
 																<label>Ngày hết hạn</label>
-																<input th:field="*{expirationDate}" id="expirationDate" type="date" class="form-control" placeholder="Ngày hết hạn">
+																<input th:field="${coupon.expirationDate}" id="expirationDate" type="date" class="form-control" placeholder="Ngày hết hạn">
 															</div>
 														</div>
-														<div class="col-md-6 pr-0">
-															<input type="radio" id="expires" value="Expires">
-															<label for="html">Expires</label><br>
-															<input type="radio" id="valid" value="Valid">
-															<label for="css">Valid</label>
+														<div class="col-sm-12">
+															<div class="form-group form-group-default">
+																<label>Mô tả sản phẩm</label>
+																<input type="radio" id="active" name="expires" value="true" 
+																	   th:checked="${coupon.expires}" />
+																<label for="active">Active</label>
+																<input type="radio" id="inactive" name="expires" value="false" 
+																	   th:checked="${!coupon.expires}" />
+																<label for="inactive">Inactive</label>
+																<p th:if="${#fields.hasErrors('expires')}" th:errorclass="text-danger" th:errors="${#fields.errors('expires')}"></p>
+															</div>
 														</div>
 													</div>
 													<div class="modal-footer no-bd">
@@ -131,60 +146,45 @@
 											</div>
 										</div>
 									</div>
-								</div>
+								</div> -->
 
 								<div class="table-responsive">
 									<table id="add-row" class="display table table-striped table-hover" >
 										<thead>
 											<tr>
-												<th>Mã sản phẩm</th>
-												<th>Ảnh</th>
-												<th>Tên sản phẩm</th>
-												<th>Thể loại</th>
-												<th>Đơn giá</th>
+												<th>Mã phiếu giảm giá</th>
 												<th>Giảm giá</th>
-												<th>Số lượng</th>
-												<th>Ngày thêm</th>
-												<th>Mô tả sản phẩm</th>
+												<th>Ngày hết hạn</th>
+												<th>Hết hạn</th>
 												<th style="width: 10%">Hành động</th>
 											</tr>
 										</thead>
 										<tfoot>
 											<tr>
-												<th>Mã sản phẩm</th>
-												<th>Ảnh</th>
-												<th>Tên sản phẩm</th>
-												<th>Thể loại</th>
-												<th>Đơn giá</th>
+												<th>Mã phiếu giảm giá</th>
 												<th>Giảm giá</th>
-												<th>Số lượng</th>
-												<th>Ngày thêm</th>
-												<th>Mô tả sản phẩm</th>
+												<th>Ngày hết hạn</th>
+												<th>Hết hạn</th>
 												<th>Hành động</th>
 											</tr>
 										</tfoot>
 										<tbody>
-											<tr th:each="item : ${products}">
-												<td>[[${item.productCode}]]</td>
-												<td>
-													<img th:src="@{'/loadImage?imageName='+${item.productImage}}" width="80px" alt="product" />
-													<!-- <img th:src="@{'static/images/product/' + ${item.productImage}}" width="80px" alt="product" /> -->
-												</td>
-												<td>[[${item.productName}]]</td>
-												<td>[[${item.category.categoryName}]]</td>
-												<td th:text="${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ'"></td>
+											<tr th:each="item : ${coupons}">
+												<td>[[${item.code}]]</td>
 												<td>[[${#numbers.formatDecimal(item?.discount, 1, 'DEFAULT', 0, 'DEFAULT')}+' %']]</td>
-												<td>[[${item.quantity}]]</td>
-												<td>[[${item.enteredDate}]]</td>
-												<td>[[${item.description}]]</td>
+												<td>[[${item.expirationDate}]]</td>
+												<td>
+													<span th:classappend="${item.expires} ? 'status-label expired' : 'status-label valid'" 
+														  th:text="${item.expires} ? 'Hết hạn' : 'Còn hạn'"></span>
+												</td>
 												<td>
 													<div class="form-button-action">
-														<a th:href="@{/admin/editProduct/{productId}(productId=${item.productId})}"
+														<a th:href="@{/admin/coupon/update/{id}(id=${item.id})}"
 															type="button" data-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Chỉnh sửa">
 															<i class="fa fa-edit"></i>
 														</a>
-														<button th:data-id="${item.productId}" th:data-name="${item.productName}"
-																onclick="showConfigModalDialog(this.getAttribute('data-id'), this.getAttribute('data-name'))"
+														<button th:data-id="${item.id}" th:data-code="${item.code}"
+																onclick="showConfigModalDialog(this.getAttribute('data-id'), this.getAttribute('data-code'))"
 																type="button" data-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Xóa">
 															<i class="fa fa-times"></i>
 														</button>
@@ -197,7 +197,7 @@
 									<script>
 									function showConfigModalDialog(id, name) {
 										$('#name').text(name);
-										$('#yesOption').attr('href', '/admin/deleteProduct/'+id);
+										$('#yesOption').attr('href', '/admin/coupon/delete/'+id);
 										$('#configmationId').modal('show');
 									}
 									</script>
@@ -214,7 +214,7 @@
 													</button>
 												</div>
 												<div class="modal-body">
-													<p style="color: black">Bạn muốn xóa sản phẩm này không?</p>
+													<p style="color: black">Bạn muốn xóa phiếu giảm giá này không?</p>
 												</div>
 												<div class="modal-footer">
 													<a id="yesOption" type="button" class="btn btn-primary">Có</a>
@@ -310,17 +310,6 @@
 			});
 
 			var action = '<td> <div class="form-button-action"> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';
-
-			/* $('#addRowButton').click(function() {
-				$('#add-row').dataTable().fnAddData([
-					$("#addName").val(),
-					$("#addPosition").val(),
-					$("#addOffice").val(),
-					action
-					]);
-				$('#addRowModal').modal('hide');
-
-			}); */
 		});
 	</script>
 </body>

@@ -1,8 +1,11 @@
 package vn.fs.controller.admin;
 
+import java.util.Objects;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,15 +27,32 @@ public class CouponController {
         return "redirect:/admin/coupon";
     }
 
+    @GetMapping(value = "/new")
+	public String showPopUpAddCoupon(Model model) {
+		Coupon coupon = new Coupon();
+		model.addAttribute("coupon", coupon);
+		return "admin/createCoupon";
+	}
+    
     @PostMapping("/new")
     public String add(@ModelAttribute("coupon") Coupon coupon, Model model) {
         couponService.add(coupon, model);
         return "redirect:/admin/coupon";
     }
+    
+    @GetMapping(value = "/update/{id}")
+	public String showEditPage(@PathVariable("id") Long id, ModelMap model) {
+		Coupon coupon = couponService.getById(id);
+		if (Objects.isNull(coupon)) {
+			return "error";
+		}
+		model.addAttribute("coupon", coupon);
+		return "admin/editCoupon";
+	}
 
-    @PostMapping("/update")
-    public String update(@ModelAttribute("coupon") Coupon coupon, Model model) {
-        couponService.update(coupon, model);
+    @PostMapping("/update/{id}")
+    public String update(@PathVariable("id") Long id, @ModelAttribute("coupon") Coupon coupon, Model model) {
+        couponService.update(id, coupon, model);
         model.addAttribute("coupons", couponService.getAll());
         return "redirect:/admin/coupon";
     }
