@@ -2,6 +2,7 @@ package vn.fs.controller;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.Objects;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
@@ -29,12 +30,14 @@ import vn.fs.commom.utils.Utils;
 import vn.fs.config.PaypalPaymentIntent;
 import vn.fs.config.PaypalPaymentMethod;
 import vn.fs.model.entities.CartItem;
+import vn.fs.model.entities.Coupon;
 import vn.fs.model.entities.Order;
 import vn.fs.model.entities.OrderDetail;
 import vn.fs.model.entities.Product;
 import vn.fs.model.entities.User;
 import vn.fs.repository.OrderDetailRepository;
 import vn.fs.repository.OrderRepository;
+import vn.fs.service.CouponService;
 import vn.fs.service.PaypalService;
 import vn.fs.service.ShoppingCartService;
 
@@ -59,6 +62,9 @@ public class CartController extends CommomController {
 
 	@Autowired
 	OrderDetailRepository orderDetailRepository;
+	
+	@Autowired
+	CouponService couponService;
 
 	public Order orderFinal = new Order();
 
@@ -98,6 +104,8 @@ public class CartController extends CommomController {
 			item.setQuantity(1);
 			item.setProduct(product);
 			item.setId(productId);
+			item.setUnitPrice(product.getPrice());
+			item.setTotalPrice(product.getPrice());
 			shoppingCartService.add(item);
 		}
 		session.setAttribute("cartItems", cartItems);
@@ -140,9 +148,11 @@ public class CartController extends CommomController {
 		double totalPrice = 0;
 		for (CartItem cartItem : cartItems) {
 			double price = cartItem.getQuantity() * cartItem.getProduct().getPrice();
-			totalPrice += price - (price * cartItem.getProduct().getDiscount() / 100);
+			totalPrice += price;
 		}
 
+		session.setAttribute("totalPrice", totalPrice);
+		session.setAttribute("totalCartItems", shoppingCartService.getCount());
 		model.addAttribute("totalPrice", totalPrice);
 		model.addAttribute("totalCartItems", shoppingCartService.getCount());
 		commomDataService.commonData(model, user);
@@ -156,15 +166,18 @@ public class CartController extends CommomController {
 	public String checkedOut(Model model, Order order, HttpServletRequest request, User user)
 			throws MessagingException {
 
+		session = request.getSession();
 		String checkOut = request.getParameter("checkOut");
+		Integer totalOfCart = (Integer) session.getAttribute("totalOfCart");
+        Double totalPrice = (Double) session.getAttribute("totalPrice");
 
 		Collection<CartItem> cartItems = shoppingCartService.getCartItems();
 
-		double totalPrice = 0;
-		for (CartItem cartItem : cartItems) {
-			double price = cartItem.getQuantity() * cartItem.getProduct().getPrice();
-			totalPrice += price - (price * cartItem.getProduct().getDiscount() / 100);
-		}
+//		double totalPrice = 0;
+//		for (CartItem cartItem : cartItems) {
+//			double price = cartItem.getQuantity() * cartItem.getProduct().getPrice();
+//			totalPrice += price;
+//		}
 
 		BeanUtils.copyProperties(order, orderFinal);
 		if (StringUtils.equals(checkOut, "paypal")) {
@@ -287,7 +300,36 @@ public class CartController extends CommomController {
 		commomDataService.commonData(model, user);
 
 		return "web/checkout_paypal_success";
-
 	}
+	
+	@PostMapping("/coupon-cart")
+    public String coupon(@RequestParam(name = "coupon") String coupon, Model model, User user, HttpServletRequest request) {
+		Order order = new Order();
+		model.addAttribute("order", order);
+		session = request.getSession();
 
+		Collection<CartItem> cartItems = shoppingCartService.getCartItems();
+		model.addAttribute("cartItems", cartItems);
+		model.addAttribute("total", shoppingCartService.getAmount());
+		model.addAttribute("NoOfItems", shoppingCartService.getCount());
+		double totalPrice = 0;
+		for (CartItem cartItem : cartItems) {
+			double price = cartItem.getQuantity() * cartItem.getProduct().getPrice();
+			totalPrice += price;
+		}
+		if (!StringUtils.isEmpty(coupon)) {
+			Coupon couponObj = couponService.findCode(coupon);
+			if (!Objects.isNull(couponObj)) {
+				totalPrice = totalPrice - (totalPrice * couponObj.getDiscount() / 100);
+			}
+		}
+		model.addAttribute("totalPrice", totalPrice);
+		model.addAttribute("totalCartItems", shoppingCartService.getCount());
+		session.setAttribute("totalPrice", totalPrice);
+		session.setAttribute("totalCartItems", shoppingCartService.getCount());
+		commomDataService.commonData(model, user);
+
+		return "web/shoppingCart_checkout";
+    }
+	
 }

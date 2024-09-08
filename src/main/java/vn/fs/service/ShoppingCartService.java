@@ -2,6 +2,8 @@ package vn.fs.service;
 
 import java.util.Collection;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Service;
 
 import vn.fs.model.entities.CartItem;
@@ -23,5 +25,7 @@ public interface ShoppingCartService {
 	void add(CartItem item);
 
 	void remove(Product product);
+	
+	String updateCart(Long id, int quantity, String coupon, HttpServletRequest request);
 
 }

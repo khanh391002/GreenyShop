@@ -80,7 +80,8 @@
                         <th scope="col">Đơn giá</th>
                         <th scope="col">Thể loại</th>
                         <th scope="col">Số lượng</th>
-                        <th scope="col">action</th>
+                        <th scope="col">Tổng giá tiền</th>
+                        <th scope="col">Hành động</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -92,10 +93,13 @@
                         </td>
                         <td class="table-name"><h6>[[${item.product.productName}]]</h6></td>
                         <td class="table-price">
-                          <h6>[[${#numbers.formatDecimal(item.product.price - (item.product.price * item.product.discount/100), 1, 'DEFAULT', 0, 'DEFAULT')} +' đ']]<small>/kg</small></h6>
+                          <h6>[[${#numbers.formatDecimal(item.product.price, 1, 'DEFAULT', 0, 'DEFAULT')} +' vnđ']]<small>/kg</small></h6>
                         </td>
                         <td class="table-brand"><h6>[[${item.product.category.categoryName}]]</h6></td>
                         <td class="table-quantity"><h6>[[${item.quantity}]]</h6></td>
+                        <td class="table-price">
+                          <h6>[[${#numbers.formatDecimal(item.totalPrice, 1, 'DEFAULT', 0, 'DEFAULT')} +' vnđ']]</h6>
+                        </td>
                         <td class="table-action">
                           <a
                             class="view"
@@ -114,17 +118,28 @@
                   </table>
                 </div>
                 <th:block th:if="${totalCartItems!=0}">
-                <div class="chekout-coupon">
-                  <h4>Tổng tiền thanh toán</h4>
-                </div>
-                <div class="checkout-charge">
-                  <ul>
-                    <li>
-                      <span>Tổng tiền thanh toán<small>(Incl. VAT)</small></span>
-                      <span>[[${#numbers.formatDecimal(totalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}+ ' đ']]</span>
-                    </li>
-                  </ul>
-                </div>
+                  <div class="col-md-7 col-lg-6 col-xl-6" style="margin-left: auto; margin-right: 0;">
+                    <form class="news-form" method="post" th:action="@{/coupon-cart}">
+                      <input id="couponInput" name="coupon"
+                        type="text"
+                        placeholder="Nhập mã giảm giá"
+                        style="border: 1px solid #119744; padding: 5px; border-radius: 8px;"
+                      /><button id="applyCouponBtn">
+                        <span>Áp dụng</span>
+                      </button>
+                    </form>
+                  </div>
+                  <div class="chekout-coupon">
+                    <h4>Tổng tiền thanh toán</h4>
+                  </div>
+                  <div class="checkout-charge">
+                    <ul>
+                      <li>
+                        <span>Tổng tiền thanh toán<small>(Incl. VAT)</small></span>
+                        <span>[[${#numbers.formatDecimal(totalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}+ ' vnđ']]</span>
+                      </li>
+                    </ul>
+                  </div>
                 </th:block>
               </div>
             </div>
@@ -182,7 +197,7 @@
                             <input
                                 type="text"
                                 class="form-control"
-                                placeholder="Nội dung đơn hàng"
+                                placeholder="Ghi chú"
                                 
                             />
                         </div>
@@ -285,6 +300,18 @@
 			$('#configmationId').modal('show');
 		}
 		</script>
+    <script>
+      document.getElementById("applyCouponBtn").addEventListener("click", function (event) {
+          var couponInput = document.getElementById("couponInput");
+          var couponValue = couponInput.value;
+  
+          if (couponValue === null || couponValue.trim() === "") {
+              event.preventDefault();
+              couponInput.focus();
+              alert("Coupon value not null");
+          }
+      });
+  </script>
 		
 		<!-- Modal -->
 		<div class="modal" id="configmationId">

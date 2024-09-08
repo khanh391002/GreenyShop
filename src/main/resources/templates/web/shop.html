@@ -155,9 +155,9 @@
               <div class="col" th:each="item : ${products}">
                 <div class="product-card">
                   <div class="product-media">
-                    <div class="product-label">
+                    <!-- <div class="product-label">
                       <label class="label-text sale">- [[${item.discount + '%'}]]</label>
-                    </div>
+                    </div> -->
                    
                    		<th:block th:if="${user.email != null}">
 		                    <button class="product-wish" th:if="${item.favorite} == false">
@@ -230,8 +230,8 @@
                       <a href="javascript:void(0);">[[${item.productName}]]</a>
                     </h6>
                     <h6 class="product-price">
-                      <del>[[${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]</del>
-                      <span>[[${#numbers.formatDecimal(item.price - (item.price * item.discount/100), 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]<small>/kg</small></span>
+                      <!-- <del>[[${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]</del> -->
+                      <span>[[${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]<small>/kg</small></span>
                     </h6>
                     
                     <a class="product-add1" th:attr="data-product-id=${item.productId}" href="#" title="Thêm Giỏ Hàng">

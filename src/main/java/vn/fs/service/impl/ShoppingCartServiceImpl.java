@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Service;
 
 import vn.fs.model.entities.CartItem;
@@ -21,9 +23,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
 		if (existedItem != null) {
 			existedItem.setQuantity(item.getQuantity() + existedItem.getQuantity());
-			existedItem.setTotalPrice(item.getTotalPrice() + existedItem.getUnitPrice() * existedItem.getQuantity());
+			existedItem.setTotalPrice(existedItem.getTotalPrice() + item.getUnitPrice() * item.getQuantity());
 		} else {
-			map.put(item.getId(), item);
+ 			map.put(item.getId(), item);
 		}
 	}
 
@@ -61,5 +63,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 	@Override
 	public void remove(Product product) {
 
+	}
+
+	@Override
+	public String updateCart(Long id, int quantity, String coupon, HttpServletRequest request) {
+		return null;
 	}
 }

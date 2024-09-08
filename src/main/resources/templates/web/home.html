@@ -132,7 +132,7 @@
 								<div class="product-media">
 									<div class="product-label">
 										<label class="label-text new">bán chạy</label>
-										<label class="label-text sale">- [[${item.discount + '%'}]]</label>
+										<!-- <label class="label-text sale">- [[${item.discount + '%'}]]</label> -->
 									</div>
 									<button class="product-wish wish">
 										<i class="fas fa-heart"></i>
@@ -169,8 +169,8 @@
 										<a th:href="@{/productDetail(id=${item.productId})}">[[${item.productName}]]</a>
 									</h6>
 									<h6 class="product-price">
-										<del>[[${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]</del>
-										<span>[[${#numbers.formatDecimal(item.price - (item.price * item.discount/100), 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]<small>/kg</small></span>
+										<!-- <del>[[${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]</del> -->
+										<span>[[${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]<small>/kg</small></span>
 									</h6>
 									<a class="product-add1" title="Thêm giỏ hàng" th:href="@{/addToCart(productId=${item.productId})}">
 										<i class="fas fa-shopping-basket"></i><span>Thêm giỏ hàng</span>
@@ -221,7 +221,7 @@
 								<div class="product-media">
 									<div class="product-label">
 										<label class="label-text feat">nổi bật</label>
-										<label class="label-text sale">- [[${item.discount + '%'}]]</label>
+										<!-- <label class="label-text sale">- [[${item.discount + '%'}]]</label> -->
 									</div>
 									<button class="product-wish wish">
 										<i class="fas fa-heart"></i>
@@ -258,8 +258,8 @@
 										<a th:href="@{/productDetail(id=${item.productId})}">[[${item.productName}]]</a>
 									</h6>
 									<h6 class="product-price">
-										<del>[[${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]</del>
-										<span>[[${#numbers.formatDecimal(item.price - (item.price * item.discount/100), 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]<small>/kg</small></span>
+										<!-- <del>[[${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]</del> -->
+										<span>[[${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]<small>/kg</small></span>
 									</h6>
 									<a class="product-add1" title="Thêm giỏ hàng" th:href="@{/addToCart(productId=${item.productId})}">
 										<i class="fas fa-shopping-basket"></i><span>Thêm giỏ hàng</span>
@@ -330,7 +330,7 @@
 								<div class="product-media">
 									<div class="product-label">
 										<label class="label-text new">mới</label>
-										<label class="label-text sale">- [[${item.discount + '%'}]]</label>
+										<!-- <label class="label-text sale">- [[${item.discount + '%'}]]</label> -->
 									</div>
 									<button class="product-wish wish">
 										<i class="fas fa-heart"></i>
@@ -366,8 +366,8 @@
 										<a th:href="@{/productDetail(id=${item.productId})}">[[${item.productName}]]</a>
 									</h6>
 									<h6 class="product-price">
-										<del>[[${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]</del>
-										<span>[[${#numbers.formatDecimal(item.price - (item.price * item.discount/100), 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]<small>/kg</small></span>
+										<!-- <del>[[${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]</del> -->
+										<span>[[${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]<small>/kg</small></span>
 									</h6>
 									<a class="product-add1" title="Thêm giỏ hàng" th:href="@{/addToCart(productId=${item.productId})}">
 										<i class="fas fa-shopping-basket"></i><span>Thêm giỏ hàng</span>
