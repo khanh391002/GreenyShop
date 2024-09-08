@@ -29,6 +29,83 @@
     <link rel="stylesheet" href="vendor/niceselect/nice-select.min.css" />
     <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="css/main.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   	<script>
+        $(document).ready(function() {
+            $('.product-add1').click(function(event) {
+                event.preventDefault();
+                
+                var productId = $(this).data('product-id');
+                
+               	$.ajax({
+                    type: "GET",
+                    url: "/api/carts",
+                    dataType: 'json',
+                    success: function(response) {
+                    	let isDuplicate = response.find((item) => item.product.productId === productId);
+                    	if (!isDuplicate) {
+                    		let totalCartItems = Number($('sup[id="totalCartItems"]').text());
+                    		if (!totalCartItems) {
+                    			totalCartItems = 0;
+                    		}
+                        	$('sup[id="totalCartItems"]').text(totalCartItems + 1);
+                    	}
+                    },
+                    error: function() {}
+                });
+                
+                $.ajax({
+                    type: "GET",
+                    url: "/addToCart",
+                    data: {
+                        productId: productId
+                    },
+                    success: function() {},
+                    error: function() {}
+                });
+            });
+            
+            function addToCart() {
+                $.ajax({
+                    type: "GET",
+                    url: "/api/carts",
+                    dataType: 'json',
+                    success: function(response) {
+                    	if (response.length > 0) {
+                    		$('.cart-list').text('')
+                    		response.forEach((item) => {
+                    			let cartItem = `<li class="cart-item"> <div class="cart-media"> <a href="/productDetail?id=${item.product.productId}"> <img src="/loadImage?imageName=${item.product.productImage}" alt="product"> </a> </div> <div class="cart-info-group"> <div class="cart-info"> <h6> <label>Tên sản phẩm :</label> <a href="/productDetail?id=${item.product.productId}" style="color: #119744">${item.product.productName}</a> </h6> <label>Đơn giá :</label> <p>${item.product.price} đ</p> </div> <div class="cart-action-group"> <div class="product-action"> <label>Số lượng :</label> <input class="action-input" title="Quantity Number" type="text" name="quantity" value="${item.quantity}"> </div> <h6>${item.totalPrice} đ</h6> </div> </div> </li>`;
+                    			$('.cart-list').append(cartItem)
+                    		})
+                    	}
+                    },
+                    error: function() {}
+                });
+            }
+            
+            $('#cart-icon').click(function(event) {
+            	$.ajax({
+                    type: "GET",
+                    url: "/api/total-cart-items",
+                    dataType: 'json',
+                    success: function(response) {
+                    	$('#total-cart-items').text('(' + response + ')');
+                    	if (Number(response) > 0) {
+                    		document.getElementById("some-item-1").style.setProperty('display', 'block', 'important');
+                    		document.getElementById("some-item-2").style.setProperty('display', 'block', 'important');
+                    		document.getElementById("nothing-item").style.setProperty('display', 'none', 'important');
+                    		addToCart();
+                    	} else {
+                    		document.getElementById("nothing-item").style.setProperty('display', 'block', 'important');
+                    		document.getElementById("some-item-1").style.setProperty('display', 'none', 'important');
+                    		document.getElementById("some-item-2").style.setProperty('display', 'none', 'important');
+                    	}
+                    },
+                    error: function() {}
+                });
+            });
+        });
+    </script>
     <link rel="stylesheet" href="css/error.css" />
   </head>
   <body>
