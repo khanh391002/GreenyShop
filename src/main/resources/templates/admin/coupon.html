@@ -21,15 +21,18 @@
 
 	<style>
 		.status-label {
-			padding: 5px 10px;
-			border: 2px solid red;
-			border-radius: 3px;
+		color: white; /* Màu chữ trắng cho cả hai trạng thái */
+		padding: 5px; /* Khoảng cách trong phần tử để dễ nhìn hơn */
+		border-radius: 3px; /* Bo góc cho phần tử */
+		display: inline-block; /* Đảm bảo phần tử có kích thước thích hợp */
 		}
-		.expired {
-			color: red;
+
+		.status-label.expired {
+			background-color: rgb(241, 25, 25); /* Màu nền đỏ cho trạng thái hết hạn */
 		}
-		.valid {
-			color: green;
+
+		.status-label.valid {
+			background-color: rgb(22, 168, 54); /* Màu nền xanh cho trạng thái còn hạn */
 		}
 	</style>
 
@@ -155,7 +158,7 @@
 												<th>Mã phiếu giảm giá</th>
 												<th>Giảm giá</th>
 												<th>Ngày hết hạn</th>
-												<th>Hết hạn</th>
+												<th>Tình trạng</th>
 												<th style="width: 10%">Hành động</th>
 											</tr>
 										</thead>
@@ -164,7 +167,7 @@
 												<th>Mã phiếu giảm giá</th>
 												<th>Giảm giá</th>
 												<th>Ngày hết hạn</th>
-												<th>Hết hạn</th>
+												<th>Tình trạng</th>
 												<th>Hành động</th>
 											</tr>
 										</tfoot>
@@ -172,7 +175,7 @@
 											<tr th:each="item : ${coupons}">
 												<td>[[${item.code}]]</td>
 												<td>[[${#numbers.formatDecimal(item?.discount, 1, 'DEFAULT', 0, 'DEFAULT')}+' %']]</td>
-												<td>[[${item.expirationDate}]]</td>
+												<td th:text="${#dates.format(item.expirationDate, 'yyyy-MM-dd')}"></td>
 												<td>
 													<span th:classappend="${item.expires} ? 'status-label expired' : 'status-label valid'" 
 														  th:text="${item.expires} ? 'Hết hạn' : 'Còn hạn'"></span>

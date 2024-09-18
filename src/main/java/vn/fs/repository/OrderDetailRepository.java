@@ -87,5 +87,10 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
     		+ "INNER JOIN user c ON p.user_id = c.user_id\r\n"
     		+ "GROUP BY c.user_id;", nativeQuery = true)
     public List<Object[]> reportCustommer();
+    
+//    @Query("select count(o.order_id) > 0 from order_details od "
+//    		+ "join orders o on od.order_id = o.order_id "
+//    		+ "where o.user_id = :userId and od.product_id = :productId and o.status = '2' ")
+//    Boolean hasCartItems(@Param("userId") Long userId, @Param("productId") Long productId);
 
 }

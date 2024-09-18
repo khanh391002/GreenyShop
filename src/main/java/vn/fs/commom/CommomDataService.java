@@ -91,4 +91,28 @@ public class CommomDataService {
 		emailSender.send(mimeMessage);
 
 	}
+	
+	// sendEmail to admin order success
+	public void sendEmailToAdmin(String email, String subject, String contentEmail, User user, Order orderFinal, User admin) throws MessagingException {
+		Locale locale = LocaleContextHolder.getLocale();
+
+		// Prepare the evaluation context
+		Context ctx = new Context(locale);
+		ctx.setVariable("user", user);
+		ctx.setVariable("orderFinal", orderFinal);
+		ctx.setVariable("admin", admin);
+		// Prepare message using a Spring helper
+		MimeMessage mimeMessage = emailSender.createMimeMessage();
+		MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, "UTF-8");
+		mimeMessageHelper.setSubject(subject);
+		mimeMessageHelper.setTo(email);
+		// Create the HTML body
+		String htmlContent = "";
+		htmlContent = templateEngine.process("mail/email_admin.html", ctx);
+		mimeMessageHelper.setText(htmlContent, true);
+
+		// Send Message!
+		emailSender.send(mimeMessage);
+
+	}
 }

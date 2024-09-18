@@ -1,7 +1,6 @@
 package vn.fs.service.impl;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +28,8 @@ public class CouponServiceImpl implements CouponService {
 			return null;
 		}
 		Coupon coupon = optional.get();
-		if (LocalDate.now().isAfter(coupon.getExpirationDate())) {
+		Date now = new Date();
+		if (now.after(coupon.getExpirationDate())) {
 			return null;
 		}
 		return coupon;
@@ -38,12 +38,21 @@ public class CouponServiceImpl implements CouponService {
 	@Override
 	@Transactional
 	public void add(Coupon coupon, Model model) {
-		Optional<Coupon> optional = couponRepository.findByCodeAndDeletedFalse(coupon.getCode());
+		Optional<Coupon> optional = couponRepository.findByCode(coupon.getCode());
+		Date now = new Date();
+		Coupon couponSave = null;
 		if (optional.isPresent()) {
-			model.addAttribute("error", "Code is already exist");
-			return;
+			couponSave = optional.get();
+			couponSave.setDeleted(false);
+			couponSave.setDiscount(coupon.getDiscount());
+			couponSave.setExpirationDate(coupon.getExpirationDate());
+			couponSave.setExpires(coupon.getExpirationDate().before(now));
+		} else {
+			couponSave = coupon;
+			coupon.setExpires(coupon.getExpirationDate().before(now));
+			couponSave.setCode(coupon.getCode().toUpperCase());
 		}
-		couponRepository.save(coupon);
+		couponRepository.save(couponSave);
 	}
 
 	@Override
@@ -51,7 +60,7 @@ public class CouponServiceImpl implements CouponService {
 	public List<Coupon> getAll() {
 		List<Coupon> coupons = couponRepository.findAllByDeletedFalse();
 		for (Coupon coupon : coupons) {
-			if (coupon.getExpirationDate().isBefore(LocalDate.now())) {
+			if (coupon.getExpirationDate().before(new Date())) {
 				coupon.setExpires(true);
 			}
 		}
@@ -69,12 +78,13 @@ public class CouponServiceImpl implements CouponService {
 	@Transactional
 	public void update(Long id, Coupon coupon, Model model) {
 		Optional<Coupon> optional = couponRepository.findByCodeAndDeletedFalse(coupon.getCode());
-		if (optional.isPresent()) {
+		if (optional.isPresent() && optional.get().getId() != id) {
 			model.addAttribute("error", "Code is already exist");
 			return;
 		}
+		Date now = new Date();
 		Coupon getById = couponRepository.getById(id);
-		getById.update(coupon).setExpires(getById.getExpirationDate().isBefore(LocalDate.now()));
+		getById.update(coupon).setExpires(getById.getExpirationDate().before(now));
 		couponRepository.save(getById);
 	}
 

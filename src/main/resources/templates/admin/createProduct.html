@@ -110,21 +110,21 @@
 													<p th::if="${#fields.hasErrors('price')}" th:errorclass="text-danger" th:errors="${productRequest.price}"></p>
 												</div>
 											</div>
-											<div class="col-md-4 pr-0">
+											<div class="col-md-6 pr-0">
 												<div class="form-group form-group-default">
 													<label>Số lượng</label>
 													<input th:field="${productRequest.quantity}" id="quantity" min = 0 type="number" class="form-control" placeholder="Số lượng">
 													<p th::if="${#fields.hasErrors('quantity')}" th:errorclass="text-danger" th:errors="${productRequest.quantity}"></p>
 												</div>
 											</div>
-											<div class="col-md-4 pr-0">
+											<!-- <div class="col-md-4 pr-0">
 												<div class="form-group form-group-default">
 													<label>Giảm giá</label>
 													<input th:field="${productRequest.discount}" id="discount" min = 0 type="number" class="form-control" placeholder="giảm giá">
 													<p th::if="${#fields.hasErrors('discount')}" th:errorclass="text-danger" th:errors="${productRequest.discount}"></p>
 												</div>
-											</div>
-											<div class="col-md-4 pr-0">
+											</div> -->
+											<div class="col-md-6 pr-0">
 												<div class="form-group form-group-default">
 													<label>Ngày thêm</label>
 													<input th:field="${productRequest.enteredDate}" id="enteredDate" type="date" class="form-control" placeholder="ngày thêm">

@@ -1,6 +1,6 @@
 package vn.fs.model.entities;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,7 +9,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.Data;
 
@@ -30,14 +34,16 @@ public class Coupon {
     @Column(name = "discount")
     private Integer discount;
 
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "expiration_date")
-    private LocalDate expirationDate;
+    private Date expirationDate;
 
     @Column(name = "expires", columnDefinition = "boolean default false")
-    private Boolean expires;
+    private Boolean expires = false;
 
     @Column(name = "deleted", columnDefinition = "boolean default false")
-    private Boolean deleted;
+    private Boolean deleted = false;
 
     public Coupon update(Coupon coupon) {
         this.code = coupon.getCode();

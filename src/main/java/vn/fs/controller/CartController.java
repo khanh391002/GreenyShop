@@ -1,7 +1,9 @@
 package vn.fs.controller;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import javax.mail.MessagingException;
@@ -16,6 +18,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,6 +43,7 @@ import vn.fs.repository.OrderRepository;
 import vn.fs.service.CouponService;
 import vn.fs.service.PaypalService;
 import vn.fs.service.ShoppingCartService;
+import vn.fs.service.UserService;
 
 
 @Controller
@@ -65,6 +69,9 @@ public class CartController extends CommomController {
 	
 	@Autowired
 	CouponService couponService;
+	
+	@Autowired
+	UserService userService;
 
 	public Order orderFinal = new Order();
 
@@ -81,7 +88,7 @@ public class CartController extends CommomController {
 		double totalPrice = 0;
 		for (CartItem cartItem : cartItems) {
 			double price = cartItem.getQuantity() * cartItem.getProduct().getPrice();
-			totalPrice += price - (price * cartItem.getProduct().getDiscount() / 100);
+			totalPrice += price;
 		}
 
 		model.addAttribute("totalPrice", totalPrice);
@@ -200,23 +207,17 @@ public class CartController extends CommomController {
 
 		}
 
-//		session = request.getSession();
 		Date date = new Date();
 		order.setOrderDate(date);
 		order.setStatus(0);
 		order.getOrderId();
-//		if (!StringUtils.isEmpty(couponCode)) {
-//			Coupon couponObj = couponService.findCode(couponCode);
-//			if (!Objects.isNull(couponObj)) {
-//				totalPrice = totalPrice - (totalPrice * couponObj.getDiscount() / 100);
-//				session.setAttribute("couponCode", couponObj.getCode());
-//			}
-//		}
+
 		order.setAmount(totalPrice);
 		order.setUser(user);
 
 		orderRepository.save(order);
 
+		List<OrderDetail> orderDetails = new ArrayList<>();
 		for (CartItem cartItem : cartItems) {
 			OrderDetail orderDetail = new OrderDetail();
 			orderDetail.setQuantity(cartItem.getQuantity());
@@ -230,12 +231,23 @@ public class CartController extends CommomController {
 				}
 			}
 			orderDetail.setPrice(unitPrice);
-			orderDetailRepository.save(orderDetail);
+			cartItem.setUnitPrice(unitPrice);
+			orderDetails.add(orderDetail);
 		}
-
+		orderDetailRepository.saveAll(orderDetails);
 		// sendMail
-		commomDataService.sendSimpleEmail(user.getEmail(), "Greeny-Shop Xác Nhận Đơn hàng", "Xác nhận đặt đơn thành công", cartItems,
-				totalPrice, order);
+		commomDataService.sendSimpleEmail(user.getEmail(), "Greeny-Shop Xác Nhận Đơn hàng",
+				"Xác nhận đặt đơn thành công", cartItems, totalPrice, order);
+
+		// lấy ra danh sách admin của hệ thống
+		List<User> admins = userService.getAllUserIsAdmin();
+		if (!CollectionUtils.isEmpty(admins)) {
+			for (User admin : admins) {
+				// send mail to admin
+				commomDataService.sendEmailToAdmin(admin.getEmail(), "Đơn Hàng Mới Cần Xác Nhận",
+						"Đơn Hàng Mới Cần Xác Nhận", user, order, admin);
+			}
+		}
 
 		shoppingCartService.clear();
 		session.removeAttribute("cartItems");
@@ -255,7 +267,7 @@ public class CartController extends CommomController {
 		double totalPrice = 0;
 		for (CartItem cartItem : cartItems) {
 			double price = cartItem.getQuantity() * cartItem.getProduct().getPrice();
-			totalPrice += price - (price * cartItem.getProduct().getDiscount() / 100);
+			totalPrice += price;
 		}
 		model.addAttribute("totalPrice", totalPrice);
 		model.addAttribute("totalCartItems", shoppingCartService.getCount());

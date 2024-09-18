@@ -18,6 +18,16 @@
 			}
 		});
 	</script>
+	<style>
+		.form-check-label {
+			margin-left: 5px !important; 
+		}
+		.form-check {
+        padding: 5px 25px 5px 20px !important; /* Padding với lề bên trái lớn hơn */
+        display: ruby !important;
+        align-items: center; /* Đảm bảo radio button và nhãn căn chỉnh theo chiều dọc */
+    	}
+	</style>
 
 	<!-- CSS Files -->
 	<link rel="stylesheet" href="/assets/css/bootstrap.min.css">
@@ -60,7 +70,7 @@
 							<i class="flaticon-right-arrow"></i>
 						</li>
 						<li class="nav-item">
-							<a href="#">Quản lý phiếu giảm giá</a>
+							<a href="/admin/coupon">Quản lý phiếu giảm giá</a>
 						</li>
 					</ul>
 				</div>
@@ -89,22 +99,28 @@
 													<input th:field="${coupon.discount}" id="discount" min = 0 type="number" class="form-control" placeholder="Giảm giá">
 													<p th::if="${#fields.hasErrors('discount')}" th:errorclass="text-danger" th:errors="${coupon.discount}"></p>
 												</div>
+											</div>
+										</div>
+										<div class="row">
 											<div class="col-md-6 pr-0">
 												<div class="form-group form-group-default">
 													<label>Ngày hết hạn</label>
 													<input th:field="${coupon.expirationDate}" id="expirationDate" type="date" class="form-control" placeholder="Ngày hết hạn">
 												</div>
 											</div>
-											<div class="col-sm-12">
+											<div class="col-md-6 pr-0">
 												<div class="form-group form-group-default">
-													<label>Mô tả sản phẩm</label>
-													<input type="radio" id="active" name="expires" value="true" 
-														   th:checked="${coupon.expires}" />
-													<label for="active">Active</label>
-													<input type="radio" id="inactive" name="expires" value="false" 
-														   th:checked="${!coupon.expires}" />
-													<label for="inactive">Inactive</label>
-													<p th:if="${#fields.hasErrors('expires')}" th:errorclass="text-danger" th:errors="${#fields.errors('expires')}"></p>
+													<label>Trạng thái</label>
+													<div class="d-flex align-items-center">
+														<div class="form-check me-3">
+															<input type="radio" id="active" name="expires" value="false" th:checked="${!coupon.expires}" class="form-check-input"/>
+															<label for="active" class="form-check-label">Active</label>
+														</div>
+														<div class="form-check">
+															<input type="radio" id="inactive" name="expires" value="true" th:checked="${coupon.expires}" class="form-check-input"/>
+															<label for="inactive" class="form-check-label">Inactive</label>
+														</div>
+													</div>
 												</div>
 											</div>
 										</div>

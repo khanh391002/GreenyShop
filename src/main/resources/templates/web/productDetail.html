@@ -1,222 +1,297 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-  <meta
-    http-equiv="content-type"
-    content="text/html;charset=utf-8"
-  />
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <meta name="author" content="mironcoder" />
-    <meta name="email" content="mironcoder@gmail.com" />
-    <meta name="profile" content="https://themeforest.net/user/mironcoder" />
-    <meta name="template" content="greeny" />
-    <meta name="title" content="greeny - Ecommerce Food Store HTML Template" />
-    <meta
-      name="keywords"
-      content="organic, food, shop, ecommerce, store, html, bootstrap, template, agriculture, vegetables, products, farm, grocery, natural, online"
-    />
-    <title>Nông sản xanh Greeny</title>
-    <link rel="icon" href="images/favicon.png" />
-    <link rel="stylesheet" href="fonts/flaticon/flaticon.css" />
-    <link rel="stylesheet" href="fonts/icofont/icofont.min.css" />
-    <link rel="stylesheet" href="fonts/fontawesome/fontawesome.min.css" />
-    <link rel="stylesheet" href="vendor/venobox/venobox.min.css" />
-    <link rel="stylesheet" href="vendor/slickslider/slick.min.css" />
-    <link rel="stylesheet" href="vendor/niceselect/nice-select.min.css" />
-    <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/main.css" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-   	<script>
-        $(document).ready(function() {
-            $('.product-add1').click(function(event) {
-                event.preventDefault();
-                
-                var productId = $(this).data('product-id');
-                
-               	$.ajax({
-                    type: "GET",
-                    url: "/api/carts",
-                    dataType: 'json',
-                    success: function(response) {
-                    	let isDuplicate = response.find((item) => item.product.productId === productId);
-                    	if (!isDuplicate) {
-                    		let totalCartItems = Number($('sup[id="totalCartItems"]').text());
-                    		if (!totalCartItems) {
-                    			totalCartItems = 0;
-                    		}
-                        	$('sup[id="totalCartItems"]').text(totalCartItems + 1);
-                    	}
-                    },
-                    error: function() {}
-                });
-                
-                $.ajax({
-                    type: "GET",
-                    url: "/addToCart",
-                    data: {
-                        productId: productId
-                    },
-                    success: function() {},
-                    error: function() {}
-                });
-            });
-            
-            function addToCart() {
-                $.ajax({
-                    type: "GET",
-                    url: "/api/carts",
-                    dataType: 'json',
-                    success: function(response) {
-                    	if (response.length > 0) {
-                    		$('.cart-list').text('')
-                    		response.forEach((item) => {
-                    			let cartItem = `<li class="cart-item"> <div class="cart-media"> <a href="/productDetail?id=${item.product.productId}"> <img src="/loadImage?imageName=${item.product.productImage}" alt="product"> </a> </div> <div class="cart-info-group"> <div class="cart-info"> <h6> <label>Tên sản phẩm :</label> <a href="/productDetail?id=${item.product.productId}" style="color: #119744">${item.product.productName}</a> </h6> <label>Đơn giá :</label> <p>${item.product.price} đ</p> </div> <div class="cart-action-group"> <div class="product-action"> <label>Số lượng :</label> <input class="action-input" title="Quantity Number" type="text" name="quantity" value="${item.quantity}"> </div> <h6>${item.totalPrice} đ</h6> </div> </div> </li>`;
-                    			$('.cart-list').append(cartItem)
-                    		})
-                    	}
-                    },
-                    error: function() {}
-                });
-            }
-            
-            $('#cart-icon').click(function(event) {
-            	$.ajax({
-                    type: "GET",
-                    url: "/api/total-cart-items",
-                    dataType: 'json',
-                    success: function(response) {
-                    	$('#total-cart-items').text('(' + response + ')');
-                    	if (Number(response) > 0) {
-                    		document.getElementById("some-item-1").style.setProperty('display', 'block', 'important');
-                    		document.getElementById("some-item-2").style.setProperty('display', 'block', 'important');
-                    		document.getElementById("nothing-item").style.setProperty('display', 'none', 'important');
-                    		addToCart();
-                    	} else {
-                    		document.getElementById("nothing-item").style.setProperty('display', 'block', 'important');
-                    		document.getElementById("some-item-1").style.setProperty('display', 'none', 'important');
-                    		document.getElementById("some-item-2").style.setProperty('display', 'none', 'important');
-                    	}
-                    },
-                    error: function() {}
-                });
-            });
-        });
-    </script>
-    <link rel="stylesheet" href="css/product-details.css" />
-  </head>
-  <body>
-   
-    <!--************************************
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+	<meta name="author" content="mironcoder" />
+	<meta name="email" content="mironcoder@gmail.com" />
+	<meta name="profile" content="https://themeforest.net/user/mironcoder" />
+	<meta name="template" content="greeny" />
+	<meta name="title" content="greeny - Ecommerce Food Store HTML Template" />
+	<meta name="keywords"
+		content="organic, food, shop, ecommerce, store, html, bootstrap, template, agriculture, vegetables, products, farm, grocery, natural, online" />
+	<title>Nông sản xanh Greeny</title>
+	<link rel="icon" href="images/favicon.png" />
+	<link rel="stylesheet" href="fonts/flaticon/flaticon.css" />
+	<link rel="stylesheet" href="fonts/icofont/icofont.min.css" />
+	<link rel="stylesheet" href="fonts/fontawesome/fontawesome.min.css" />
+	<link rel="stylesheet" href="vendor/venobox/venobox.min.css" />
+	<link rel="stylesheet" href="vendor/slickslider/slick.min.css" />
+	<link rel="stylesheet" href="vendor/niceselect/nice-select.min.css" />
+	<link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css" />
+	<link rel="stylesheet" href="css/main.css" />
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script>
+		$(document).ready(function () {
+			$('.product-add1').click(function (event) {
+				event.preventDefault();
+
+				var productId = $(this).data('product-id');
+
+				$.ajax({
+					type: "GET",
+					url: "/api/carts",
+					dataType: 'json',
+					success: function (response) {
+						let isDuplicate = response.find((item) => item.product.productId === productId);
+						if (!isDuplicate) {
+							let totalCartItems = Number($('sup[id="totalCartItems"]').text());
+							if (!totalCartItems) {
+								totalCartItems = 0;
+							}
+							$('sup[id="totalCartItems"]').text(totalCartItems + 1);
+						}
+					},
+					error: function () { }
+				});
+
+				$.ajax({
+					type: "GET",
+					url: "/addToCart",
+					data: {
+						productId: productId
+					},
+					success: function () { },
+					error: function () { }
+				});
+			});
+
+			function addToCart() {
+				$.ajax({
+					type: "GET",
+					url: "/api/carts",
+					dataType: 'json',
+					success: function (response) {
+						if (response.length > 0) {
+							$('.cart-list').text('')
+							response.forEach((item) => {
+								let cartItem = `<li class="cart-item"> <div class="cart-media"> <a href="/productDetail?id=${item.product.productId}"> <img src="/loadImage?imageName=${item.product.productImage}" alt="product"> </a> </div> <div class="cart-info-group"> <div class="cart-info"> <h6> <label>Tên sản phẩm :</label> <a href="/productDetail?id=${item.product.productId}" style="color: #119744">${item.product.productName}</a> </h6> <label>Đơn giá :</label> <p>${item.product.price} đ</p> </div> <div class="cart-action-group"> <div class="product-action"> <label>Số lượng :</label> <input class="action-input" title="Quantity Number" type="text" name="quantity" value="${item.quantity}"> </div> <h6>${item.totalPrice} đ</h6> </div> </div> </li>`;
+								$('.cart-list').append(cartItem)
+							})
+						}
+					},
+					error: function () { }
+				});
+			}
+
+			$('#cart-icon').click(function (event) {
+				$.ajax({
+					type: "GET",
+					url: "/api/total-cart-items",
+					dataType: 'json',
+					success: function (response) {
+						$('#total-cart-items').text('(' + response + ')');
+						if (Number(response) > 0) {
+							document.getElementById("some-item-1").style.setProperty('display', 'block', 'important');
+							document.getElementById("some-item-2").style.setProperty('display', 'block', 'important');
+							document.getElementById("nothing-item").style.setProperty('display', 'none', 'important');
+							addToCart();
+						} else {
+							document.getElementById("nothing-item").style.setProperty('display', 'block', 'important');
+							document.getElementById("some-item-1").style.setProperty('display', 'none', 'important');
+							document.getElementById("some-item-2").style.setProperty('display', 'none', 'important');
+						}
+					},
+					error: function () { }
+				});
+			});
+		});
+	</script>
+	<style>
+		.details-wish.favorite:hover {
+			color: #fd7e14;
+			/* Màu chữ khi hover */
+		}
+	</style>
+
+	<link rel="stylesheet" href="css/product-details.css" />
+</head>
+
+<body>
+
+	<!--************************************
 				Header Start
 		*************************************-->
-		<header th:replace="~{/web/fragments/header :: header}"></header>
-		<!--************************************
+	<header th:replace="~{/web/fragments/header :: header}"></header>
+	<!--************************************
 				Header End
 		*************************************-->
-    
-    <section
-      class="single-banner inner-section"
-      style="background: url(images/single-banner.jpg) no-repeat center">
-      <div class="container">
-        <h2>Chi tiết sản phẩm</h2>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
-        </ol>
-      </div>
-    </section>
-    
-    <section class="inner-section">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-6">
-            <div class="details-gallery">
-              <div class="details-label-group">
-                <label class="details-label new">new</label>
-                <label class="details-label off">- [[${product.discount + '%'}]]</label>
-              </div>
-              <ul class="details-preview">
-                <li><img th:src="@{'/loadImage?imageName='+${product.productImage}}" alt="product"/></li>
-              </ul>
-              <ul class="details-thumb">
-                <li>
-                	<img th:src="@{'/loadImage?imageName='+${product.productImage}}" alt="product" />
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-lg-6">
-            
-            <div class="details-content">
-              <h3 class="details-name">
-                <a href="#">[[${product.productName}]]</a>
-              </h3>
-              <div class="details-meta">
-                <p>Mã sản phẩm:<span>[[${product.productId}]]</span></p>
-                <p>Thể loại:<a href="#">[[${product.category.categoryName}]]</a></p>
-              </div>
-              <div class="details-rating">
-                <i class="active icofont-star"></i
-                ><i class="active icofont-star"></i
-                ><i class="active icofont-star"></i
-                ><i class="active icofont-star"></i>
-                <i class="icofont-star"></i>
-                
-              </div>
-              <h3 class="details-price">
-                <del>[[${#numbers.formatDecimal(product.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]</del>
-                <span>[[${#numbers.formatDecimal(product.price - (product.price * product.discount/100), 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]<small>/kg</small></span>
-              </h3>
-              <p class="details-desc">
-                [[${product.description}]]
-              </p>
-              <div class="details-list-group">
-                <label class="details-list-title">Xem thêm:</label>
-                <ul class="details-tag-list">
-                  <li th:each="item : ${categoryList}">
-                  	<a th:href="@{/productByCategory(categoryId=${item.categoryId})}">[[${item.categoryName}]]</a>
-                  </li>
-                </ul>
-              </div>
-              <div class="details-list-group">
-                <label class="details-list-title">Share:</label>
-                <ul class="details-share-list">
-                  <li>
-                    <a href="javascript:void(0);" class="icofont-facebook" title="Facebook"></a>
-                  </li>
-                  <li>
-                    <a href="javascript:void(0);" class="icofont-twitter" title="Twitter"></a>
-                  </li>
-                  <li>
-                    <a href="javascript:void(0);" class="icofont-linkedin" title="Linkedin"></a>
-                  </li>
-                  <li>
-                    <a href="javascript:void(0);" class="icofont-instagram" title="Instagram"></a>
-                  </li>
-                </ul>
-              </div>
-              <div class="details-add-group">
-                <a class="product-add1" style="background-color: #119744" th:attr="data-product-id=${product.productId}" href="#" title="Thêm Giỏ Hàng">
-                  <i style="color: white" class="fas fa-shopping-basket"></i>
-                  <span style="color: white">Thêm giỏ hàng</span>
-                </a>
-                
-              </div>
-              <div class="details-action-group">
+
+	<section class="single-banner inner-section" style="background: url(images/single-banner.jpg) no-repeat center">
+		<div class="container">
+			<h2>Chi tiết sản phẩm</h2>
+			<ol class="breadcrumb">
+				<li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
+			</ol>
+		</div>
+	</section>
+
+	<section class="inner-section">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="details-gallery">
+						<div class="details-label-group">
+							<label class="details-label new">new</label>
+							<!-- <label class="details-label off">- [[${product.discount + '%'}]]</label> -->
+						</div>
+						<ul class="details-preview">
+							<li><img th:src="@{'/loadImage?imageName='+${product.productImage}}" alt="product" /></li>
+						</ul>
+						<ul class="details-thumb">
+							<li>
+								<img th:src="@{'/loadImage?imageName='+${product.productImage}}" alt="product" />
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="col-lg-6">
+
+					<div class="details-content">
+						<h3 class="details-name">
+							<a href="#">[[${product.productName}]]</a>
+						</h3>
+						<div class="details-meta">
+							<p>Mã sản phẩm:<span>[[${product.productId}]]</span></p>
+							<p>Thể loại:<a href="#">[[${product.category.categoryName}]]</a></p>
+						</div>
+						<div class="details-rating">
+							<i class="active icofont-star"></i><i class="active icofont-star"></i><i
+								class="active icofont-star"></i><i class="active icofont-star"></i>
+							<i class="icofont-star"></i>
+
+						</div>
+						<h3 class="details-price">
+							<!-- <del>[[${#numbers.formatDecimal(product.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]</del> -->
+							<span>[[${#numbers.formatDecimal(product.price - (product.price * product.discount/100), 1,
+								'DEFAULT', 0, 'DEFAULT')}+' đ']]<small>/kg</small></span>
+						</h3>
+						<p class="details-desc">
+							[[${product.description}]]
+						</p>
+						<div class="details-list-group">
+							<label class="details-list-title">Xem thêm:</label>
+							<ul class="details-tag-list">
+								<li th:each="item : ${categoryList}">
+									<a
+										th:href="@{/productByCategory(categoryId=${item.categoryId})}">[[${item.categoryName}]]</a>
+								</li>
+							</ul>
+						</div>
+						<div class="details-list-group">
+							<label class="details-list-title">Share:</label>
+							<ul class="details-share-list">
+								<li>
+									<a href="javascript:void(0);" class="icofont-facebook" title="Facebook"></a>
+								</li>
+								<li>
+									<a href="javascript:void(0);" class="icofont-twitter" title="Twitter"></a>
+								</li>
+								<li>
+									<a href="javascript:void(0);" class="icofont-linkedin" title="Linkedin"></a>
+								</li>
+								<li>
+									<a href="javascript:void(0);" class="icofont-instagram" title="Instagram"></a>
+								</li>
+							</ul>
+						</div>
+						<div class="details-add-group">
+							<a class="product-add1" style="background-color: #119744"
+								th:attr="data-product-id=${product.productId}" href="#" title="Thêm Giỏ Hàng">
+								<i style="color: white" class="fas fa-shopping-basket"></i>
+								<span style="color: white">Thêm giỏ hàng</span>
+							</a>
+
+						</div>
+						<!-- <div class="details-action-group">
                 <a class="details-wish" href="javascript:void(0);" title="Yêu thích">
                 <i class="icofont-heart"></i>
                 <span>Thêm yêu thích</span></a>
-              </div>
-              
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section class="inner-section">
+              </div> -->
+
+						<th:block th:if="${user.email != null}"></th:block>
+						<div class="details-action-group">
+							<a class="details-wish" th:if="${product.favorite} == false" title="Yêu thích"
+								th:href="@{/doFavorite(id=${product.productId})}">
+								<i class="icofont-heart"></i>
+								<span>Thêm yêu thích</span>
+							</a>
+
+							<a class="details-wish favorite" th:if="${product.favorite} == true" title="Xóa Yêu thích"
+								th:href="@{/doUnFavorite(id=${product.productId})}">
+								<i class="icofont-heart"></i>
+								<span>Xóa yêu thích</span>
+							</a>
+						</div>
+						</th:block>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- Tab Pane Section -->
+	<section class="inner-section">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="product-details-frame">
+						<!-- Tabs for Description and Comments -->
+						<div class="tabs">
+							<ul class="nav nav-tabs">
+								<li class="nav-item">
+									<a class="nav-link active" id="description-tab" data-toggle="tab" href="#description">Mô tả sản phẩm</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" id="comments-tab" data-toggle="tab" href="#comments">Bình luận</a>
+								</li>
+							</ul>
+							<div class="tab-content">
+								<!-- Description Tab -->
+								<div class="tab-pane fade show active" id="description" role="tabpanel">
+									<h3 class="frame-title">Mô tả sản phẩm</h3>
+									<div class="tab-descrip">
+										<p>[[${product.description}]]</p>
+									</div>
+								</div>
+								<!-- Comments Tab -->
+								<div class="tab-pane fade" id="comments" role="tabpanel">
+									<div id="comments-list">
+										<!-- Comments will be loaded here -->
+									</div>
+									<div th:if="${user.email != null}" id="add-comment">
+										<h5>Thêm bình luận</h5>
+										<form id="comment-form" th:action="@{/productDetail/comment}" method="post">
+											<input id="product-id" name="productId" th:value="${product.productId}" type="hidden"/>
+											<input class="dis-none" id="starNumber" name="starNumber" required type="hidden">
+											<div class="rating-group">
+												<label>Your Rating</label>
+												<div class="wrap-rating fs-18 cl11 pointer">
+													<i class="item-rating pointer zmdi zmdi-star-outline" data-value="1"></i>
+													<i class="item-rating pointer zmdi zmdi-star-outline" data-value="2"></i>
+													<i class="item-rating pointer zmdi zmdi-star-outline" data-value="3"></i>
+													<i class="item-rating pointer zmdi zmdi-star-outline" data-value="4"></i>
+													<i class="item-rating pointer zmdi zmdi-star-outline" data-value="5"></i>
+												</div>
+											</div>
+											<div class="form-group">
+												<label for="review">Your review</label>
+												<textarea class="form-control" id="review" name="review" required></textarea>
+											</div>
+											<button type="submit" class="btn btn-primary">Submit</button>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- <section class="inner-section">
       <div class="container">
         <div class="row">
           <div class="col-lg-12">
@@ -232,9 +307,9 @@
           </div>
         </div>
       </div>
-    </section>
- 
-    <section class="section newitem-part">
+    </section> -->
+
+	<section class="section newitem-part">
 		<div class="container">
 			<div class="row">
 				<div class="col">
@@ -249,65 +324,52 @@
 						<li th:each="item : ${productByCategory}">
 							<div class="product-card">
 								<div class="product-media">
-									<div class="product-label">
+									<!-- <div class="product-label">
 										<label class="label-text sale">- [[${item.discount + '%'}]]</label>
-									</div>
-									
+									</div> -->
+
 									<th:block th:if="${user.email != null}">
-					                    <button class="product-wish" th:if="${item.favorite} == false">
-					                      <i class="fas fa-heart"></i>
-					                    </button>
-					                    
-					                    <button class="product-wish" th:if="${item.favorite} == true" style="color: #fd7e14">
-					                      <i class="fas fa-heart"></i>
-					                    </button>
-				                    
-				                    </th:block>
-				                    
-				                    <th:block th:if="${user.email == null}">
-					                    <button class="product-wish" >
-					                      <i class="fas fa-heart"></i>
-					                    </button>
-				                    </th:block>
-									
-									<a class="product-image"
-										href="javascript:void(0);">
+										<button class="product-wish" th:if="${item.favorite} == false">
+											<i class="fas fa-heart"></i>
+										</button>
+
+										<button class="product-wish" th:if="${item.favorite} == true"
+											style="color: #fd7e14">
+											<i class="fas fa-heart"></i>
+										</button>
+
+									</th:block>
+
+									<th:block th:if="${user.email == null}">
+										<button class="product-wish">
+											<i class="fas fa-heart"></i>
+										</button>
+									</th:block>
+
+									<a class="product-image" href="javascript:void(0);">
 										<img th:src="@{'/loadImage?imageName='+${item.productImage}}" alt="product" />
 									</a>
 									<div class="product-widget">
 										<th:block href="/login" th:if="${user.email == null}">
-					                      <a
-					                        title="Hãy đăng nhập"
-					                        th:href="@{/login}"
-					                        class="fas fa-heart">
-					                        </a>
-				                        </th:block>
-				                        
-				                        <th:block th:if="${user.email != null}">
-					                      <a th:if="${product.favorite} == false"
-					                        title="Yêu thích"
-					                        th:href="@{/doFavorite(id=${item.productId})}"
-					                        class="fas fa-heart">
-					                        </a>
-				                        
-					                      <a th:if="${product.favorite} == true"
-					                        title="Xóa Yêu thích"
-					                        th:href="@{/doUnFavorite(id=${item.productId})}"
-					                        style="background-color: #fd7e14"
-					                        class="fas fa-heart">
-					                        </a>
-				                        </th:block>
-				                        
-										<a
-											title="Video về sản phẩm"
-											href="https://youtu.be/9xzcVxSBbG8"
-											class="venobox fas fa-play"
-											data-autoplay="true"
-											data-vbtype="video">
+											<a title="Hãy đăng nhập" th:href="@{/login}" class="fas fa-heart">
+											</a>
+										</th:block>
+
+										<th:block th:if="${user.email != null}">
+											<a th:if="${product.favorite} == false" title="Yêu thích"
+												th:href="@{/doFavorite(id=${item.productId})}" class="fas fa-heart">
+											</a>
+
+											<a th:if="${product.favorite} == true" title="Xóa Yêu thích"
+												th:href="@{/doUnFavorite(id=${item.productId})}"
+												style="background-color: #fd7e14" class="fas fa-heart">
+											</a>
+										</th:block>
+
+										<a title="Video về sản phẩm" href="https://youtu.be/9xzcVxSBbG8"
+											class="venobox fas fa-play" data-autoplay="true" data-vbtype="video">
 										</a>
-										<a
-											title="Chi tiết sản phẩm"
-											th:href="@{/productDetail(id=${item.productId})}"
+										<a title="Chi tiết sản phẩm" th:href="@{/productDetail(id=${item.productId})}"
 											class="fas fa-eye">
 										</a>
 									</div>
@@ -324,33 +386,34 @@
 										<a href="product-video.html">[[${item.productName}]]</a>
 									</h6>
 									<h6 class="product-price">
-										<del>[[${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]</del>
-										<span>[[${#numbers.formatDecimal(item.price - (item.price * item.discount/100), 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]<small> /kg</small></span>
+										<!-- <del>[[${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]</del> -->
+										<span>[[${#numbers.formatDecimal(item.price - (item.price * item.discount/100),
+											1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]<small> /kg</small></span>
 									</h6>
-									<a class="product-add1" th:attr="data-product-id=${item.productId}" href="#" title="Thêm Giỏ Hàng">
+									<a class="product-add1" th:attr="data-product-id=${item.productId}" href="#"
+										title="Thêm Giỏ Hàng">
 										<i class="fas fa-shopping-basket"></i><span>Thêm giỏ hàng</span>
 									</a>
-									
+
 								</div>
 							</div>
 						</li>
-						
+
 					</ul>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col">
 					<div class="section-btn-25">
-						<a th:href="@{/products}" class="btn btn-outline"><i
-							class="fas fa-eye"></i><span>xem thêm</span></a>
+						<a th:href="@{/products}" class="btn btn-outline"><i class="fas fa-eye"></i><span>xem
+								thêm</span></a>
 					</div>
 				</div>
 			</div>
 		</div>
 	</section>
-    
-    <section class="news-part"
-		style="background: url(images/newsletter.jpg) no-repeat center">
+
+	<section class="news-part" style="background: url(images/newsletter.jpg) no-repeat center">
 		<div class="container">
 			<div class="row align-items-center">
 				<div class="col-md-5 col-lg-6 col-xl-7">
@@ -380,7 +443,7 @@
 						</div>
 						<div class="intro-content">
 							<h5>Giao Hàng Tận Nhà Miễn Phí</h5>
-							<p>Lorem ipsum dolor sit amet adipisicing elit nobis.</p>
+							<p>Giao hàng nhanh chóng, đảm bảo chất lượng hàng còn tươi.</p>
 						</div>
 					</div>
 				</div>
@@ -391,7 +454,8 @@
 						</div>
 						<div class="intro-content">
 							<h5>Chính Sách Hoàn Trả</h5>
-							<p>Lorem ipsum dolor sit amet adipisicing elit nobis.</p>
+							<p>Nếu có bất kỳ dấu hiệu nào của sản phẩm bị hỏng, không còn tươi, chúng tôi cam kết hoàn
+								trả 100%.</p>
 						</div>
 					</div>
 				</div>
@@ -402,7 +466,7 @@
 						</div>
 						<div class="intro-content">
 							<h5>Hệ Thống Hỗ Trợ</h5>
-							<p>Lorem ipsum dolor sit amet adipisicing elit nobis.</p>
+							<p>Nhân viên hỗ trợ nhanh chóng, nhiệt tình, hotline 24/24.</p>
 						</div>
 					</div>
 				</div>
@@ -413,36 +477,104 @@
 						</div>
 						<div class="intro-content">
 							<h5>Cách Thanh Toán An Toàn</h5>
-							<p>Lorem ipsum dolor sit amet adipisicing elit nobis.</p>
+							<p>Thanh toán tiện lợi với hình thức trực tuyến hoặc nhận hàng tận tay rồi thanh toán.</p>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</section>
-    
+
 	<!--************************************
 				Footer Start
 		*************************************-->
-		<footer th:replace="~{/web/fragments/footer :: footer}"></footer>
-				
-		<!--************************************
+	<footer th:replace="~{/web/fragments/footer :: footer}"></footer>
+
+	<!--************************************
 				Footer End
 		*************************************-->
-    
-    
-    <script src="vendor/bootstrap/jquery-1.12.4.min.js"></script>
-    <script src="vendor/bootstrap/popper.min.js"></script>
-    <script src="vendor/bootstrap/bootstrap.min.js"></script>
-    <script src="vendor/countdown/countdown.min.js"></script>
-    <script src="vendor/niceselect/nice-select.min.js"></script>
-    <script src="vendor/slickslider/slick.min.js"></script>
-    <script src="vendor/venobox/venobox.min.js"></script>
-    <script src="js/nice-select.js"></script>
-    <script src="js/countdown.js"></script>
-    <script src="js/accordion.js"></script>
-    <script src="js/venobox.js"></script>
-    <script src="js/slick.js"></script>
-    <script src="js/main.js"></script>
-  </body>
+
+	<!-- JavaScript Logic -->
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			// Rating stars logic
+			const stars = document.querySelectorAll('.item-rating');
+			const starNumberInput = document.getElementById('starNumber');
+	
+			stars.forEach(star => {
+				star.addEventListener('click', function () {
+					const value = this.getAttribute('data-value');
+					starNumberInput.value = value;
+	
+					stars.forEach(star => {
+						if (parseInt(star.getAttribute('data-value')) <= value) {
+							star.classList.remove('zmdi-star-outline');
+							star.classList.add('zmdi-star');
+						} else {
+							star.classList.remove('zmdi-star');
+							star.classList.add('zmdi-star-outline');
+						}
+					});
+				});
+			});
+	
+			// Fetch and display comments
+			const productId = document.getElementById('product-id')?.value;
+			const commentsList = document.getElementById('comments-list');
+	
+			if (productId) {
+				fetch('/api/product-comments?productId=' + productId)
+					.then(response => {
+						if (!response.ok) {
+							throw new Error('Network response was not ok');
+						}
+						return response.json();
+					})
+					.then(data => {
+						if (!data.comments || !Array.isArray(data.comments)) {
+							throw new Error('Invalid data format');
+						}
+						commentsList.innerHTML = '';
+						data.comments.slice(0, 3).forEach(comment => {
+							const commentElement = document.createElement('div');
+							commentElement.classList.add('comment');
+							commentElement.innerHTML = `
+								<div class="comment-author">
+									<img src="${comment.user.avatar}" alt="${comment.user.name}" class="avatar"/>
+									<span class="author-name">${comment.user.name}</span>
+								</div>
+								<div class="comment-rating">
+									${'<i class="icofont-star"></i>'.repeat(comment.rating)}
+									${'<i class="icofont-star"></i>'.repeat(5 - comment.rating)}
+								</div>
+								<p class="comment-text">${comment.text}</p>
+							`;
+							commentsList.appendChild(commentElement);
+						});
+					})
+					.catch(error => console.error('Error fetching comments:', error));
+			}
+	
+			// Function to switch to comments tab
+			document.getElementById('comment-form')?.addEventListener('submit', function () {
+				document.getElementById('comments-tab').click();  // Switch to comments tab
+			});
+		});
+	</script>
+
+	<script src="vendor/bootstrap/jquery-1.12.4.min.js"></script>
+	<script src="vendor/bootstrap/popper.min.js"></script>
+	<script src="vendor/bootstrap/bootstrap.min.js"></script>
+	<script src="vendor/countdown/countdown.min.js"></script>
+	<script src="vendor/niceselect/nice-select.min.js"></script>
+	<script src="vendor/slickslider/slick.min.js"></script>
+	<script src="vendor/venobox/venobox.min.js"></script>
+	<script src="js/nice-select.js"></script>
+	<script src="js/countdown.js"></script>
+	<script src="js/accordion.js"></script>
+	<script src="js/venobox.js"></script>
+	<script src="js/slick.js"></script>
+	<script src="js/main.js"></script>
+</body>
+
 </html>

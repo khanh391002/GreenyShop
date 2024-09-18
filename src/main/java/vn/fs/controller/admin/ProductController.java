@@ -107,13 +107,7 @@ public class ProductController {
 			e.printStackTrace();
 			return "error";
 		}
-//			if (productRequest.getProductImage().isEmpty()) {
-//				result.addError(new FieldError("productRequest", "productImage", "The product image is required!"));
-//			}
-//			
-//			if (result.hasErrors()) {
-//				return "admin/createProduct";
-//	  	    }
+
 		Product product = new Product();
 		product.setProductCode(productRequest.getProductCode());
 		product.setProductName(productRequest.getProductName());
@@ -134,42 +128,6 @@ public class ProductController {
 		}
 		return "redirect:/admin/products";
 	}
-
-//	// add product
-//	@PostMapping(value = "/addProduct")
-//	public String addProduct(@ModelAttribute("product") Product product, ModelMap model,
-//			@RequestParam("file") MultipartFile file, BindingResult result, HttpServletRequest httpServletRequest) {
-//
-//		try {
-//			File convFile = new File(pathUploadImage + "/" + file.getOriginalFilename());
-//			FileOutputStream fos = new FileOutputStream(convFile);
-//			fos.write(file.getBytes());
-//			fos.close();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			return "error";
-//		}
-////		Optional<Product> productOpt = productRepository.findByProductCodeAndIsDeletedIsFalse(product.getProductCode());
-////		if (productOpt.isPresent()) {
-////			result.addError(new FieldError("product", "productCode", "Product Code is existed!"));
-////		}
-////  		if (result.hasErrors()) {
-////  			model.addAttribute("message", "Product Code is existed!");
-////			model.addAttribute("product", product);
-//// 			return "error";
-////  	    }
-//
-//		product.setProductImage(file.getOriginalFilename());
-// 		Product p = productRepository.save(product);
-//		if (null != p) {
-//			model.addAttribute("message", "Update success");
-//			model.addAttribute("product", product);
-//		} else {
-//			model.addAttribute("message", "Update failure");
-//			model.addAttribute("product", product);
-//		}
-//		return "redirect:/admin/products";
-//	}
 
 	// show select option ở add product
 	@ModelAttribute("categoryList")
@@ -212,20 +170,26 @@ public class ProductController {
 			@ModelAttribute("productRequest") ProductRequest productRequest, ModelMap model,
 			@RequestParam("file") MultipartFile file, BindingResult result, HttpServletRequest httpServletRequest) {
 		String productImage = null;
-		try {
-			if (file.getSize() > 0) {
-				productImage = file.getOriginalFilename();
-			} else {
-				productImage = productRequest.getProductImage();
+		if (file.getSize() > 0) {
+			productImage = file.getOriginalFilename();
+			try {
+				if (file.getSize() > 0) {
+					productImage = file.getOriginalFilename();
+				} else {
+					productImage = productRequest.getProductImage();
+				}
+				File convFile = new File(pathUploadImage + "/" + (productImage));
+				FileOutputStream fos = new FileOutputStream(convFile);
+				fos.write(file.getBytes());
+				fos.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+				return "error";
 			}
-			File convFile = new File(pathUploadImage + "/" + (productImage));
-			FileOutputStream fos = new FileOutputStream(convFile);
-			fos.write(file.getBytes());
-			fos.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return "error";
+		} else {
+			productImage = productRequest.getProductImage();
 		}
+		
 		Optional<Product> productOptional = productRepository.findById(id);
 		if (!productOptional.isPresent()) {
 			return "error";

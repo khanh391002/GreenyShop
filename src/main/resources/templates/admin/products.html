@@ -135,12 +135,12 @@
 																<input th:field="*{quantity}" id="quantity" min = 0 type="number" class="form-control" placeholder="Số lượng">
 															</div>
 														</div>
-														<div class="col-md-6 pr-0">
+														<!-- <div class="col-md-6 pr-0">
 															<div class="form-group form-group-default">
 																<label>Giảm giá</label>
 																<input th:field="*{discount}" id="discount" min = 0 type="number" class="form-control" placeholder="Giảm giá">
 															</div>
-														</div>
+														</div> -->
 														<div class="col-md-6 pr-0">
 															<div class="form-group form-group-default">
 																<label>Ngày thêm</label>
@@ -179,7 +179,7 @@
 												<th>Tên sản phẩm</th>
 												<th>Thể loại</th>
 												<th>Đơn giá</th>
-												<th>Giảm giá</th>
+												<!-- <th>Giảm giá</th> -->
 												<th>Số lượng</th>
 												<th>Ngày thêm</th>
 												<th>Mô tả sản phẩm</th>
@@ -193,7 +193,7 @@
 												<th>Tên sản phẩm</th>
 												<th>Thể loại</th>
 												<th>Đơn giá</th>
-												<th>Giảm giá</th>
+												<!-- <th>Giảm giá</th> -->
 												<th>Số lượng</th>
 												<th>Ngày thêm</th>
 												<th>Mô tả sản phẩm</th>
@@ -210,7 +210,7 @@
 												<td>[[${item.productName}]]</td>
 												<td>[[${item.category.categoryName}]]</td>
 												<td th:text="${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' vnđ'"></td>
-												<td>[[${#numbers.formatDecimal(item?.discount, 1, 'DEFAULT', 0, 'DEFAULT')}+' %']]</td>
+												<!-- <td>[[${#numbers.formatDecimal(item?.discount, 1, 'DEFAULT', 0, 'DEFAULT')}+' %']]</td> -->
 												<td>[[${item.quantity}]]</td>
 												<td>[[${item.enteredDate}]]</td>
 												<td>[[${item.description}]]</td>

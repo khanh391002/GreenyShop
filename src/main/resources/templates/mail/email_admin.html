@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <style>
+        .btn-custom {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            color: white;
+            background-color: #119744;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none; /* Remove underline */
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            border: 2px solid #119744; /* Đường viền bao quanh email */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .email-header {
+            text-align: center;
+            padding-bottom: 20px;
+        }
+        .email-header h2 {
+            margin: 0;
+            font-size: 24px;
+            color: #333333;
+        }
+        .email-body {
+            font-size: 16px;
+            color: #333333;
+            line-height: 1.5;
+        }
+        .email-body p {
+            margin: 0 0 10px;
+        }
+        .email-footer {
+            text-align: center;
+            padding-top: 20px;
+        }
+        .email-footer a {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #ffffff;
+            background-color: #119744;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .email-footer a:hover {
+            background-color: #0f7a3e;
+        }
+        .order-details {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #dddddd;
+        }
+        .order-details p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="email-container">
+        <div class="email-header">
+            <h2>Đơn Hàng Mới Cần Xác Nhận</h2>
+        </div>
+        <div class="email-body">
+            <p>Kính gửi <b>[[${admin.name}]]</b>,</p>
+            <p>Chúng tôi xin thông báo về một đơn hàng mới được đặt thành công. Xin vui lòng kiểm tra và xác nhận đơn hàng.</p>
+
+            <div class="order-details">
+                <p><strong>Mã Đơn Hàng:</strong> [[${orderFinal.orderId}]]</p>
+                <p><strong>Khách Hàng:</strong> [[${user.name}]]</p>
+                <p><strong>Email:</strong> [[${user.email}]]</p>
+                <p><strong>Số Điện Thoại:</strong> [[${orderFinal.phone}]]</p>
+            </div>
+        </div>
+        <div class="email-footer">
+            <a href="http://localhost:8080/admin/orders" class="btn-custom" align="center">
+                Truy cập đơn hàng
+            </a>
+        </div>
+    </div>
+</body>
+</html>
