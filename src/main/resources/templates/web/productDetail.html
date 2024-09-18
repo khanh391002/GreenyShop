@@ -240,24 +240,24 @@
 					<div class="product-details-frame">
 						<!-- Tabs for Description and Comments -->
 						<div class="tabs">
-							<ul class="nav nav-tabs">
+							<ul class="nav nav-pills" id="pills-tab" role="tablist" style="display: flex; justify-content: center;">
 								<li class="nav-item">
-									<a class="nav-link active" id="description-tab" data-toggle="tab" href="#description">Mô tả sản phẩm</a>
+									<a class="nav-link active" id="pills-description-tab" data-bs-toggle="pill" href="#description" role="tab" aria-controls="pills-description" aria-selected="true">Mô tả sản phẩm</a>
 								</li>
 								<li class="nav-item">
-									<a class="nav-link" id="comments-tab" data-toggle="tab" href="#comments">Bình luận</a>
+									<a class="nav-link" id="pills-comments-tab" data-bs-toggle="pill" href="#comments" role="tab" aria-controls="pills-comments" aria-selected="true">Bình luận</a>
 								</li>
 							</ul>
-							<div class="tab-content">
+							<div class="tab-content" id="pills-tabContent">
 								<!-- Description Tab -->
-								<div class="tab-pane fade show active" id="description" role="tabpanel">
+								<div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="pills-description-tab">
 									<h3 class="frame-title">Mô tả sản phẩm</h3>
 									<div class="tab-descrip">
 										<p>[[${product.description}]]</p>
 									</div>
 								</div>
 								<!-- Comments Tab -->
-								<div class="tab-pane fade" id="comments" role="tabpanel">
+								<div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="pills-comments-tab">
 									<div id="comments-list">
 										<!-- Comments will be loaded here -->
 									</div>
