@@ -269,11 +269,11 @@
 											<div class="rating-group">
 												<label>Your Rating</label>
 												<div class="wrap-rating fs-18 cl11 pointer">
-													<i class="item-rating pointer zmdi zmdi-star-outline" data-value="1"></i>
-													<i class="item-rating pointer zmdi zmdi-star-outline" data-value="2"></i>
-													<i class="item-rating pointer zmdi zmdi-star-outline" data-value="3"></i>
-													<i class="item-rating pointer zmdi zmdi-star-outline" data-value="4"></i>
-													<i class="item-rating pointer zmdi zmdi-star-outline" data-value="5"></i>
+													<i class="item-rating pointer far fa-star" data-value="1"></i>
+													<i class="item-rating pointer far fa-star" data-value="2"></i>
+													<i class="item-rating pointer far fa-star" data-value="3"></i>
+													<i class="item-rating pointer far fa-star" data-value="4"></i>
+													<i class="item-rating pointer far fa-star" data-value="5"></i>
 												</div>
 											</div>
 											<div class="form-group">
@@ -508,11 +508,11 @@
 	
 					stars.forEach(star => {
 						if (parseInt(star.getAttribute('data-value')) <= value) {
-							star.classList.remove('zmdi-star-outline');
-							star.classList.add('zmdi-star');
+							star.classList.remove('far', 'fa-star');
+							star.classList.add('fas', 'fa-star');
 						} else {
-							star.classList.remove('zmdi-star');
-							star.classList.add('zmdi-star-outline');
+							star.classList.remove('fas', 'fa-star');
+							star.classList.add('far', 'fa-star');
 						}
 					});
 				});
@@ -544,8 +544,8 @@
 									<span class="author-name">${comment.user.name}</span>
 								</div>
 								<div class="comment-rating">
-									${'<i class="icofont-star"></i>'.repeat(comment.rating)}
-									${'<i class="icofont-star"></i>'.repeat(5 - comment.rating)}
+									${'<i class="far fa-star"></i>'.repeat(comment.rating)}
+									${'<i class="fas fa-star"></i>'.repeat(5 - comment.rating)}
 								</div>
 								<p class="comment-text">${comment.text}</p>
 							`;
