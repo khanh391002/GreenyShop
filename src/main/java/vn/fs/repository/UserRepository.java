@@ -24,4 +24,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 			+ "WHERE r.name = 'ROLE_ADMIN' AND u.status = '1' ", nativeQuery = true)
 	List<User> findAllUserIsAdmin();
 	
+	@Query(value = "SELECT COUNT(u.user_id) FROM greeny_shop.user u "
+			+ "LEFT JOIN greeny_shop.users_roles ur ON u.user_id = ur.user_id "
+			+ "LEFT JOIN greeny_shop.role r ON ur.role_id = r.id "
+			+ "WHERE r.name = 'ROLE_USER' AND u.status = '1' ", nativeQuery = true)
+	int countAllUserIsCustomer();
+	
 }

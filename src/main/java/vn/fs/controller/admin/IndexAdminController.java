@@ -10,7 +10,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import vn.fs.model.entities.User;
+import vn.fs.repository.CategoryRepository;
+import vn.fs.repository.OrderRepository;
+import vn.fs.repository.ProductRepository;
 import vn.fs.repository.UserRepository;
+import vn.fs.service.AdminStatisticService;
 
 @Controller
 @RequestMapping("/admin")
@@ -18,6 +22,19 @@ public class IndexAdminController{
 	
 	@Autowired
 	UserRepository userRepository;
+	
+	@Autowired
+	ProductRepository productRepository;
+	
+	@Autowired
+	CategoryRepository categoryRepository;
+	
+	@Autowired
+	OrderRepository orderRepository;
+	
+	@Autowired
+	AdminStatisticService adminStatisticService;
+	
 	
 	@ModelAttribute(value = "user")
 	public User user(Model model, Principal principal, User user) {
@@ -32,8 +49,11 @@ public class IndexAdminController{
 	}
 
 	@GetMapping(value = "/home")
-	public String index() {
-		
+	public String index(Model model) {
+		model.addAttribute("orderToday", adminStatisticService.countOrderStatisticToday());
+		model.addAttribute("totalProduct", productRepository.countAllProductByIsDeletedIsFalse());
+		model.addAttribute("totalCustomer", userRepository.countAllUserIsCustomer());
+		model.addAttribute("totalCategory", categoryRepository.countAllCategory());
 		return "admin/index";
 	}
 }

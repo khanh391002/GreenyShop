@@ -104,6 +104,16 @@
 			color: #fd7e14;
 			/* Màu chữ khi hover */
 		}
+
+		.item-rating {
+			color: gold;
+			/* Đặt màu vàng cho các ngôi sao */
+		}
+
+		.item-rating.selected {
+			color: gold;
+			/* Đặt màu vàng cho sao đã chọn */
+		}
 	</style>
 
 	<link rel="stylesheet" href="css/product-details.css" />
@@ -135,7 +145,6 @@
 					<div class="details-gallery">
 						<div class="details-label-group">
 							<label class="details-label new">new</label>
-							<!-- <label class="details-label off">- [[${product.discount + '%'}]]</label> -->
 						</div>
 						<ul class="details-preview">
 							<li><img th:src="@{'/loadImage?imageName='+${product.productImage}}" alt="product" /></li>
@@ -165,7 +174,7 @@
 						</div>
 						<h3 class="details-price">
 							<!-- <del>[[${#numbers.formatDecimal(product.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]</del> -->
-							<span>[[${#numbers.formatDecimal(product.price - (product.price * product.discount/100), 1,
+							<span>[[${#numbers.formatDecimal(product.price, 1,
 								'DEFAULT', 0, 'DEFAULT')}+' đ']]<small>/kg</small></span>
 						</h3>
 						<p class="details-desc">
@@ -240,34 +249,42 @@
 					<div class="product-details-frame">
 						<!-- Tabs for Description and Comments -->
 						<div class="tabs">
-							<ul class="nav nav-pills" id="pills-tab" role="tablist" style="display: flex; justify-content: center;">
+							<ul class="nav nav-pills" id="pills-tab" role="tablist"
+								style="display: flex; justify-content: center;">
 								<li class="nav-item">
-									<a class="nav-link active" id="pills-description-tab" data-bs-toggle="pill" href="#description" role="tab" aria-controls="pills-description" aria-selected="true">Mô tả sản phẩm</a>
+									<a class="nav-link active" id="pills-description-tab" data-bs-toggle="pill"
+										href="#description" role="tab" aria-controls="pills-description"
+										aria-selected="true">Mô tả sản phẩm</a>
 								</li>
 								<li class="nav-item">
-									<a class="nav-link" id="pills-comments-tab" data-bs-toggle="pill" href="#comments" role="tab" aria-controls="pills-comments" aria-selected="true">Bình luận</a>
+									<a class="nav-link" id="pills-comments-tab" data-bs-toggle="pill" href="#comments"
+										role="tab" aria-controls="pills-comments" aria-selected="true">Bình luận</a>
 								</li>
 							</ul>
 							<div class="tab-content" id="pills-tabContent">
 								<!-- Description Tab -->
-								<div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="pills-description-tab">
+								<div class="tab-pane fade show active" id="description" role="tabpanel"
+									aria-labelledby="pills-description-tab">
 									<h3 class="frame-title">Mô tả sản phẩm</h3>
 									<div class="tab-descrip">
 										<p>[[${product.description}]]</p>
 									</div>
 								</div>
 								<!-- Comments Tab -->
-								<div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="pills-comments-tab">
+								<div class="tab-pane fade" id="comments" role="tabpanel"
+									aria-labelledby="pills-comments-tab">
 									<div id="comments-list">
 										<!-- Comments will be loaded here -->
 									</div>
+									<hr> <!-- Đường kẻ ngang phân chia -->
 									<div th:if="${user.email != null}" id="add-comment">
 										<h5>Thêm bình luận</h5>
 										<form id="comment-form" th:action="@{/productDetail/comment}" method="post">
-											<input id="product-id" name="productId" th:value="${product.productId}" type="hidden"/>
+											<input id="product-id" name="productId" th:value="${product.productId}" type="hidden" />
 											<input class="dis-none" id="starNumber" name="starNumber" required type="hidden">
+											
 											<div class="rating-group">
-												<label>Your Rating</label>
+												<label>Đánh giá</label>
 												<div class="wrap-rating fs-18 cl11 pointer">
 													<i class="item-rating pointer far fa-star" data-value="1"></i>
 													<i class="item-rating pointer far fa-star" data-value="2"></i>
@@ -276,11 +293,18 @@
 													<i class="item-rating pointer far fa-star" data-value="5"></i>
 												</div>
 											</div>
+											
 											<div class="form-group">
-												<label for="review">Your review</label>
+												<label for="review">Bình luận</label>
 												<textarea class="form-control" id="review" name="review" required></textarea>
 											</div>
-											<button type="submit" class="btn btn-primary">Submit</button>
+											
+											<div th:if="${!hasCommented}">
+												<button type="submit" class="btn btn-primary">Gửi bình luận</button>
+											</div>
+											<div th:if="${hasCommented}">
+												<p>Bạn đã bình luận cho sản phẩm này.</p>
+											</div>
 										</form>
 									</div>
 								</div>
@@ -324,9 +348,6 @@
 						<li th:each="item : ${productByCategory}">
 							<div class="product-card">
 								<div class="product-media">
-									<!-- <div class="product-label">
-										<label class="label-text sale">- [[${item.discount + '%'}]]</label>
-									</div> -->
 
 									<th:block th:if="${user.email != null}">
 										<button class="product-wish" th:if="${item.favorite} == false">
@@ -387,7 +408,7 @@
 									</h6>
 									<h6 class="product-price">
 										<!-- <del>[[${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]</del> -->
-										<span>[[${#numbers.formatDecimal(item.price - (item.price * item.discount/100),
+										<span>[[${#numbers.formatDecimal(item.price,
 											1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]<small> /kg</small></span>
 									</h6>
 									<a class="product-add1" th:attr="data-product-id=${item.productId}" href="#"
@@ -500,12 +521,12 @@
 			// Rating stars logic
 			const stars = document.querySelectorAll('.item-rating');
 			const starNumberInput = document.getElementById('starNumber');
-	
+
 			stars.forEach(star => {
 				star.addEventListener('click', function () {
 					const value = this.getAttribute('data-value');
 					starNumberInput.value = value;
-	
+
 					stars.forEach(star => {
 						if (parseInt(star.getAttribute('data-value')) <= value) {
 							star.classList.remove('far', 'fa-star');
@@ -517,44 +538,55 @@
 					});
 				});
 			});
-	
+
 			// Fetch and display comments
-			const productId = document.getElementById('product-id')?.value;
+			const productIdElement = document.getElementById('product-id');
+			const productId = productIdElement ? productIdElement.value : null;
+			console.log('Product ID:', productId); // Kiểm tra giá trị
 			const commentsList = document.getElementById('comments-list');
-	
+
+			// console.log('Product ID:', productId); // Ghi log giá trị productId để kiểm tra
+
 			if (productId) {
-				fetch('/api/product-comments?productId=' + productId)
+				fetch(`/api/product-comments?productId=${productId}`)
 					.then(response => {
 						if (!response.ok) {
 							throw new Error('Network response was not ok');
 						}
-						return response.json();
+						return response.json(); // Trả về dữ liệu JSON
 					})
 					.then(data => {
-						if (!data.comments || !Array.isArray(data.comments)) {
-							throw new Error('Invalid data format');
-						}
-						commentsList.innerHTML = '';
-						data.comments.slice(0, 3).forEach(comment => {
+						console.log('Fetched data:', data); // Ghi log dữ liệu nhận được
+						// Không cần kiểm tra kiểu dữ liệu ở đây vì nó là một mảng
+						commentsList.innerHTML = ''; // Xóa nội dung hiện tại
+
+						data.slice(0, 3).forEach(comment => {
 							const commentElement = document.createElement('div');
 							commentElement.classList.add('comment');
+							commentElement.style.marginBottom = '30px'; // Thêm khoảng cách giữa các bình luận
 							commentElement.innerHTML = `
-								<div class="comment-author">
-									<img src="${comment.user.avatar}" alt="${comment.user.name}" class="avatar"/>
-									<span class="author-name">${comment.user.name}</span>
+								<div class="comment-author" style="display: flex; justify-content: space-between; align-items: center;">
+									<div style="display: flex; align-items: center;">
+										<img src="/images/${comment.user.avatar}" alt="${comment.user.name}" class="avatar" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 10px;"/>
+										<div>
+											<strong>${comment.user.name}</strong>
+											<div class="comment-text">${comment.content}</div>
+										</div>
+									</div>
+									<div class="comment-rating" style="margin-left: auto; color: gold;">
+										${'<i class="fas fa-star"></i>'.repeat(comment.rating)}
+										${'<i class="far fa-star"></i>'.repeat(5 - comment.rating)}
+									</div>
 								</div>
-								<div class="comment-rating">
-									${'<i class="far fa-star"></i>'.repeat(comment.rating)}
-									${'<i class="fas fa-star"></i>'.repeat(5 - comment.rating)}
-								</div>
-								<p class="comment-text">${comment.text}</p>
 							`;
 							commentsList.appendChild(commentElement);
 						});
 					})
 					.catch(error => console.error('Error fetching comments:', error));
+			} else {
+				console.error('Product ID is not defined');
 			}
-	
+
 			// Function to switch to comments tab
 			document.getElementById('comment-form')?.addEventListener('submit', function () {
 				document.getElementById('comments-tab').click();  // Switch to comments tab

@@ -112,7 +112,7 @@
     <section class="user-form-part">
       <div class="container">
         <div class="row justify-content-center">
-          <div class="col-12 col-sm-10 col-md-12 col-lg-12 col-xl-10">
+          <div class="col-6 col-sm-5 col-md-6 col-lg-6 col-xl-5">
             <div class="user-form-logo">
               <a th:href="@{/}"><img src="images/logo.png" alt="logo" /></a>
             </div>
@@ -122,7 +122,7 @@
                 <p>Thiết Lập Một Tài Khoản Mới</p>
               </div>
               <div class="user-form-group">
-                <ul class="user-form-social">
+                <!-- <ul class="user-form-social">
                 
                   <li>
                     <a class="facebook" href="javascript:void(0);">
@@ -137,7 +137,7 @@
                   </li>
                   
                 </ul>
-                <div class="user-form-divider"><p>hoặc</p></div>
+                <div class="user-form-divider"><p>hoặc</p></div> -->
                 
                 <form th:action="@{/register}" method="post" th:object="${user}" class="user-form">
                     <div class="form-group">

@@ -67,7 +67,7 @@ public class OrderController {
 	@GetMapping(value = "/orders")
 	public String orders(Model model, Principal principal) {
 
-		List<Order> orderDetails = orderRepository.findAll();
+		List<Order> orderDetails = orderRepository.findAllByOrderDateDesc();
 		model.addAttribute("orderDetails", orderDetails);
 
 		return "admin/orders";
@@ -122,12 +122,12 @@ public class OrderController {
 		oReal.setStatus((short) 2);
 		orderRepository.save(oReal);
 
-		Product p = null;
+		Product product= null;
 		List<OrderDetail> listDe = orderDetailRepository.findByOrderId(id);
 		for (OrderDetail od : listDe) {
-			p = od.getProduct();
-			p.setQuantity(p.getQuantity() - od.getQuantity());
-			productRepository.save(p);
+			product = od.getProduct();
+			product.setQuantity(product.getQuantity() - od.getQuantity());
+			productRepository.save(product);
 		}
 
 		return new ModelAndView("forward:/admin/orders", model);

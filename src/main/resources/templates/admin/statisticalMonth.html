@@ -43,7 +43,7 @@
 		<div class="content">
 			<div class="page-inner">
 				<div class="page-header">
-					<h4 class="page-title">Quản Lý Thống Kê</h4>
+					<h4 class="page-title">Thống Kê Theo Tháng</h4>
 					<ul class="breadcrumbs">
 						<li class="nav-home">
 							<a href="#">
@@ -60,7 +60,7 @@
 							<i class="flaticon-right-arrow"></i>
 						</li>
 						<li class="nav-item">
-							<a href="#">Quản Lý Thống Kê</a>
+							<a href="#">Thống Kê Theo Tháng</a>
 						</li>
 					</ul>
 				</div>
@@ -68,7 +68,7 @@
 						<div class="card">
 							<div class="card-header">
 									<div class="d-flex align-items-center">
-										<h4 class="card-title" style="text-decoration: underline;">Quản Lý Thống Kê</h4>
+										<h4 class="card-title" style="text-decoration: underline;">Thống Kê Theo Tháng</h4>
 									</div>
 								</div>
 							<div class="card-body">
@@ -76,35 +76,41 @@
 									<table id="add-row" class="display table table-striped table-hover" >
 										<thead>
 											<tr>
-												<th>#</th>
-												<th>Nhóm</th>
+												<th>Tháng</th>
 												<th>Số lượng bán ra</th>
 												<th>Doanh thu</th>
-												<th>Giá trung bình</th>
-												<th>Giá thấp nhất</th>
-												<th>Giá cao nhất</th>
+												<th>Số đơn hoàn thành</th>
+												<th>Số đơn đã huỷ</th>
+												<th>Khách hàng nhiều đơn nhất</th>
+												<th>Sản phẩm bán chạy nhất</th>
+												<th>Thể loại bán chạy nhất</th>
+												<th>Đánh giá từ khách hàng</th>
 											</tr>
 										</thead>
 										<tfoot>
 											<tr>
-												<th>#</th>
-												<th>Nhóm</th>
+												<th>Tháng</th>
 												<th>Số lượng bán ra</th>
 												<th>Doanh thu</th>
-												<th>Giá trung bình</th>
-												<th>Giá thấp nhất</th>
-												<th>Giá cao nhất</th>
+												<th>Số đơn hoàn thành</th>
+												<th>Số đơn đã huỷ</th>
+												<th>Khách hàng nhiều đơn nhất</th>
+												<th>Sản phẩm bán chạy nhất</th>
+												<th>Thể loại bán chạy nhất</th>
+												<th>Đánh giá từ khách hàng</th>
 											</tr>
 										</tfoot>
 										<tbody>
 											<tr th:each="item, iState : ${listReportCommon}">
-												<td>[[${iState.index + 1}]]</td>
-												<td>[[${item[0]}]]</td>
-												<td>[[${item[1]}]]</td>
-												<td>[[${#numbers.formatDecimal(item[2], 1, 'DEFAULT', 0, 'DEFAULT')} + ' đ']]</td>
-												<td>[[${#numbers.formatDecimal(item[3], 1, 'DEFAULT', 0, 'DEFAULT')} + ' đ']]</td>
-												<td>[[${#numbers.formatDecimal(item[4], 1, 'DEFAULT', 0, 'DEFAULT')} + ' đ']]</td>
-												<td>[[${#numbers.formatDecimal(item[5], 1, 'DEFAULT', 0, 'DEFAULT')} + ' đ']]</td>
+												<td>[[${item.time}]]</td>
+												<td>[[${item.quantitySold} + ' (sản phẩm)']]</td>
+												<td>[[${#numbers.formatDecimal(item.revenue, 1, 'DEFAULT', 0, 'DEFAULT')} + ' (vnđ)']]</td>
+												<td>[[${item.totalOrderSuccess} + ' (đơn)']]</td>
+												<td>[[${item.totalOrderCancel} + ' (đơn)']]</td>
+												<td>[[${item.topCustomer}]]</td>
+												<td>[[${item.bestSellingProduct}]]</td>
+												<td>[[${item.bestSellingCategory}]]</td>
+												<td>[[${item.rating} + '/5 (sao)']]</td>
 											</tr>
 										</tbody>
 									</table>

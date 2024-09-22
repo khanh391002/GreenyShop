@@ -12,8 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import vn.fs.model.entities.OrderDetail;
 import vn.fs.model.entities.User;
+import vn.fs.model.response.CategoryStatisticResponse;
+import vn.fs.model.response.CustomerStatisticResponse;
+import vn.fs.model.response.ProductStatisticResponse;
+import vn.fs.model.response.TimeStatisticResponse;
 import vn.fs.repository.OrderDetailRepository;
 import vn.fs.repository.UserRepository;
+import vn.fs.service.AdminStatisticService;
 
 @Controller
 public class ReportController {
@@ -23,6 +28,9 @@ public class ReportController {
 
 	@Autowired
 	OrderDetailRepository orderDetailRepository;
+	
+	@Autowired
+	AdminStatisticService adminStatisticService;
 
 	// Statistics by product sold
 	@GetMapping(value = "/admin/reports")
@@ -32,10 +40,10 @@ public class ReportController {
 
 		OrderDetail orderDetail = new OrderDetail();
 		model.addAttribute("orderDetail", orderDetail);
-		List<Object[]> listReportCommon = orderDetailRepository.repo();
-		model.addAttribute("listReportCommon", listReportCommon);
+		List<ProductStatisticResponse> productStatisticResponses = adminStatisticService.getProductStatistics();
+		model.addAttribute("listReportCommon", productStatisticResponses);
 
-		return "admin/statistical";
+		return "admin/statisticalProduct";
 	}
 
 	// Statistics by category sold
@@ -46,10 +54,10 @@ public class ReportController {
 
 		OrderDetail orderDetail = new OrderDetail();
 		model.addAttribute("orderDetail", orderDetail);
-		List<Object[]> listReportCommon = orderDetailRepository.repoWhereCategory();
+		List<CategoryStatisticResponse> listReportCommon = adminStatisticService.getCategoryStatistics();
 		model.addAttribute("listReportCommon", listReportCommon);
 
-		return "admin/statistical";
+		return "admin/statisticalCategory";
 	}
 
 	// Statistics of products sold by year
@@ -60,10 +68,10 @@ public class ReportController {
 
 		OrderDetail orderDetail = new OrderDetail();
 		model.addAttribute("orderDetail", orderDetail);
-		List<Object[]> listReportCommon = orderDetailRepository.repoWhereYear();
+		List<TimeStatisticResponse> listReportCommon = adminStatisticService.getYearStatistics();
 		model.addAttribute("listReportCommon", listReportCommon);
 
-		return "admin/statistical";
+		return "admin/statisticalYear";
 	}
 
 	// Statistics of products sold by month
@@ -74,10 +82,10 @@ public class ReportController {
 
 		OrderDetail orderDetail = new OrderDetail();
 		model.addAttribute("orderDetail", orderDetail);
-		List<Object[]> listReportCommon = orderDetailRepository.repoWhereMonth();
+		List<TimeStatisticResponse> listReportCommon = adminStatisticService.getMonthStatistics();
 		model.addAttribute("listReportCommon", listReportCommon);
 
-		return "admin/statistical";
+		return "admin/statisticalMonth";
 	}
 
 	// Statistics of products sold by quarter
@@ -88,10 +96,11 @@ public class ReportController {
 
 		OrderDetail orderDetail = new OrderDetail();
 		model.addAttribute("orderDetail", orderDetail);
-		List<Object[]> listReportCommon = orderDetailRepository.repoWhereQUARTER();
+//		List<Object[]> listReportCommon = orderDetailRepository.repoWhereQUARTER();
+		List<TimeStatisticResponse> listReportCommon = adminStatisticService.getQuarterStatistics();
 		model.addAttribute("listReportCommon", listReportCommon);
 
-		return "admin/statistical";
+		return "admin/statisticalQuarter";
 	}
 
 	// Statistics by user
@@ -102,10 +111,10 @@ public class ReportController {
 
 		OrderDetail orderDetail = new OrderDetail();
 		model.addAttribute("orderDetail", orderDetail);
-		List<Object[]> listReportCommon = orderDetailRepository.reportCustommer();
+		List<CustomerStatisticResponse> listReportCommon = adminStatisticService.getCustomerStatistics();
 		model.addAttribute("listReportCommon", listReportCommon);
 
-		return "admin/statistical";
+		return "admin/statisticalCustomer";
 	}
 	
 	// end task developer by Khanh.NguyenQuoc

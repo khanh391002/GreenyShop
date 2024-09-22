@@ -1,133 +1,126 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
- <meta
-    http-equiv="content-type"
-    content="text/html;charset=utf-8"
-  />
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <meta name="author" content="mironcoder" />
-    <meta name="email" content="mironcoder@gmail.com" />
-    <meta name="profile" content="https://themeforest.net/user/mironcoder" />
-    <meta name="template" content="greeny" />
-    <meta name="title" content="greeny - Ecommerce Food Store HTML Template" />
-    <meta
-      name="keywords"
-      content="organic, food, shop, ecommerce, store, html, bootstrap, template, agriculture, vegetables, products, farm, grocery, natural, online"
-    />
-    <title>Nông sản xanh Greeny</title>
-    <link rel="icon" href="images/favicon.png" />
-    <link rel="stylesheet" href="fonts/flaticon/flaticon.css" />
-    <link rel="stylesheet" href="fonts/icofont/icofont.min.css" />
-    <link rel="stylesheet" href="fonts/fontawesome/fontawesome.min.css" />
-    <link rel="stylesheet" href="vendor/venobox/venobox.min.css" />
-    <link rel="stylesheet" href="vendor/slickslider/slick.min.css" />
-    <link rel="stylesheet" href="vendor/niceselect/nice-select.min.css" />
-    <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/main.css" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-   	<script>
-        $(document).ready(function() {
-            $('.product-add1').click(function(event) {
-                event.preventDefault();
-                
-                var productId = $(this).data('product-id');
-                
-               	$.ajax({
-                    type: "GET",
-                    url: "/api/carts",
-                    dataType: 'json',
-                    success: function(response) {
-                    	let isDuplicate = response.find((item) => item.product.productId === productId);
-                    	if (!isDuplicate) {
-                    		let totalCartItems = Number($('sup[id="totalCartItems"]').text());
-                    		if (!totalCartItems) {
-                    			totalCartItems = 0;
-                    		}
-                        	$('sup[id="totalCartItems"]').text(totalCartItems + 1);
-                    	}
-                    },
-                    error: function() {}
-                });
-                
-                $.ajax({
-                    type: "GET",
-                    url: "/addToCart",
-                    data: {
-                        productId: productId
-                    },
-                    success: function() {},
-                    error: function() {}
-                });
-            });
-            
-            function addToCart() {
-                $.ajax({
-                    type: "GET",
-                    url: "/api/carts",
-                    dataType: 'json',
-                    success: function(response) {
-                    	if (response.length > 0) {
-                    		$('.cart-list').text('')
-                    		response.forEach((item) => {
-                    			let cartItem = `<li class="cart-item"> <div class="cart-media"> <a href="/productDetail?id=${item.product.productId}"> <img src="/loadImage?imageName=${item.product.productImage}" alt="product"> </a> </div> <div class="cart-info-group"> <div class="cart-info"> <h6> <label>Tên sản phẩm :</label> <a href="/productDetail?id=${item.product.productId}" style="color: #119744">${item.product.productName}</a> </h6> <label>Đơn giá :</label> <p>${item.product.price} đ</p> </div> <div class="cart-action-group"> <div class="product-action"> <label>Số lượng :</label> <input class="action-input" title="Quantity Number" type="text" name="quantity" value="${item.quantity}"> </div> <h6>${item.totalPrice} đ</h6> </div> </div> </li>`;
-                    			$('.cart-list').append(cartItem)
-                    		})
-                    	}
-                    },
-                    error: function() {}
-                });
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="author" content="mironcoder" />
+  <meta name="email" content="mironcoder@gmail.com" />
+  <meta name="profile" content="https://themeforest.net/user/mironcoder" />
+  <meta name="template" content="greeny" />
+  <meta name="title" content="greeny - Ecommerce Food Store HTML Template" />
+  <meta name="keywords"
+    content="organic, food, shop, ecommerce, store, html, bootstrap, template, agriculture, vegetables, products, farm, grocery, natural, online" />
+  <title>Nông sản xanh Greeny</title>
+  <link rel="icon" href="images/favicon.png" />
+  <link rel="stylesheet" href="fonts/flaticon/flaticon.css" />
+  <link rel="stylesheet" href="fonts/icofont/icofont.min.css" />
+  <link rel="stylesheet" href="fonts/fontawesome/fontawesome.min.css" />
+  <link rel="stylesheet" href="vendor/venobox/venobox.min.css" />
+  <link rel="stylesheet" href="vendor/slickslider/slick.min.css" />
+  <link rel="stylesheet" href="vendor/niceselect/nice-select.min.css" />
+  <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('.product-add1').click(function (event) {
+        event.preventDefault();
+
+        var productId = $(this).data('product-id');
+
+        $.ajax({
+          type: "GET",
+          url: "/api/carts",
+          dataType: 'json',
+          success: function (response) {
+            let isDuplicate = response.find((item) => item.product.productId === productId);
+            if (!isDuplicate) {
+              let totalCartItems = Number($('sup[id="totalCartItems"]').text());
+              if (!totalCartItems) {
+                totalCartItems = 0;
+              }
+              $('sup[id="totalCartItems"]').text(totalCartItems + 1);
             }
-            
-            $('#cart-icon').click(function(event) {
-            	$.ajax({
-                    type: "GET",
-                    url: "/api/total-cart-items",
-                    dataType: 'json',
-                    success: function(response) {
-                    	$('#total-cart-items').text('(' + response + ')');
-                    	if (Number(response) > 0) {
-                    		document.getElementById("some-item-1").style.setProperty('display', 'block', 'important');
-                    		document.getElementById("some-item-2").style.setProperty('display', 'block', 'important');
-                    		document.getElementById("nothing-item").style.setProperty('display', 'none', 'important');
-                    		addToCart();
-                    	} else {
-                    		document.getElementById("nothing-item").style.setProperty('display', 'block', 'important');
-                    		document.getElementById("some-item-1").style.setProperty('display', 'none', 'important');
-                    		document.getElementById("some-item-2").style.setProperty('display', 'none', 'important');
-                    	}
-                    },
-                    error: function() {}
-                });
-            });
+          },
+          error: function () { }
         });
-    </script>
-    <link rel="stylesheet" href="css/user-auth.css" />
-  </head>
-  <body>
-    <section class="user-form-part">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-12 col-sm-10 col-md-12 col-lg-12 col-xl-10">
-            <div class="user-form-logo">
-              <a th:href="@{/}"><img src="images/logo.png" alt="logo" /></a>
-            </div>
-            <div class="user-form-card">
-              <div class="user-form-title">
-                <h2>Đăng nhập!</h2>
-                <p>Sử Dụng Thông Tin Đăng Nhập Của Bạn Để Truy Cập</p>
-                <br>
-                <div class="alert alert-success" role="alert"
-					th:if="${message}">
-					<strong>Chúc mừng !</strong>  Bạn đã đăng ký và kích hoạt tài khoản thành công!
-				</div>
-				
+
+        $.ajax({
+          type: "GET",
+          url: "/addToCart",
+          data: {
+            productId: productId
+          },
+          success: function () { },
+          error: function () { }
+        });
+      });
+
+      function addToCart() {
+        $.ajax({
+          type: "GET",
+          url: "/api/carts",
+          dataType: 'json',
+          success: function (response) {
+            if (response.length > 0) {
+              $('.cart-list').text('')
+              response.forEach((item) => {
+                let cartItem = `<li class="cart-item"> <div class="cart-media"> <a href="/productDetail?id=${item.product.productId}"> <img src="/loadImage?imageName=${item.product.productImage}" alt="product"> </a> </div> <div class="cart-info-group"> <div class="cart-info"> <h6> <label>Tên sản phẩm :</label> <a href="/productDetail?id=${item.product.productId}" style="color: #119744">${item.product.productName}</a> </h6> <label>Đơn giá :</label> <p>${item.product.price} đ</p> </div> <div class="cart-action-group"> <div class="product-action"> <label>Số lượng :</label> <input class="action-input" title="Quantity Number" type="text" name="quantity" value="${item.quantity}"> </div> <h6>${item.totalPrice} đ</h6> </div> </div> </li>`;
+                $('.cart-list').append(cartItem)
+              })
+            }
+          },
+          error: function () { }
+        });
+      }
+
+      $('#cart-icon').click(function (event) {
+        $.ajax({
+          type: "GET",
+          url: "/api/total-cart-items",
+          dataType: 'json',
+          success: function (response) {
+            $('#total-cart-items').text('(' + response + ')');
+            if (Number(response) > 0) {
+              document.getElementById("some-item-1").style.setProperty('display', 'block', 'important');
+              document.getElementById("some-item-2").style.setProperty('display', 'block', 'important');
+              document.getElementById("nothing-item").style.setProperty('display', 'none', 'important');
+              addToCart();
+            } else {
+              document.getElementById("nothing-item").style.setProperty('display', 'block', 'important');
+              document.getElementById("some-item-1").style.setProperty('display', 'none', 'important');
+              document.getElementById("some-item-2").style.setProperty('display', 'none', 'important');
+            }
+          },
+          error: function () { }
+        });
+      });
+    });
+  </script>
+  <link rel="stylesheet" href="css/user-auth.css" />
+</head>
+
+<body>
+  <section class="user-form-part">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-6 col-sm-5 col-md-6 col-lg-6 col-xl-5">
+          <div class="user-form-logo">
+            <a th:href="@{/}"><img src="images/logo.png" alt="logo" /></a>
+          </div>
+          <div class="user-form-card">
+            <div class="user-form-title">
+              <h2>Đăng nhập!</h2>
+              <p>Sử Dụng Thông Tin Đăng Nhập Của Bạn Để Truy Cập</p>
+              <br>
+              <div class="alert alert-success" role="alert" th:if="${message}">
+                <strong>Chúc mừng !</strong> Bạn đã đăng ký và kích hoạt tài khoản thành công!
               </div>
-              <div class="user-form-group">
+
+            </div>
+            <!-- <div class="user-form-group">
                 <ul class="user-form-social">
                   <li>
                     <a href="javascript:void(0);" class="facebook">
@@ -142,90 +135,72 @@
                   </li>
 
                 </ul>
-                <div class="user-form-divider"><p>hoặc</p></div>
-                
-                <form th:action="@{/doLogin}" method="post" class="user-form">
-                
-               		 <!-- error message -->
-					<div th:if="${param.error}">
-						<div class="alert alert-danger"><span>Tài khoản hoặc mật khẩu không chính xác!</span></div>
-					</div>
-					<br>
-                  <div class="form-group">
-                    <input
-                      type="email"
-                      name="username"
-                      class="form-control"
-                      placeholder="Địa chỉ Email"
-                      autocomplete="off"
-                    />
-                  </div>
-                  <div class="form-group">
-                    <input
-                      type="password"
-                      name="password"
-                      class="form-control"
-                      id="myPass"
-                      placeholder="Mật khẩu"
-                    />
-                  </div>
-                  <div class="form-check mb-3">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      value=""
-                      id="check"
-                      onclick="hidePass()"
-                    />
-                    <label class="form-check-label" for="check" >Hiển thị mật khẩu</label>
-                  </div>
-                  <div class="form-button">
-                    <button type="submit">Đăng nhập</button>
-                    <p>
-                        Quên Mật Khẩu?
-                        <a th:href="@{/forgotPassword}">Tại đây</a>
-                    </p>
-                  </div>
-                </form>
-                
+                <div class="user-form-divider"><p>hoặc</p></div> -->
+
+            <form th:action="@{/doLogin}" method="post" class="user-form">
+
+              <!-- error message -->
+              <div th:if="${param.error}">
+                <div class="alert alert-danger"><span>Tài khoản hoặc mật khẩu không chính xác!</span></div>
               </div>
-            </div>
-            <div class="user-form-remind">
-              <p>
-                Không Có Bất Kỳ Tài Khoản?<a th:href="@{/register}">Đăng Ký Tại Đây</a>
-              </p>
-            </div>
-            <div class="user-form-footer">
-              <p>Greeny | &COPY; Developer by <a href="javascript:void(0);">Khanh.NguyenQuoc</a></p>
-            </div>
+              <br>
+              <div class="form-group">
+                <input type="email" name="username" class="form-control" placeholder="Địa chỉ Email"
+                  autocomplete="off" />
+              </div>
+              <div class="form-group">
+                <input type="password" name="password" class="form-control" id="myPass" placeholder="Mật khẩu" />
+              </div>
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" value="" id="check" onclick="hidePass()" />
+                <label class="form-check-label" for="check">Hiển thị mật khẩu</label>
+              </div>
+              <div class="form-button">
+                <button type="submit">Đăng nhập</button>
+                <p>
+                  Quên Mật Khẩu?
+                  <a th:href="@{/forgotPassword}">Tại đây</a>
+                </p>
+              </div>
+            </form>
+          </div>
+          <div class="user-form-remind">
+            <p>
+              Không Có Bất Kỳ Tài Khoản?<a th:href="@{/register}">Đăng Ký Tại Đây</a>
+            </p>
           </div>
         </div>
       </div>
-    </section>
-    
-    <script>
-		function hidePass() {
-			var x = document.getElementById("myPass");
-			if (x.type === "password") {
-				x.type = "text";
-			} else {
-				x.type = "password";
-			}
-		}
-	</script>
-    
-    <script src="vendor/bootstrap/jquery-1.12.4.min.js"></script>
-    <script src="vendor/bootstrap/popper.min.js"></script>
-    <script src="vendor/bootstrap/bootstrap.min.js"></script>
-    <script src="vendor/countdown/countdown.min.js"></script>
-    <script src="vendor/niceselect/nice-select.min.js"></script>
-    <script src="vendor/slickslider/slick.min.js"></script>
-    <script src="vendor/venobox/venobox.min.js"></script>
-    <script src="js/nice-select.js"></script>
-    <script src="js/countdown.js"></script>
-    <script src="js/accordion.js"></script>
-    <script src="js/venobox.js"></script>
-    <script src="js/slick.js"></script>
-    <script src="js/main.js"></script>
-  </body>
+      <div class="user-form-footer">
+        <p>Greeny | &COPY; Developer by <a href="javascript:void(0);">Khanh.NguyenQuoc</a></p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    function hidePass() {
+      var x = document.getElementById("myPass");
+      if (x.type === "password") {
+        x.type = "text";
+      } else {
+        x.type = "password";
+      }
+    }
+  </script>
+
+  <script src="vendor/bootstrap/jquery-1.12.4.min.js"></script>
+  <script src="vendor/bootstrap/popper.min.js"></script>
+  <script src="vendor/bootstrap/bootstrap.min.js"></script>
+  <script src="vendor/countdown/countdown.min.js"></script>
+  <script src="vendor/niceselect/nice-select.min.js"></script>
+  <script src="vendor/slickslider/slick.min.js"></script>
+  <script src="vendor/venobox/venobox.min.js"></script>
+  <script src="js/nice-select.js"></script>
+  <script src="js/countdown.js"></script>
+  <script src="js/accordion.js"></script>
+  <script src="js/venobox.js"></script>
+  <script src="js/slick.js"></script>
+  <script src="js/main.js"></script>
+</body>
+
 </html>

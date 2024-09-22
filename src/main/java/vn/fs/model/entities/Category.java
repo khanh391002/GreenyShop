@@ -35,4 +35,5 @@ public class Category implements Serializable{
 	@Size(max = 2048, message = "Category_Image's length should be less than 2048 characters")
 	@Column(name = "category_image", length = 2048)
 	private String categoryImage;
+
 }

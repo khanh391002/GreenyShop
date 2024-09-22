@@ -1,7 +1,6 @@
 package vn.fs.controller;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -20,13 +19,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import vn.fs.commom.CommomDataService;
-import vn.fs.model.entities.CartItem;
 import vn.fs.model.entities.Favorite;
 import vn.fs.model.entities.Product;
 import vn.fs.model.entities.User;
 import vn.fs.repository.FavoriteRepository;
 import vn.fs.repository.ProductRepository;
-import vn.fs.service.ShoppingCartService;
 
 @Controller
 public class ShopController extends CommomController {

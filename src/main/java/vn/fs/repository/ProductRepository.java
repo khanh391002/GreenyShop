@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import vn.fs.model.dto.CountProductOfCategoryDTO;
 import vn.fs.model.entities.Product;
 
 @Repository
@@ -52,5 +53,15 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	List<Product> findByInventoryIds(@Param("ids") List<Integer> listProductId);
 	
 	Optional<Product> findByProductCodeAndIsDeletedIsFalse(String productCode);
+	
+	@Query(value = "SELECT COUNT(product_id) FROM greeny_shop.products WHERE is_deleted = false", nativeQuery = true)
+	int countAllProductByIsDeletedIsFalse();
+	
+	@Query(value = "SELECT c.category_id as categoryId, COUNT(p.product_id) as totalProduct, SUM(p.quantity) as quantity "
+			+ "FROM greeny_shop.products p "
+			+ "LEFT JOIN categories c ON c.category_id = p.category_id "
+			+ "WHERE p.category_id IN (:categoryIds) AND p.is_deleted = false "
+			+ "GROUP BY c.category_id ", nativeQuery = true)
+	List<CountProductOfCategoryDTO> countProductByCategoryIdsByIsDeletedIsFalse(@Param("categoryIds") List<Long> categoryIds);
 
 }

@@ -38,6 +38,15 @@ public class ProductDetailController extends CommomController{
 
 		commomDataService.commonData(model, user);
 		listProductByCategory10(model, product.getCategory().getCategoryId());
+		
+		List<Comment> comments = commentService.getRecentComments(id);
+	    model.addAttribute("comments", comments);
+		
+		// Kiểm tra xem người dùng đã bình luận chưa
+	    if (user != null) {
+	        boolean hasCommented = comments.stream().anyMatch(comment -> comment.getUser().getUserId().equals(user.getUserId()));
+	        model.addAttribute("hasCommented", hasCommented);
+	    }
 
 		return "web/productDetail";
 	}
@@ -50,23 +59,27 @@ public class ProductDetailController extends CommomController{
 	
 	@GetMapping("/api/product-comments")
 	@ResponseBody
-	public List<Comment> getProductComments(@RequestParam Long productId, Model model) {
-		model.addAttribute("comments", commentService.getRecentComments(productId));
+	public List<Comment> getProductComments(@RequestParam Long productId, Model model, User user) {
+		model.addAttribute("comments", commentService.getRecentComments(productId));  
+		Product product = productRepository.findById(productId).orElse(null);
+		model.addAttribute("product", product);
+
+		commomDataService.commonData(model, user);
+		listProductByCategory10(model, product.getCategory().getCategoryId());
 		return commentService.getRecentComments(productId);
 	}
 	
 	@PostMapping("/productDetail/comment")
-    public String addReview(@RequestParam("productId") Long productId,
-                            @RequestParam("starNumber") Integer starNumber,
-                            @RequestParam("review") String reviewContent,
-                            User user,
-                            RedirectAttributes redirectAttributes) {
-        try {
-            commentService.addComment(productId, starNumber, reviewContent, user);
-            redirectAttributes.addFlashAttribute("success", "Review added successfully!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error adding review.");
-        }
-        return "web/productDetail";
-    }
+	public String addReview(@RequestParam("productId") Long productId, @RequestParam("starNumber") Integer starNumber,
+			@RequestParam("review") String reviewContent, User user, Model model,
+			RedirectAttributes redirectAttributes) {
+		try {
+			commentService.addComment(productId, starNumber, reviewContent, user, model);
+			redirectAttributes.addFlashAttribute("success", "Review added successfully!");
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Error adding review.");
+		}
+		commomDataService.commonData(model, user);
+		return "redirect:/productDetail?id=" + productId;
+	}
 }

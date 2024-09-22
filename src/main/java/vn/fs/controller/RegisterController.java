@@ -88,7 +88,7 @@ public class RegisterController {
 			dto.setPassword(bCryptPasswordEncoder.encode(password));
 			dto.setRegisterDate(new Date());
 			dto.setStatus(true);
-			dto.setAvatar("user.png");
+			dto.setAvatar("user_default.png");
 			dto.setEmail(user.getEmail());
 			dto.setName(user.getName());
 			Optional<Role> roleOpt = roleRepository.findByName("ROLE_USER");
