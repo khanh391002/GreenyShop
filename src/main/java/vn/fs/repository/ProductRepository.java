@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import vn.fs.model.dto.CountProductOfCategoryDTO;
+import vn.fs.model.dto.ProductDTO;
 import vn.fs.model.entities.Product;
 
 @Repository
@@ -63,5 +64,15 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 			+ "WHERE p.category_id IN (:categoryIds) AND p.is_deleted = false "
 			+ "GROUP BY c.category_id ", nativeQuery = true)
 	List<CountProductOfCategoryDTO> countProductByCategoryIdsByIsDeletedIsFalse(@Param("categoryIds") List<Long> categoryIds);
+	
+	@Query(value = "SELECT p.product_id AS productId, p.product_name AS productName, p.product_code AS productCode, p.description, "
+			+ "    p.entered_date AS enteredDate, p.price, p.product_image AS productImage, p.quantity, p.favorite, p.is_deleted AS isDeleted, "
+			+ "    p.status, p.discount, p.category_id AS categoryId, cate.category_name AS categoryName, COALESCE(AVG(c.rating), 5) AS evaluate "
+			+ "FROM products p "
+			+ "LEFT JOIN comments c ON p.product_id = c.product_id "
+			+ "LEFT JOIN categories cate ON p.category_id = cate.category_id "
+			+ "WHERE p.is_deleted = false "
+			+ "GROUP BY p.product_id ", nativeQuery = true)
+	List<ProductDTO> findAllProductAndAvgRating();
 
 }

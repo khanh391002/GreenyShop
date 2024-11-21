@@ -26,6 +26,6 @@ public interface ShoppingCartService {
 
 	void remove(Product product);
 	
-	String updateCart(Long id, int quantity, String coupon, HttpServletRequest request);
+	String updateCart(Long id, int quantity, HttpServletRequest request);
 
 }

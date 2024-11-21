@@ -1,23 +1,61 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta charset="UTF-8" />
 	<title>Greeny - Trang quản trị</title>
 	<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
-	<link rel="icon" href="/assets/img/icon.ico" type="image/x-icon"/>
-	
+	<link rel="icon" href="/assets/img/icon.ico" type="image/x-icon" />
+
 	<!-- Fonts and icons -->
 	<script src="/assets/js/plugin/webfont/webfont.min.js"></script>
 	<script>
 		WebFont.load({
-			google: {"families":["Lato:300,400,700,900"]},
-			custom: {"families":["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands", "simple-line-icons"], urls: ['/assets/css/fonts.min.css']},
-			active: function() {
+			google: { "families": ["Lato:300,400,700,900"] },
+			custom: { "families": ["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands", "simple-line-icons"], urls: ['/assets/css/fonts.min.css'] },
+			active: function () {
 				sessionStorage.fonts = true;
 			}
 		});
+
+		document.addEventListener('DOMContentLoaded', function () {
+			const viewButtons = document.querySelectorAll('.btn-link.btn-primary');
+
+			viewButtons.forEach(button => {
+				button.addEventListener('click', function () {
+					const userId = this.getAttribute('data-user-id');
+					const userName = this.getAttribute('data-user-name');
+					const userEmail = this.getAttribute('data-user-email');
+					const userAddress = this.getAttribute('data-user-address');
+					const userPhone = this.getAttribute('data-user-phone');
+					const registerDate = this.getAttribute('data-register-date');
+					const userStatus = this.getAttribute('data-user-status') === 'true' ? 'Đang hoạt động' : 'Ngừng hoạt động';
+
+					document.getElementById('userId').textContent = userId;
+					document.getElementById('userName').textContent = userName;
+					document.getElementById('userEmail').textContent = userEmail;
+					document.getElementById('userAddress').textContent = userAddress;
+					document.getElementById('userPhone').textContent = userPhone;
+					document.getElementById('registerDate').textContent = registerDate;
+					document.getElementById('userStatus').textContent = userStatus;
+
+					$('#userInfoModal').modal('show');
+				});
+			});
+		});
 	</script>
+	<style>
+		.text-success {
+			color: green !important;
+			/* Màu xanh lá */
+		}
+
+		.text-danger {
+			color: red !important;
+			/* Màu đỏ */
+		}
+	</style>
 
 	<!-- CSS Files -->
 	<link rel="stylesheet" href="/assets/css/bootstrap.min.css">
@@ -25,45 +63,73 @@
 	<!-- CSS Just for demo purpose, don't include it in your project -->
 	<link rel="stylesheet" href="/assets/css/demo.css">
 </head>
+
 <body>
 	<div class="wrapper">
-	<!-- Header -->
-	
-	<th:block th:replace="~{admin/fragments/header :: header}"></th:block>
-	
-	<!-- End Header -->
-	
-	<!-- Navbar -->
-	
-	<th:block th:replace="~{admin/fragments/navbar :: navbar}"></th:block>
-	
-	<!-- End Navbar -->
-		
-	<div class="main-panel">
-		<div class="content">
-			<div class="page-inner">
-				<div class="page-header">
-					<h4 class="page-title">Quản lý người dùng</h4>
-					<ul class="breadcrumbs">
-						<li class="nav-home">
-							<a href="javascript:void(0);">
-								<i class="flaticon-home"></i>
-							</a>
-						</li>
-						<li class="separator">
-							<i class="flaticon-right-arrow"></i>
-						</li>
-						<li class="nav-item">
-							<a href="javascript:void(0);">Trang chủ</a>
-						</li>
-						<li class="separator">
-							<i class="flaticon-right-arrow"></i>
-						</li>
-						<li class="nav-item">
-							<a href="javascript:void(0);">Quản lý người dùng</a>
-						</li>
-					</ul>
+		<!-- Header -->
+
+		<th:block th:replace="~{admin/fragments/header :: header}"></th:block>
+
+		<!-- End Header -->
+
+		<!-- Navbar -->
+
+		<th:block th:replace="~{admin/fragments/navbar :: navbar}"></th:block>
+
+		<!-- End Navbar -->
+
+		<!-- Modal View Detail User -->
+		<div class="modal fade" id="userInfoModal" tabindex="-1" role="dialog" aria-labelledby="userInfoModalLabel"
+			aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="userInfoModalLabel">Thông Tin Người Dùng</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<p><strong>ID: </strong> <span id="userId"></span></p>
+						<p><strong>Tên hiển thị: </strong> <span id="userName"></span></p>
+						<p><strong>Email: </strong> <span id="userEmail"></span></p>
+						<p><strong>Địa chỉ: </strong> <span id="userAddress"></span></p>
+						<p><strong>Số điện thoại: </strong> <span id="userPhone"></span></p>
+						<p><strong>Ngày đăng ký: </strong> <span id="registerDate"></span></p>
+						<p><strong>Trạng thái: </strong> <span id="userStatus"></span></p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+					</div>
 				</div>
+			</div>
+		</div>
+
+		<div class="main-panel">
+			<div class="content">
+				<div class="page-inner">
+					<div class="page-header">
+						<h4 class="page-title">Quản lý người dùng</h4>
+						<ul class="breadcrumbs">
+							<li class="nav-home">
+								<a href="javascript:void(0);">
+									<i class="flaticon-home"></i>
+								</a>
+							</li>
+							<li class="separator">
+								<i class="flaticon-right-arrow"></i>
+							</li>
+							<li class="nav-item">
+								<a href="javascript:void(0);">Trang chủ</a>
+							</li>
+							<li class="separator">
+								<i class="flaticon-right-arrow"></i>
+							</li>
+							<li class="nav-item">
+								<a href="javascript:void(0);">Quản lý người dùng</a>
+							</li>
+						</ul>
+					</div>
 					<div class="col-md-12">
 						<div class="card">
 							<div class="card-header">
@@ -75,7 +141,7 @@
 								<!-- Modal -->
 
 								<div class="table-responsive">
-									<table id="add-row" class="display table table-striped table-hover" >
+									<table id="add-row" class="display table table-striped table-hover">
 										<thead>
 											<tr>
 												<th>id</th>
@@ -84,7 +150,7 @@
 												<th>Email</th>
 												<th>Ngày đăng ký</th>
 												<th>Trạng thái</th>
-												<th>Hành động</th>
+												<th style="text-align: center;">Hành động</th>
 											</tr>
 										</thead>
 										<tfoot>
@@ -95,24 +161,43 @@
 												<th>Email</th>
 												<th>Ngày đăng ký</th>
 												<th>Trạng thái</th>
-												<th>Hành động</th>
+												<th style="text-align: center;">Hành động</th>
 											</tr>
 										</tfoot>
 										<tbody>
 											<tr th:each="item : ${users}">
 												<td>[[${item.userId}]]</td>
 												<td>
-													<img th:src="@{'/loadImage?imageName='+${item.avatar}}"  alt="..." class="avatar-img rounded-circle" style="width: 60px">
+													<img th:src="@{'/loadImage?imageName=' + ${item.avatar}}" alt="..."
+														class="avatar-img rounded-circle" style="width: 60px">
 												</td>
 												<td>[[${item.name}]]</td>
 												<td>[[${item.email}]]</td>
 												<td>[[${item.registerDate}]]</td>
-												<td>[[${item.status?'Đang hoạt động':'Ngừng hoạt động'}]]</td>
 												<td>
+													<span th:class="${item.status ? 'text-success' : 'text-danger'}">
+														[[${item.status ? 'Đang hoạt động' : 'Ngừng hoạt động'}]]
+													</span>
+												</td>
+												<td style="text-align: center;">
 													<div class="form-button-action">
-														<button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Xem">
+														<button type="button" data-toggle="tooltip" title=""
+															class="btn btn-link btn-primary btn-lg"
+															data-original-title="Xem" th:data-user-id="${item.userId}"
+															th:data-user-name="${item.name}"
+															th:data-user-email="${item.email}"
+															th:data-user-address="${item.address}"
+															th:data-user-phone="${item.phone}"
+															th:data-register-date="${item.registerDate}"
+															th:data-user-status="${item.status}">
 															<i class="fa fa-eye"></i>
 														</button>
+														<a th:href="@{/admin/users/edit/{id}(id=${item.userId})}"
+															type="button" data-toggle="tooltip" title=""
+															class="btn btn-link btn-primary btn-lg"
+															data-original-title="Chỉnh sửa">
+															<i class="fa fa-edit"></i>
+														</a>
 													</div>
 												</td>
 											</tr>
@@ -124,34 +209,35 @@
 					</div>
 				</div>
 			</div>
-		<footer class="footer">
-			<div class="container-fluid">
-				<nav class="pull-left">
-					<ul class="nav">
-						<li class="nav-item">
-							<a class="nav-link" href="javascript:void(0);">
-								GREENY-SHOP
-							</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="javascript:void(0);">
-								Help
-							</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="javascript:void(0);">
-								Licenses
-							</a>
-						</li>
-					</ul>
-				</nav>
-				<div class="copyright ml-auto">
-					2024, made with <i class="fa fa-heart heart text-danger"></i> by <a href="javascript:void(0);">GREENY-SHOP</a>
-				</div>				
-			</div>
-		</footer>
-	</div>
-		
+			<footer class="footer">
+				<div class="container-fluid">
+					<nav class="pull-left">
+						<ul class="nav">
+							<li class="nav-item">
+								<a class="nav-link" href="javascript:void(0);">
+									GREENY-SHOP
+								</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="javascript:void(0);">
+									Help
+								</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="javascript:void(0);">
+									Licenses
+								</a>
+							</li>
+						</ul>
+					</nav>
+					<div class="copyright ml-auto">
+						2024, made with <i class="fa fa-heart heart text-danger"></i> by <a
+							href="javascript:void(0);">GREENY-SHOP</a>
+					</div>
+				</div>
+			</footer>
+		</div>
+
 	</div>
 	<!--   Core JS Files   -->
 	<script src="/assets/js/core/jquery.3.2.1.min.js"></script>
@@ -160,7 +246,7 @@
 	<!-- jQuery UI -->
 	<script src="/assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
 	<script src="/assets/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
-	
+
 	<!-- jQuery Scrollbar -->
 	<script src="/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
 	<!-- Datatables -->
@@ -169,53 +255,80 @@
 	<script src="/assets/js/atlantis.min.js"></script>
 	<!-- Atlantis DEMO methods, don't include it in your project! -->
 	<script src="/assets/js/setting-demo2.js"></script>
-	<script >
-		$(document).ready(function() {
+	<script>
+		$(document).ready(function () {
 			$('#basic-datatables').DataTable({
 			});
 
-			$('#multi-filter-select').DataTable( {
+			$('#multi-filter-select').DataTable({
 				"pageLength": 5,
 				initComplete: function () {
-					this.api().columns().every( function () {
+					this.api().columns().every(function () {
 						var column = this;
 						var select = $('<select class="form-control"><option value=""></option></select>')
-						.appendTo( $(column.footer()).empty() )
-						.on( 'change', function () {
-							var val = $.fn.dataTable.util.escapeRegex(
-								$(this).val()
+							.appendTo($(column.footer()).empty())
+							.on('change', function () {
+								var val = $.fn.dataTable.util.escapeRegex(
+									$(this).val()
 								);
 
-							column
-							.search( val ? '^'+val+'$' : '', true, false )
-							.draw();
-						} );
+								column
+									.search(val ? '^' + val + '$' : '', true, false)
+									.draw();
+							});
 
-						column.data().unique().sort().each( function ( d, j ) {
-							select.append( '<option value="'+d+'">'+d+'</option>' )
-						} );
-					} );
+						column.data().unique().sort().each(function (d, j) {
+							select.append('<option value="' + d + '">' + d + '</option>')
+						});
+					});
 				}
 			});
 
 			// Add Row
-			/* $('#add-row').DataTable({
+			$('#add-row').DataTable({
 				"pageLength": 5,
 			});
 
 			var action = '<td> <div class="form-button-action"> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';
 
-			$('#addRowButton').click(function() {
+			$('#addRowButton').click(function () {
 				$('#add-row').dataTable().fnAddData([
 					$("#addName").val(),
 					$("#addPosition").val(),
 					$("#addOffice").val(),
 					action
-					]);
+				]);
 				$('#addRowModal').modal('hide');
 
-			}); */
+			});
+		});
+
+		document.addEventListener('DOMContentLoaded', function () {
+			const viewButtons = document.querySelectorAll('.btn-link.btn-primary');
+
+			viewButtons.forEach(button => {
+				button.addEventListener('click', function () {
+					const userId = this.getAttribute('data-user-id');
+					const userName = this.getAttribute('data-user-name');
+					const userEmail = this.getAttribute('data-user-email');
+					const userAddress = this.getAttribute('data-user-address');
+					const userPhone = this.getAttribute('data-user-phone');
+					const registerDate = this.getAttribute('data-register-date');
+					const userStatus = this.getAttribute('data-user-status') === 'true' ? 'Đang hoạt động' : 'Ngừng hoạt động';
+
+					document.getElementById('userId').textContent = userId;
+					document.getElementById('userName').textContent = userName;
+					document.getElementById('userEmail').textContent = userEmail;
+					document.getElementById('userAddress').textContent = userAddress;
+					document.getElementById('userPhone').textContent = userPhone;
+					document.getElementById('registerDate').textContent = registerDate;
+					document.getElementById('userStatus').textContent = userStatus;
+
+					$('#userInfoModal').modal('show');
+				});
+			});
 		});
 	</script>
 </body>
+
 </html>

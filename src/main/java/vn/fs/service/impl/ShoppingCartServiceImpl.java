@@ -3,10 +3,13 @@ package vn.fs.service.impl;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import vn.fs.model.entities.CartItem;
 import vn.fs.model.entities.Product;
@@ -14,10 +17,11 @@ import vn.fs.service.ShoppingCartService;
 
 @Service
 public class ShoppingCartServiceImpl implements ShoppingCartService {
-
+	
 	private Map<Long, CartItem> map = new HashMap<Long, CartItem>(); // <Long, CartItem>
 
 	@Override
+	@Transactional
 	public void add(CartItem item) {
 		CartItem existedItem = map.get(item.getId());
 
@@ -66,7 +70,16 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 	}
 
 	@Override
-	public String updateCart(Long id, int quantity, String coupon, HttpServletRequest request) {
-		return null;
+	@Transactional
+	public String updateCart(Long id, int quantity, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		if (Objects.nonNull(id)) {
+			CartItem item = map.get(id);
+			item.setQuantity(item.getQuantity() + quantity);
+			item.setTotalPrice(item.getTotalPrice() + item.getUnitPrice() * quantity);
+		}
+		session.setAttribute("cartItems", map);
+
+		return "redirect:/products";
 	}
 }

@@ -19,9 +19,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import vn.fs.commom.CommomDataService;
+import vn.fs.model.dto.ProductDTO;
 import vn.fs.model.entities.Favorite;
 import vn.fs.model.entities.Product;
 import vn.fs.model.entities.User;
+import vn.fs.model.response.ProductResponse;
 import vn.fs.repository.FavoriteRepository;
 import vn.fs.repository.ProductRepository;
 
@@ -44,7 +46,7 @@ public class ShopController extends CommomController {
 		int currentPage = page.orElse(1);
 		int pageSize = size.orElse(12);
 
-		Page<Product> productPage = findPaginated(PageRequest.of(currentPage - 1, pageSize));
+		Page<ProductResponse> productPage = findPaginated(PageRequest.of(currentPage - 1, pageSize));
 
 		int totalPages = productPage.getTotalPages();
 		if (totalPages > 0) {
@@ -58,26 +60,51 @@ public class ShopController extends CommomController {
 		return "web/shop";
 	}
 
-	public Page<Product> findPaginated(Pageable pageable) {
+	public Page<ProductResponse> findPaginated(Pageable pageable) {
 
-		List<Product> productPage = productRepository.findAll();
+//		List<Product> productPage = productRepository.findAll();
+		List<ProductDTO> productDTOs = productRepository.findAllProductAndAvgRating();
+		List<ProductResponse> productResponses = new ArrayList<>();
+		buildProductResponses(productDTOs, productResponses);
 
 		int pageSize = pageable.getPageSize();
 		int currentPage = pageable.getPageNumber();
 		int startItem = currentPage * pageSize;
-		List<Product> list;
+		List<ProductResponse> list;
 
-		if (productPage.size() < startItem) {
+		if (productResponses.size() < startItem) {
 			list = Collections.emptyList();
 		} else {
-			int toIndex = Math.min(startItem + pageSize, productPage.size());
-			list = productPage.subList(startItem, toIndex);
+			int toIndex = Math.min(startItem + pageSize, productResponses.size());
+			list = productResponses.subList(startItem, toIndex);
 		}
 
-		Page<Product> productPages = new PageImpl<Product>(list, PageRequest.of(currentPage, pageSize),
-				productPage.size());
+		Page<ProductResponse> productPages = new PageImpl<ProductResponse>(list, PageRequest.of(currentPage, pageSize),
+				productResponses.size());
 
 		return productPages;
+	}
+
+	private void buildProductResponses(List<ProductDTO> productDTOs, List<ProductResponse> productResponses) {
+		for(ProductDTO dto : productDTOs) {
+			ProductResponse productResponse = new ProductResponse();
+			productResponse.setProductId(dto.getProductId());
+			productResponse.setProductName(dto.getProductName());
+			productResponse.setProductCode(dto.getProductCode());
+			productResponse.setQuantity(dto.getQuantity());
+			productResponse.setPrice(dto.getPrice());
+			productResponse.setDiscount(dto.getDiscount());
+			productResponse.setProductImage(dto.getProductImage());
+			productResponse.setDescription(dto.getDescription());
+			productResponse.setEnteredDate(dto.getEnteredDate());
+			productResponse.setStatus(dto.getStatus());
+			productResponse.setFavorite(dto.getFavorite());
+			productResponse.setDeleted(dto.getIsDeleted());
+			productResponse.setCategoryId(dto.getCategoryId());
+			productResponse.setCategoryName(dto.getCategoryName());
+			productResponse.setEvaluate(dto.getEvaluate());
+			productResponses.add(productResponse);
+		}
 	}
 
 	// search product

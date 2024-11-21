@@ -1,167 +1,258 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-  <meta
-    http-equiv="content-type"
-    content="text/html;charset=utf-8"
-  />
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <meta name="author" content="mironcoder" />
-    <meta name="email" content="mironcoder@gmail.com" />
-    <meta name="profile" content="https://themeforest.net/user/mironcoder" />
-    <meta name="template" content="greeny" />
-    <meta name="title" content="greeny - Ecommerce Food Store HTML Template" />
-    <meta
-      name="keywords"
-      content="organic, food, shop, ecommerce, store, html, bootstrap, template, agriculture, vegetables, products, farm, grocery, natural, online"
-    />
-    <title>Nông sản xanh Greeny</title>
-    <link rel="icon" href="images/favicon.png" />
-    <link rel="stylesheet" href="fonts/flaticon/flaticon.css" />
-    <link rel="stylesheet" href="fonts/icofont/icofont.min.css" />
-    <link rel="stylesheet" href="fonts/fontawesome/fontawesome.min.css" />
-    <link rel="stylesheet" href="vendor/venobox/venobox.min.css" />
-    <link rel="stylesheet" href="vendor/slickslider/slick.min.css" />
-    <link rel="stylesheet" href="vendor/niceselect/nice-select.min.css" />
-    <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/main.css" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-   	<script>
-        $(document).ready(function() {
-            $('.product-add1').click(function(event) {
-                event.preventDefault();
-                
-                var productId = $(this).data('product-id');
-                
-               	$.ajax({
-                    type: "GET",
-                    url: "/api/carts",
-                    dataType: 'json',
-                    success: function(response) {
-                    	let isDuplicate = response.find((item) => item.product.productId === productId);
-                    	if (!isDuplicate) {
-                    		let totalCartItems = Number($('sup[id="totalCartItems"]').text());
-                    		if (!totalCartItems) {
-                    			totalCartItems = 0;
-                    		}
-                        	$('sup[id="totalCartItems"]').text(totalCartItems + 1);
-                    	}
-                    },
-                    error: function() {}
-                });
-                
-                $.ajax({
-                    type: "GET",
-                    url: "/addToCart",
-                    data: {
-                        productId: productId
-                    },
-                    success: function() {},
-                    error: function() {}
-                });
-            });
-            
-            function addToCart() {
-                $.ajax({
-                    type: "GET",
-                    url: "/api/carts",
-                    dataType: 'json',
-                    success: function(response) {
-                    	if (response.length > 0) {
-                    		$('.cart-list').text('')
-                    		response.forEach((item) => {
-                    			let cartItem = `<li class="cart-item"> <div class="cart-media"> <a href="/productDetail?id=${item.product.productId}"> <img src="/loadImage?imageName=${item.product.productImage}" alt="product"> </a> </div> <div class="cart-info-group"> <div class="cart-info"> <h6> <label>Tên sản phẩm :</label> <a href="/productDetail?id=${item.product.productId}" style="color: #119744">${item.product.productName}</a> </h6> <label>Đơn giá :</label> <p>${item.product.price} đ</p> </div> <div class="cart-action-group"> <div class="product-action"> <label>Số lượng :</label> <input class="action-input" title="Quantity Number" type="text" name="quantity" value="${item.quantity}"> </div> <h6>${item.totalPrice} đ</h6> </div> </div> </li>`;
-                    			$('.cart-list').append(cartItem)
-                    		})
-                    	}
-                    },
-                    error: function() {}
-                });
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="author" content="mironcoder" />
+  <meta name="email" content="mironcoder@gmail.com" />
+  <meta name="profile" content="https://themeforest.net/user/mironcoder" />
+  <meta name="template" content="greeny" />
+  <meta name="title" content="greeny - Ecommerce Food Store HTML Template" />
+  <meta name="keywords"
+    content="organic, food, shop, ecommerce, store, html, bootstrap, template, agriculture, vegetables, products, farm, grocery, natural, online" />
+  <title>Nông sản xanh Greeny</title>
+  <link rel="icon" href="images/favicon.png" />
+  <link rel="stylesheet" href="fonts/flaticon/flaticon.css" />
+  <link rel="stylesheet" href="fonts/icofont/icofont.min.css" />
+  <link rel="stylesheet" href="fonts/fontawesome/fontawesome.min.css" />
+  <link rel="stylesheet" href="vendor/venobox/venobox.min.css" />
+  <link rel="stylesheet" href="vendor/slickslider/slick.min.css" />
+  <link rel="stylesheet" href="vendor/niceselect/nice-select.min.css" />
+  <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    /* Đảm bảo các nút có kích thước và hiển thị đúng */
+    .btn-num-product-down,
+    .btn-num-product-up {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 16px;
+      height: 16px;
+      background-color: #f1f1f1;
+      border: 1px solid #ccc;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .btn-num-product-down i,
+    .btn-num-product-up i {
+      font-size: 8px;
+      color: #333;
+    }
+
+    .btn-num-product-down:hover,
+    .btn-num-product-up:hover {
+      background-color: #e2e2e2;
+    }
+  </style>
+  <script>
+    $(document).ready(function () {
+      $('.product-add1').click(function (event) {
+        event.preventDefault();
+
+        var productId = $(this).data('product-id');
+
+        $.ajax({
+          type: "GET",
+          url: "/api/carts",
+          dataType: 'json',
+          success: function (response) {
+            let isDuplicate = response.find((item) => item.product.productId === productId);
+            if (!isDuplicate) {
+              let totalCartItems = Number($('sup[id="totalCartItems"]').text());
+              if (!totalCartItems) {
+                totalCartItems = 0;
+              }
+              $('sup[id="totalCartItems"]').text(totalCartItems + 1);
             }
-            
-            $('#cart-icon').click(function(event) {
-            	$.ajax({
-                    type: "GET",
-                    url: "/api/total-cart-items",
-                    dataType: 'json',
-                    success: function(response) {
-                    	$('#total-cart-items').text('(' + response + ')');
-                    	if (Number(response) > 0) {
-                    		document.getElementById("some-item-1").style.setProperty('display', 'block', 'important');
-                    		document.getElementById("some-item-2").style.setProperty('display', 'block', 'important');
-                    		document.getElementById("nothing-item").style.setProperty('display', 'none', 'important');
-                    		addToCart();
-                    	} else {
-                    		document.getElementById("nothing-item").style.setProperty('display', 'block', 'important');
-                    		document.getElementById("some-item-1").style.setProperty('display', 'none', 'important');
-                    		document.getElementById("some-item-2").style.setProperty('display', 'none', 'important');
-                    	}
-                    },
-                    error: function() {}
-                });
-            });
+          },
+          error: function () { }
         });
-    </script>	
-  </head>
-  <body>
-  
+
+        $.ajax({
+          type: "GET",
+          url: "/addToCart",
+          data: {
+            productId: productId
+          },
+          success: function () { },
+          error: function () { }
+        });
+      });
+
+      function addToCart() {
+          $.ajax({
+              type: "GET",
+              url: "/api/carts",
+              dataType: 'json',
+              success: function (response) {
+                  if (response.length > 0) {
+                      $('.cart-list').text('');
+                      response.forEach((item) => {
+                          let cartItem = `<li class="cart-item">
+                                              <div class="cart-media">
+                                                  <a href="/productDetail?id=${item.product.productId}">
+                                                      <img src="/loadImage?imageName=${item.product.productImage}" alt="product">
+                                                  </a>
+                                              </div>
+                                              <div class="cart-info-group">
+                                                  <div class="cart-info">
+                                                      <h6>
+                                                          <label>Tên sản phẩm :</label>
+                                                          <a href="/productDetail?id=${item.product.productId}" style="color: #119744">${item.product.productName}</a>
+                                                      </h6>
+                                                      <label>Đơn giá :</label>
+                                                      <p>${item.product.price} đ</p>
+                                                  </div>
+                                                  <div class="cart-action-group">
+                                                      <div class="product-action">
+                                                          <label>Số lượng :</label>
+                                                          <button class="btn-num-product-down" data-id="${item.id}" data-quantity="-1">
+                                                              <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+                                                                  <i class="fa fa-minus"></i>
+                                                              </div>
+                                                          </button>
+                                                          <input class="action-input" title="Quantity Number" type="text" name="quantity" value="${item.quantity}" style="width: 25px; height: 25px;">
+                                                          <button class="btn-num-product-up" data-id="${item.id}" data-quantity="1">
+                                                              <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+                                                                  <i class="fa fa-plus"></i>
+                                                              </div>
+                                                          </button>
+                                                      </div>
+                                                      <h6>${item.totalPrice} đ</h6>
+                                                  </div>
+                                              </div>
+                                          </li>`;
+                          $('.cart-list').append(cartItem);
+                      });
+
+                      // Gán sự kiện click cho các nút thay đổi số lượng
+                      // Lưu ý chỉ gán sự kiện một lần cho các button
+                      $('.btn-num-product-down').off('click').on('click', function() {
+                          const itemId = $(this).data('id');         // Lấy id từ data-id
+                          const newQuantity = $(this).data('quantity');  // Lấy quantity từ data-quantity
+                          console.log('itemId:', itemId, 'newQuantity:', newQuantity);  // Kiểm tra lại giá trị
+                          updateCart(itemId, newQuantity);          // Gọi hàm updateCart
+                      });
+
+                      $('.btn-num-product-up').off('click').on('click', function() {
+                          const itemId = $(this).data('id');         // Lấy id từ data-id
+                          const newQuantity = $(this).data('quantity');  // Lấy quantity từ data-quantity
+                          console.log('itemId:', itemId, 'newQuantity:', newQuantity);  // Kiểm tra lại giá trị
+                          updateCart(itemId, newQuantity);          // Gọi hàm updateCart
+                      });
+                  }
+              },
+              error: function () {
+                  alert("Cập nhật giỏ hàng thất bại!");
+              }
+          });
+      }
+
+      function updateCart(itemId, quantity) {
+        console.log('Update cart with:', itemId, newQuantity);  // In ra để kiểm tra
+        $.ajax({
+          type: "GET",
+          url: "/update-cart",  // Đảm bảo đường dẫn là chính xác
+          data: {               // Truyền tham số qua query string
+            id: itemId,         // Tham số 'id'
+            quantity: quantity  // Tham số 'quantity'
+          },
+          success: function(response) {
+            console.log("Cart updated successfully:", response);
+            addToCart();  // Reload giỏ hàng sau khi cập nhật thành công
+          },
+          error: function(xhr, status, error) {
+            console.error('Cập nhật giỏ hàng thất bại:', status, error);
+            alert("Cập nhật giỏ hàng thất bại!");
+          }
+        });
+      }
+
+      $('#cart-icon').click(function (event) {
+        $.ajax({
+          type: "GET",
+          url: "/api/total-cart-items",
+          dataType: 'json',
+          success: function (response) {
+            $('#total-cart-items').text('(' + response + ')');
+            if (Number(response) > 0) {
+              document.getElementById("some-item-1").style.setProperty('display', 'block', 'important');
+              document.getElementById("some-item-2").style.setProperty('display', 'block', 'important');
+              document.getElementById("nothing-item").style.setProperty('display', 'none', 'important');
+              addToCart();
+            } else {
+              document.getElementById("nothing-item").style.setProperty('display', 'block', 'important');
+              document.getElementById("some-item-1").style.setProperty('display', 'none', 'important');
+              document.getElementById("some-item-2").style.setProperty('display', 'none', 'important');
+            }
+          },
+          error: function () { }
+        });
+      });
+    });
+  </script>
+</head>
+
+<body>
+
   <!--************************************
 				Header Start
 		*************************************-->
-		<header th:replace="~{/web/fragments/header :: header}"></header>
-		<!--************************************
+  <header th:replace="~{/web/fragments/header :: header}"></header>
+  <!--************************************
 				Header End
 		*************************************-->
 
-    <section
-      class="inner-section single-banner"
-      style="background: url(images/single-banner.jpg) no-repeat center">
-      <div class="container">
-        <h2>Sản phẩm</h2>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a th:href="@{/}">Trang chủ</a>
-            </li>
-        </ol>
-      </div>
-    </section>
-    <section class="inner-section shop-part">
-      <div class="container">
-        <div class="row content-reverse">
-          <div class="col-lg-3">
-            <div class="shop-widget-promo">
-              <a href="#"><img src="images/promo/shop/01.jpg" alt="promo" /></a>
-            </div>
-            <div class="shop-widget">
-              <h6 class="shop-widget-title">Theo thể loại</h6>
-              
-                <ul class="shop-widget-list shop-widget-scroll">
-                  <li th:each="item : ${coutnProductByCategory}">
-	                    <div class="shop-widget-content">
-	                    	<a href="javascript:void(0);" th:href="@{/productByCategory(id=${item[0]})}">
-	                      		<label for="cate1" style="color: #119744">[[${item[1]}]]</label>
-	                       </a>
-	                    </div>
-	                    <span class="shop-widget-number">([[${item[2]}]])</span>
-                  </li>
-                </ul>
-              
-            </div>
+  <section class="inner-section single-banner" style="background: url(images/single-banner.jpg) no-repeat center">
+    <div class="container">
+      <h2>Sản phẩm</h2>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a th:href="@{/}">Trang chủ</a>
+        </li>
+      </ol>
+    </div>
+  </section>
+  <section class="inner-section shop-part">
+    <div class="container">
+      <div class="row content-reverse">
+        <div class="col-lg-3">
+          <div class="shop-widget-promo">
+            <a href="#"><img src="images/promo/shop/01.jpg" alt="promo" /></a>
           </div>
-          <div class="col-lg-9">
-            <div class="row">
-              <div class="col-lg-12">
-                <div class="top-filter">
-                  <div class="filter-show">
-                    <label class="filter-label"></label>
+          <div class="shop-widget">
+            <h6 class="shop-widget-title">Theo thể loại</h6>
+
+            <ul class="shop-widget-list shop-widget-scroll">
+              <li th:each="item : ${coutnProductByCategory}">
+                <div class="shop-widget-content">
+                  <a href="javascript:void(0);" th:href="@{/productByCategory(id=${item[0]})}">
+                    <label for="cate1" style="color: #119744">[[${item[1]}]]</label>
+                  </a>
+                </div>
+                <span class="shop-widget-number">([[${item[2]}]])</span>
+              </li>
+            </ul>
+
+          </div>
+        </div>
+        <div class="col-lg-9">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="top-filter">
+                <div class="filter-show">
+                  <label class="filter-label"></label>
                 </div>
               </div>
             </div>
-            
+
             <!-- item product -->
             <div class="row row-cols-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4">
               <div class="col" th:each="item : ${products}">
@@ -170,212 +261,266 @@
                     <!-- <div class="product-label">
                       <label class="label-text sale">- [[${item.discount + '%'}]]</label>
                     </div> -->
-                   
-                   		<th:block th:if="${user.email != null}">
-		                    <button class="product-wish" th:if="${item.favorite} == false">
-		                      <i class="fas fa-heart"></i>
-		                    </button>
-		                    
-		                    <button class="product-wish" th:if="${item.favorite} == true" style="color: #fd7e14">
-		                      <i class="fas fa-heart"></i>
-		                    </button>
-	                    
-	                    </th:block>
-	                    
-	                    <th:block th:if="${user.email == null}">
-		                    <button class="product-wish" >
-		                      <i class="fas fa-heart"></i>
-		                    </button>
-	                    </th:block>
-                   
-                        <a class="product-image" href="javascript:void(0);">
-                            <img th:src="@{'/loadImage?imageName='+${item.productImage}}" alt="product"/>
-                        </a>
-                    <div class="product-widget">
-                    
-                    	<th:block href="/login" th:if="${user.email == null}">
-	                      <a
-	                        title="Hãy đăng nhập"
-	                        th:href="@{/login}"
-	                        class="fas fa-heart">
-	                        </a>
-                        </th:block>
-                        
-                        <th:block th:if="${user.email != null}">
-	                      <a th:if="${item.favorite} == false"
-	                        title="Yêu thích"
-	                        th:href="@{/doFavorite(id=${item.productId})}"
-	                        class="fas fa-heart">
-	                        </a>
-                        
-	                      <a th:if="${item.favorite} == true"
-	                        title="Xóa Yêu thích"
-	                        th:href="@{/doUnFavorite(id=${item.productId})}"
-	                        style="background-color: #fd7e14"
-	                        class="fas fa-heart">
-	                        </a>
-                        </th:block>
-                        
-                        <a
-                        title="Video về sản phẩm"
-                        href="https://youtu.be/9xzcVxSBbG8"
-                        class="venobox fas fa-play"
-                        data-autoplay="true"
-                        data-vbtype="video">
-                        </a>
-                        <a
-                        title="Chi tiết sản phẩm"
-                        th:href="@{/productDetail(id=${item.productId})}"
-                        class="fas fa-eye">
+
+                    <th:block th:if="${user.email != null}">
+                      <button class="product-wish" th:if="${item.favorite} == false">
+                        <i class="fas fa-heart"></i>
+                      </button>
+
+                      <button class="product-wish" th:if="${item.favorite} == true" style="color: #fd7e14">
+                        <i class="fas fa-heart"></i>
+                      </button>
+
+                    </th:block>
+
+                    <th:block th:if="${user.email == null}">
+                      <button class="product-wish">
+                        <i class="fas fa-heart"></i>
+                      </button>
+                    </th:block>
+
+                    <a class="product-image" href="javascript:void(0);">
+                      <img th:src="@{'/loadImage?imageName='+${item.productImage}}" alt="product" />
                     </a>
+                    <div class="product-widget">
+
+                      <th:block href="/login" th:if="${user.email == null}">
+                        <a title="Hãy đăng nhập" th:href="@{/login}" class="fas fa-heart">
+                        </a>
+                      </th:block>
+
+                      <th:block th:if="${user.email != null}">
+                        <a th:if="${item.favorite} == false" title="Yêu thích"
+                          th:href="@{/doFavorite(id=${item.productId})}" class="fas fa-heart">
+                        </a>
+
+                        <a th:if="${item.favorite} == true" title="Xóa Yêu thích"
+                          th:href="@{/doUnFavorite(id=${item.productId})}" style="background-color: #fd7e14"
+                          class="fas fa-heart">
+                        </a>
+                      </th:block>
+
+                      <a title="Video về sản phẩm" href="https://youtu.be/9xzcVxSBbG8" class="venobox fas fa-play"
+                        data-autoplay="true" data-vbtype="video">
+                      </a>
+                      <a title="Chi tiết sản phẩm" th:href="@{/productDetail(id=${item.productId})}" class="fas fa-eye">
+                      </a>
                     </div>
                   </div>
                   <div class="product-content">
-                    <div class="product-rating">
+                    <div class="product-rating" th:attr="data-evaluate=${item.evaluate}">
+                      <!-- <i class="active icofont-star"></i>
                       <i class="active icofont-star"></i>
                       <i class="active icofont-star"></i>
                       <i class="active icofont-star"></i>
-                      <i class="active icofont-star"></i>
-                      <i class="icofont-star"></i>
+                      <i class="icofont-star"></i> -->
                     </div>
                     <h6 class="product-name">
                       <a href="javascript:void(0);">[[${item.productName}]]</a>
                     </h6>
                     <h6 class="product-price">
                       <!-- <del>[[${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]</del> -->
-                      <span>[[${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+' đ']]<small>/kg</small></span>
+                      <span>[[${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 0, 'DEFAULT')}+'
+                        đ']]<small>/kg</small></span>
                     </h6>
-                    
+
                     <a class="product-add1" th:attr="data-product-id=${item.productId}" href="#" title="Thêm Giỏ Hàng">
                       <i class="fas fa-shopping-basket"></i>
                       <span>Thêm Giỏ Hàng</span>
                     </a>
-                    
+
                   </div>
                 </div>
               </div>
             </div>
 
-	            <div class="row">
-	              <div class="col-lg-12">
-	                <div class="bottom-paginate">
-	                  <p class="page-info"></p>
-	                  <ul class="pagination">
-	                    
-	                    <li th:each="pageNumber : ${pageNumbers}" th:if="${products.totalPages > 0}" class="page-item">
-	                      <a class="page-link"
-	                      		th:href="@{/products(size=${products.size}, page=${pageNumber})}"
-	                      		th:class="${pageNumber==products.number + 1} ? 'page-link active'">
-	                      		[[${pageNumber}]]
-	                      </a>
-	                    </li>
-	                    
-	                  </ul>
-	                </div>
-	              </div>
-	            </div>
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="bottom-paginate">
+                  <p class="page-info"></p>
+                  <ul class="pagination">
+
+                    <li th:each="pageNumber : ${pageNumbers}" th:if="${products.totalPages > 0}" class="page-item">
+                      <a class="page-link" th:href="@{/products(size=${products.size}, page=${pageNumber})}"
+                        th:class="${pageNumber==products.number + 1} ? 'page-link active'">
+                        [[${pageNumber}]]
+                      </a>
+                    </li>
+
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
+
+
+  </section>
+
+  <section class="news-part" style="background: url(images/newsletter.jpg) no-repeat center">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-5 col-lg-6 col-xl-7">
+          <div class="news-text">
+            <h2>Nhận Chiết Khấu 20% Cho Người Đăng Ký</h2>
+            <p>Nhận Chiết Khấu 20% Cho Người Đăng Ký</p>
+          </div>
+        </div>
+        <div class="col-md-7 col-lg-6 col-xl-5">
+          <form class="news-form">
+            <input type="text" placeholder="Nhập Địa Chỉ Email Của Bạn" />
+            <button>
+              <span><i class="icofont-ui-email"></i>Gửi</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="intro-part">
+    <div class="container">
+      <div class="row intro-content">
+        <div class="col-sm-6 col-lg-3">
+          <div class="intro-wrap">
+            <div class="intro-icon">
+              <i class="fas fa-truck"></i>
+            </div>
+            <div class="intro-content">
+              <h5>Giao Hàng Tận Nhà Miễn Phí</h5>
+              <p>Lorem ipsum dolor sit amet adipisicing elit nobis.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <div class="intro-wrap">
+            <div class="intro-icon">
+              <i class="fas fa-sync-alt"></i>
+            </div>
+            <div class="intro-content">
+              <h5>Chính Sách Hoàn Trả</h5>
+              <p>Lorem ipsum dolor sit amet adipisicing elit nobis.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <div class="intro-wrap">
+            <div class="intro-icon">
+              <i class="fas fa-headset"></i>
+            </div>
+            <div class="intro-content">
+              <h5>Hệ Thống Hỗ Trợ</h5>
+              <p>Lorem ipsum dolor sit amet adipisicing elit nobis.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <div class="intro-wrap">
+            <div class="intro-icon">
+              <i class="fas fa-lock"></i>
+            </div>
+            <div class="intro-content">
+              <h5>Cách Thanh Toán An Toàn</h5>
+              <p>Lorem ipsum dolor sit amet adipisicing elit nobis.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Hàm renderRating để tạo sao động từ giá trị evaluate
+    function renderRating(evaluate, ratingContainer) {
+      // Xóa nội dung cũ
+      ratingContainer.innerHTML = '';
+  
+      // Tính số sao vàng (full stars)
+      var fullStars = Math.floor(evaluate);  // Sao vàng đầy (phần nguyên)
       
-       
-    </section>
-    
-    <section class="news-part"
-		style="background: url(images/newsletter.jpg) no-repeat center">
-		<div class="container">
-			<div class="row align-items-center">
-				<div class="col-md-5 col-lg-6 col-xl-7">
-					<div class="news-text">
-						<h2>Nhận Chiết Khấu 20% Cho Người Đăng Ký</h2>
-						<p>Nhận Chiết Khấu 20% Cho Người Đăng Ký</p>
-					</div>
-				</div>
-				<div class="col-md-7 col-lg-6 col-xl-5">
-					<form class="news-form">
-						<input type="text" placeholder="Nhập Địa Chỉ Email Của Bạn" />
-						<button>
-							<span><i class="icofont-ui-email"></i>Gửi</span>
-						</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</section>
-	<section class="intro-part">
-		<div class="container">
-			<div class="row intro-content">
-				<div class="col-sm-6 col-lg-3">
-					<div class="intro-wrap">
-						<div class="intro-icon">
-							<i class="fas fa-truck"></i>
-						</div>
-						<div class="intro-content">
-							<h5>Giao Hàng Tận Nhà Miễn Phí</h5>
-							<p>Lorem ipsum dolor sit amet adipisicing elit nobis.</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-sm-6 col-lg-3">
-					<div class="intro-wrap">
-						<div class="intro-icon">
-							<i class="fas fa-sync-alt"></i>
-						</div>
-						<div class="intro-content">
-							<h5>Chính Sách Hoàn Trả</h5>
-							<p>Lorem ipsum dolor sit amet adipisicing elit nobis.</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-sm-6 col-lg-3">
-					<div class="intro-wrap">
-						<div class="intro-icon">
-							<i class="fas fa-headset"></i>
-						</div>
-						<div class="intro-content">
-							<h5>Hệ Thống Hỗ Trợ</h5>
-							<p>Lorem ipsum dolor sit amet adipisicing elit nobis.</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-sm-6 col-lg-3">
-					<div class="intro-wrap">
-						<div class="intro-icon">
-							<i class="fas fa-lock"></i>
-						</div>
-						<div class="intro-content">
-							<h5>Cách Thanh Toán An Toàn</h5>
-							<p>Lorem ipsum dolor sit amet adipisicing elit nobis.</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-    
-    
-    <!--************************************
+      // Kiểm tra phần thập phân, nếu từ .1 đến .9 thì có sao nửa vàng
+      var halfStar = (evaluate % 1) >= 0.1 && (evaluate % 1) < 1 ? 1 : 0;
+      
+      // Tính số sao xám (5 sao - số sao vàng - sao nửa vàng)
+      var emptyStars = 5 - fullStars - halfStar;
+  
+      // Thêm sao vàng
+      for (var i = 0; i < fullStars; i++) {
+        var star = document.createElement('i');
+        star.classList.add('active', 'icofont-star');
+        ratingContainer.appendChild(star);
+      }
+  
+      // Thêm sao nửa vàng nếu có
+      if (halfStar === 1) {
+        var halfStarElement = document.createElement('i');
+        halfStarElement.classList.add('half-star');
+        ratingContainer.appendChild(halfStarElement);
+      }
+  
+      // Thêm sao xám
+      for (var j = 0; j < emptyStars; j++) {
+        var emptyStar = document.createElement('i');
+        emptyStar.classList.add('icofont-star');
+        ratingContainer.appendChild(emptyStar);
+      }
+    }
+  
+    // Thêm sự kiện để render số sao khi trang được tải
+    document.addEventListener('DOMContentLoaded', function () {
+      var ratingElements = document.querySelectorAll('.product-rating');
+      ratingElements.forEach(function (ratingElement) {
+        var evaluate = parseFloat(ratingElement.getAttribute('data-evaluate'));  // Lấy giá trị từ data attribute
+        renderRating(evaluate, ratingElement);  // Gọi hàm renderRating với evaluate và container
+      });
+    });
+  </script>
+  
+  <style>
+    /* CSS cho sao nửa vàng nửa xám */
+    .half-star {
+      background: linear-gradient(to right, #ffab10 50%, gray 50%);
+      width: 16px;  /* Đảm bảo chiều rộng của sao nửa vàng */
+      height: 16px; /* Đảm bảo chiều cao của sao */
+      display: inline-block;
+      /* clip-path: inset(0 50% 0 0);  Cắt sao nửa bên trái để tạo ra phần sao nửa vàng */
+      position: relative;
+    }
+  
+    /* Đảm bảo sao đầy là vàng */
+    .active.icofont-star {
+      color: #ffab10;
+    }
+  
+    /* Sao xám */
+    .icofont-star {
+      color: gray;
+    }
+  </style>
+
+  <!--************************************
 				Footer Start
 		*************************************-->
-		<footer th:replace="~{/web/fragments/footer :: footer}"></footer>
-				
-		<!--************************************
+  <footer th:replace="~{/web/fragments/footer :: footer}"></footer>
+
+  <!--************************************
 				Footer End
 		*************************************-->
-		
-    <script src="vendor/bootstrap/jquery-1.12.4.min.js"></script>
-    <script src="vendor/bootstrap/popper.min.js"></script>
-    <script src="vendor/bootstrap/bootstrap.min.js"></script>
-    <script src="vendor/countdown/countdown.min.js"></script>
-    <script src="vendor/niceselect/nice-select.min.js"></script>
-    <script src="vendor/slickslider/slick.min.js"></script>
-    <script src="vendor/venobox/venobox.min.js"></script>
-    <script src="js/nice-select.js"></script>
-    <script src="js/countdown.js"></script>
-    <script src="js/accordion.js"></script>
-    <script src="js/venobox.js"></script>
-    <script src="js/slick.js"></script>
-    <script src="js/main.js"></script>
-  </body>
+
+  <script src="vendor/bootstrap/jquery-1.12.4.min.js"></script>
+  <script src="vendor/bootstrap/popper.min.js"></script>
+  <script src="vendor/bootstrap/bootstrap.min.js"></script>
+  <script src="vendor/countdown/countdown.min.js"></script>
+  <script src="vendor/niceselect/nice-select.min.js"></script>
+  <script src="vendor/slickslider/slick.min.js"></script>
+  <script src="vendor/venobox/venobox.min.js"></script>
+  <script src="js/nice-select.js"></script>
+  <script src="js/countdown.js"></script>
+  <script src="js/accordion.js"></script>
+  <script src="js/venobox.js"></script>
+  <script src="js/slick.js"></script>
+  <script src="js/main.js"></script>
+</body>
+
 </html>

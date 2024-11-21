@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.ui.Model;
 
 import vn.fs.model.entities.User;
+import vn.fs.model.response.UserResponse;
 
 public interface UserService {
 	User findByEmail(String email);
@@ -15,9 +16,11 @@ public interface UserService {
     
     List<User> getAllUserIsAdmin();
 
-    void update(Long id, User user, Model model);
+    void update(Long id, UserResponse user, Model model);
 
     void delete(Long id);
 
-    User getById(Long idd);
+    User getById(Long id);
+    
+    UserResponse getByIdUserResponse(Long id);
 }

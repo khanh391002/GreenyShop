@@ -120,6 +120,12 @@ public class CartController extends CommomController {
 		
 		return "redirect:/products";
 	}
+	
+	@GetMapping("/update-cart")
+    public String updateToCart(@RequestParam(name = "id") Long id, @RequestParam(name = "quantity") int quantity, HttpServletRequest request, Model model) {
+		model.addAttribute("totalCartItems", shoppingCartService.getCount());
+        return shoppingCartService.updateCart(id, quantity, request);
+    }
 
 	// delete cartItem
 	@SuppressWarnings("unlikely-arg-type")

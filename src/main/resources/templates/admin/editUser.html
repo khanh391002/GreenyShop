@@ -18,18 +18,29 @@
 			}
 		});
 
-		function previewProductImage(event) {
+		function previewImage(event) {
 			const file = event.target.files[0];
 			const reader = new FileReader();
 			reader.onload = function(e) {
-				const productImagePreview = document.getElementById('productImagePreview');
-				productImagePreview.src = e.target.result; // Cập nhật hình ảnh hiển thị
+				const avatarPreview = document.getElementById('avatarPreview');
+				avatarPreview.src = e.target.result; // Cập nhật hình ảnh hiển thị
 			};
 			if (file) {
 				reader.readAsDataURL(file); // Đọc file và hiển thị
 			}
-    	}
+		}
+
 	</script>
+	<style>
+		.form-check-label {
+			margin-left: 5px !important; 
+		}
+		.form-check {
+        padding: 5px 25px 5px 20px !important; /* Padding với lề bên trái lớn hơn */
+        display: ruby !important;
+        align-items: center; /* Đảm bảo radio button và nhãn căn chỉnh theo chiều dọc */
+    	}
+	</style>
 
 	<!-- CSS Files -->
 	<link rel="stylesheet" href="/assets/css/bootstrap.min.css">
@@ -55,7 +66,7 @@
 		<div class="content">
 			<div class="page-inner">
 				<div class="page-header">
-					<h4 class="page-title">Quản lý sản phẩm</h4>
+					<h4 class="page-title">Quản lý người dùng</h4>
 					<ul class="breadcrumbs">
 						<li class="nav-home">
 							<a href="#">
@@ -72,7 +83,7 @@
 							<i class="flaticon-right-arrow"></i>
 						</li>
 						<li class="nav-item">
-							<a href="/admin/products">Quản lý sản phẩm</a>
+							<a href="/admin/users">Quản lý người dùng</a>
 						</li>
 					</ul>
 				</div>
@@ -80,75 +91,85 @@
 						<div class="card">
 							<div class="card-header">
 								<div class="d-flex align-items-center">
-									<h4 class="card-title" style="text-decoration: underline;">Sửa sản phẩm</h4>
+									<h4 class="card-title" style="text-decoration: underline;">Chỉnh sửa người dùng</h4>
 								</div>
 							</div>
 							<div class="card-header">
 								<section class="row">
 						           <div class="col-9 offset-1">
-						             <form th:action="@{/admin/editProduct/{id}(id=${product.productId})}" th:object="${productRequest}" method="post" enctype="multipart/form-data">
+						             <form th:action="@{/admin/users/edit/{id}(id=${userDto.id})}" th:object="${userDto}" method="post" enctype="multipart/form-data">
 										<div class="row">
 											<div class="col-md-12 pr-0">
 												<div class="form-group form-group-default">
-													<label>Mã sản phẩm</label>
-													<input th:field="${productRequest.productCode}" id="productCode" type="text" class="form-control" placeholder="Mã sản phẩm" readonly>
+													<label>Avatar</label>
+													<img id="avatarPreview" th:src="@{'/images/' + ${userDto.avatar}}" alt="Avatar" width="150">
+													<input type="hidden" th:field="${userDto.avatar}" class="form-control" readonly>
+													<input type="file" id="avatar" name="file" class="form-control" accept="image/*" onchange="previewImage(event)">
+												</div>
+											</div>
+											
+											<div class="col-md-6 pr-0">
+												<div class="form-group form-group-default">
+													<label>Tên Người Dùng</label>
+													<input th:field="${userDto.name}" id="name" type="text" class="form-control" placeholder="Tên người dùng" readonly>
+												</div>
+											</div>
+											
+											<div class="col-md-6 pr-0">
+												<div class="form-group form-group-default">
+													<label>Email</label>
+													<input th:field="${userDto.email}" id="email" type="text" class="form-control" placeholder="Email người dùng">
+												</div>
+											</div>
+										
+											<div class="col-md-6 pr-0">
+												<div class="form-group form-group-default">
+													<label>Địa chỉ</label>
+													<input th:field="${userDto.address}" id="address" type="text" class="form-control" placeholder="Địa chỉ">
+												</div>
+											</div>
+										
+											<div class="col-md-6 pr-0">
+												<div class="form-group form-group-default">
+													<label>Số điện thoại</label>
+													<input th:field="${userDto.phone}" id="phone" type="text" class="form-control" placeholder="Số điện thoại">
 												</div>
 											</div>
 											<div class="col-md-6 pr-0">
 												<div class="form-group form-group-default">
-													<label>Tên sản phẩm</label>
-													<input th:field="${productRequest.productName}" id="productName" type="text" class="form-control" placeholder="Tên sản phẩm...">
-												</div>
-											</div>
-											<div class="col-md-6 pr-0">
-												<div class="form-group form-group-default">
-													<label>Thể loại</label>
-													<select class="form-control"
-														 name="category" th:field="${productRequest.category.categoryId}" id="categoryId">
-														<option th:each="item : ${categoryList}"
-		  													th:value="${item.categoryId}" th:text="${item.categoryName}"
-															th:selected="${item.categoryId == productRequest.category.categoryId}">
-															Category Name
+													<label>Vai trò</label>
+													<select class="form-control" name="roles" th:field="${userDto.roles}" multiple id="roleId" required>
+														
+														<option th:each="role : ${roles}"
+																th:value="${role.id}" 
+																th:text="${role.name}"
+																th:selected="${userDto.roles.contains(role.id)}"> <!-- Kiểm tra xem role có trong danh sách của userDto không -->
 														</option>
 													</select>
+													<div class="invalid-feedback" th:if="${#lists.isEmpty(userDto.roles)}">
+														Phải chọn ít nhất 1 vai trò
+													</div>
 												</div>
 											</div>
 											<div class="col-md-6 pr-0">
 												<div class="form-group form-group-default">
-													<label>Đơn giá</label>
-													<input th:field="${productRequest.price}" id="price" min = 0 type="number" class="form-control" placeholder="Đơn giá">
-												</div>
-											</div>
-											<div class="col-md-6 pr-0">
-												<div class="form-group form-group-default">
-													<label>Số lượng</label>
-													<input th:field="${productRequest.quantity}" id="quantity" min = 0 type="number" class="form-control" placeholder="Số lượng">
-												</div>
-											</div>
-											<div class="col-md-6 pr-0" style="display: none;">
-												<div class="form-group form-group-default">
-													<label>Ngày thêm</label>
-													<input th:field="${productRequest.enteredDate}" id="enteredDate" type="date" class="form-control" placeholder="ngày thêm">
-												</div>
-											</div>
-											<div class="col-md-12 pr-0">
-												<div class="form-group form-group-default">
-													<label>Images</label>
-													<img id="productImagePreview" th:src="@{'/images/product/' + ${product.productImage}}" alt="Product Image" width="150">
-													<input type="hidden" th:field="${productRequest.productImage}" class="form-control" readonly>
-													<input type="file" id="productImage" name="file" class="form-control" accept="image/*" onchange="previewProductImage(event)">
-												</div>
-											</div>
-											<div class="col-md-12 pr-0">
-												<div class="form-group form-group-default">
-													<label>Mô tả sản phẩm</label>
-													<textarea th:field="${productRequest.description}" id="description" class="form-control" placeholder="Mô tả sản phẩm"></textarea>
+													<label>Trạng thái</label>
+													<div class="d-flex align-items-center">
+														<div class="form-check me-3">
+															<input type="radio" id="active" name="status" value="true" th:checked="${userDto.status}" class="form-check-input"/>
+															<label for="active" class="form-check-label">Đang hoạt động</label>
+														</div>
+														<div class="form-check">
+															<input type="radio" id="inactive" name="status" value="false" th:checked="${!userDto.status}" class="form-check-input"/>
+															<label for="inactive" class="form-check-label">Ngừng hoạt động</label>
+														</div>
+													</div>
 												</div>
 											</div>
 										</div>
 										<div class="modal-footer no-bd">
 											<button type="submit" id="" class="btn btn-primary">Cập nhật</button>
-											<button type="submit" class="btn btn-danger" data-dismiss="modal" formaction="/admin/products" formmethod="get">Hủy</button>
+											<button type="submit" class="btn btn-danger" data-dismiss="modal" formaction="/admin/users" formmethod="get">Hủy</button>
 										</div>
 									</form>
 						           </div>

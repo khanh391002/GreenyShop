@@ -280,9 +280,11 @@
 									<div th:if="${user.email != null}" id="add-comment">
 										<h5>Thêm bình luận</h5>
 										<form id="comment-form" th:action="@{/productDetail/comment}" method="post">
-											<input id="product-id" name="productId" th:value="${product.productId}" type="hidden" />
-											<input class="dis-none" id="starNumber" name="starNumber" required type="hidden">
-											
+											<input id="product-id" name="productId" th:value="${product.productId}"
+												type="hidden" />
+											<input class="dis-none" id="starNumber" name="starNumber" required
+												type="hidden">
+
 											<div class="rating-group">
 												<label>Đánh giá</label>
 												<div class="wrap-rating fs-18 cl11 pointer">
@@ -293,12 +295,13 @@
 													<i class="item-rating pointer far fa-star" data-value="5"></i>
 												</div>
 											</div>
-											
+
 											<div class="form-group">
 												<label for="review">Bình luận</label>
-												<textarea class="form-control" id="review" name="review" required></textarea>
+												<textarea class="form-control" id="review" name="review"
+													required></textarea>
 											</div>
-											
+
 											<div th:if="${!hasCommented}">
 												<button type="submit" class="btn btn-primary">Gửi bình luận</button>
 											</div>
