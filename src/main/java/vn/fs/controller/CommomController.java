@@ -9,10 +9,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import vn.fs.model.entities.Category;
+import vn.fs.model.entities.CategoryBlog;
 import vn.fs.model.entities.User;
 import vn.fs.repository.CategoryRepository;
 import vn.fs.repository.ProductRepository;
 import vn.fs.repository.UserRepository;
+import vn.fs.service.CategoryBlogService;
 
 @Controller
 public class CommomController {
@@ -25,6 +27,9 @@ public class CommomController {
 
 	@Autowired
 	ProductRepository productRepository;
+	
+	@Autowired
+	CategoryBlogService categoryBlogService;
 
 	@ModelAttribute(value = "user")
 	public User user(Model model, Principal principal, User user) {
@@ -44,6 +49,14 @@ public class CommomController {
 		model.addAttribute("categoryList", categoryList);
 
 		return categoryList;
+	}
+	
+	@ModelAttribute("categoryBlogList")
+	public List<CategoryBlog> showCategoryBlog(Model model) {
+		List<CategoryBlog> categoryBlogList = categoryBlogService.getAll();
+		model.addAttribute("categoryBlogList", categoryBlogList);
+
+		return categoryBlogList;
 	}
 
 }

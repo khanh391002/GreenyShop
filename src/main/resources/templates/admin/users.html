@@ -30,6 +30,8 @@
 					const userAddress = this.getAttribute('data-user-address');
 					const userPhone = this.getAttribute('data-user-phone');
 					const registerDate = this.getAttribute('data-register-date');
+					const userDistrict = this.getAttribute('data-user-district');
+					const userCity = this.getAttribute('data-user-city');
 					const userStatus = this.getAttribute('data-user-status') === 'true' ? 'Đang hoạt động' : 'Ngừng hoạt động';
 
 					document.getElementById('userId').textContent = userId;
@@ -39,6 +41,8 @@
 					document.getElementById('userPhone').textContent = userPhone;
 					document.getElementById('registerDate').textContent = registerDate;
 					document.getElementById('userStatus').textContent = userStatus;
+					document.getElementById('userDistrict').textContent = userDistrict;
+					document.getElementById('userCity').textContent = userCity;
 
 					$('#userInfoModal').modal('show');
 				});
@@ -93,8 +97,10 @@
 						<p><strong>ID: </strong> <span id="userId"></span></p>
 						<p><strong>Tên hiển thị: </strong> <span id="userName"></span></p>
 						<p><strong>Email: </strong> <span id="userEmail"></span></p>
-						<p><strong>Địa chỉ: </strong> <span id="userAddress"></span></p>
 						<p><strong>Số điện thoại: </strong> <span id="userPhone"></span></p>
+						<p><strong>Địa chỉ: </strong> <span id="userAddress"></span></p>
+						<p><strong>Quận huyện: </strong> <span id="userDistrict"></span></p>
+						<p><strong>Thành phố: </strong> <span id="userCity"></span></p>
 						<p><strong>Ngày đăng ký: </strong> <span id="registerDate"></span></p>
 						<p><strong>Trạng thái: </strong> <span id="userStatus"></span></p>
 					</div>
@@ -189,6 +195,8 @@
 															th:data-user-address="${item.address}"
 															th:data-user-phone="${item.phone}"
 															th:data-register-date="${item.registerDate}"
+															th:data-user-district="${item.district}"
+															th:data-user-city="${item.city}"
 															th:data-user-status="${item.status}">
 															<i class="fa fa-eye"></i>
 														</button>
@@ -314,6 +322,8 @@
 					const userAddress = this.getAttribute('data-user-address');
 					const userPhone = this.getAttribute('data-user-phone');
 					const registerDate = this.getAttribute('data-register-date');
+					const userDistrict = this.getAttribute('data-user-district');
+					const userCity = this.getAttribute('data-user-city');
 					const userStatus = this.getAttribute('data-user-status') === 'true' ? 'Đang hoạt động' : 'Ngừng hoạt động';
 
 					document.getElementById('userId').textContent = userId;
@@ -322,6 +332,8 @@
 					document.getElementById('userAddress').textContent = userAddress;
 					document.getElementById('userPhone').textContent = userPhone;
 					document.getElementById('registerDate').textContent = registerDate;
+					document.getElementById('userDistrict').textContent = userDistrict;
+					document.getElementById('userCity').textContent = userCity;
 					document.getElementById('userStatus').textContent = userStatus;
 
 					$('#userInfoModal').modal('show');

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.util.ObjectUtils;
 
 import lombok.RequiredArgsConstructor;
 import vn.fs.model.entities.Role;
@@ -61,15 +62,32 @@ public class UserServiceImpl implements UserService {
 		Optional<User> userOpt = userRepository.findById(id);
 		if (userOpt.isPresent()) {
 			User user = userOpt.get();
-			user.setName(userRequest.getName());
-			user.setEmail(userRequest.getEmail());
-			user.setAvatar(userRequest.getAvatar());
-			user.setPhone(userRequest.getPhone());
-			user.setAddress(userRequest.getAddress());
-			user.setStatus(userRequest.getStatus());
-			user.setRoles(userRequest.getRoles());
+			user.setName(userRequest.getName() == null ? user.getName() : userRequest.getName());
+			user.setEmail(userRequest.getEmail() == null ? user.getEmail() : userRequest.getEmail());
+			user.setAvatar(userRequest.getAvatar() == null ? user.getAvatar() : userRequest.getAvatar());
+			user.setPhone(userRequest.getPhone() == null ? user.getPhone() : userRequest.getPhone());
+			user.setAddress(userRequest.getAddress() == null ? user.getAddress() : userRequest.getAddress());
+			user.setStatus(userRequest.getStatus() == null ? user.getStatus() : userRequest.getStatus());
+			user.setDistrict(userRequest.getDistrict() == null ? user.getDistrict() : userRequest.getDistrict());
+			user.setCity(userRequest.getCity() == null ? user.getCity() : userRequest.getCity());
+			user.setRoles(userRequest.getRoles().isEmpty() ? user.getRoles() : userRequest.getRoles());
 			userRepository.save(user);
 			model.addAttribute("userDto", user);
+		}
+	}
+	
+	@Override
+	public void updateProfile(String email, UserResponse userRequest, Model model) {
+		User user = findByEmail(email);
+		if (!ObjectUtils.isEmpty(user)) {
+			user.setName(userRequest.getName() == null ? user.getName() : userRequest.getName());
+			user.setAvatar(userRequest.getAvatar() == null ? user.getAvatar() : userRequest.getAvatar());
+			user.setPhone(userRequest.getPhone() == null ? user.getPhone() : userRequest.getPhone());
+			user.setAddress(userRequest.getAddress() == null ? user.getAddress() : userRequest.getAddress());
+			user.setDistrict(userRequest.getDistrict() == null ? user.getDistrict() : userRequest.getDistrict());
+			user.setCity(userRequest.getCity() == null ? user.getCity() : userRequest.getCity());
+			userRepository.save(user);
+			model.addAttribute("user", user);
 		}
 	}
 
@@ -107,6 +125,8 @@ public class UserServiceImpl implements UserService {
 		userResponse.setRegisterDate(user.getRegisterDate());
 		userResponse.setPhone(user.getPhone());
 		userResponse.setAddress(user.getAddress());
+		userResponse.setCity(user.getCity());
+		userResponse.setDistrict(user.getDistrict());
 		userResponse.setStatus(user.getStatus());
 //		List<String> roles = user.getRoles().stream().map(Role::getName).distinct().collect(Collectors.toList());
 		userResponse.setRoles(new ArrayList<Role>(user.getRoles()));

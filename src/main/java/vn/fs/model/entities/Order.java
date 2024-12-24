@@ -51,6 +51,9 @@ public class Order implements Serializable {
 	
 	@Size(max = 2045, message = "Note's length should be less than 2045 characters")
 	private String note;
+	
+	@Size(max = 225, message = "Coupon's length should be less than 255 characters")
+	private String coupon;
 
 	@OneToMany(mappedBy = "order")
 	private List<OrderDetail> orderDetails;

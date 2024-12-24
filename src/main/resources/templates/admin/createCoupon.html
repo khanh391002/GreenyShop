@@ -89,14 +89,14 @@
 											<div class="col-md-6 pr-0">
 												<div class="form-group form-group-default">
 													<label>Mã Phiếu Giảm Giá</label>
-													<input th:field="${coupon.code}" id="code" type="text" class="form-control" placeholder="Mã phiếu giảm giá">
+													<input th:field="${coupon.code}" id="code" type="text" class="form-control" placeholder="Mã phiếu giảm giá" required="required">
 													<p th::if="${#fields.hasErrors('code')}" th:errorclass="text-danger" th:errors="${coupon.code}"></p>
 												</div>
 											</div>
 											<div class="col-md-6 pr-0">
 												<div class="form-group form-group-default">
 													<label>Giảm giá</label>
-													<input th:field="${coupon.discount}" id="discount" min = 0 type="number" class="form-control" placeholder="Giảm giá">
+													<input th:field="${coupon.discount}" id="discount" min = 0 type="number" class="form-control" placeholder="Giảm giá" required="required">
 													<p th::if="${#fields.hasErrors('discount')}" th:errorclass="text-danger" th:errors="${coupon.discount}"></p>
 												</div>
 											</div>
@@ -105,7 +105,7 @@
 											<div class="col-md-6 pr-0">
 												<div class="form-group form-group-default">
 													<label>Ngày hết hạn</label>
-													<input th:field="${coupon.expirationDate}" id="expirationDate" type="date" class="form-control" placeholder="Ngày hết hạn">
+													<input th:field="${coupon.expirationDate}" id="expirationDate" type="date" class="form-control" placeholder="Ngày hết hạn" required="required">
 												</div>
 											</div>
 											<div class="col-md-6 pr-0">

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import vn.fs.model.dto.CategoryStatisticDTO;
@@ -29,18 +30,14 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
 	public List<Object[]> repo();
 
 	// Statistics by product sold
-	@Query(value = "SELECT p.product_image as productImage, p.product_name as productName, SUM(o.quantity) as totalSold, "
-			+ "SUM(o.quantity * o.price) as totalRevenue, p.quantity as inventory, "
-			+ "COUNT(DISTINCT f.user_id) as favorite, COALESCE(AVG(c.rating), 0) as rating, " + "ROUND(CASE "
-			+ "	WHEN COUNT(o.order_id) = 0 THEN 0  "
-			+ "	ELSE (COALESCE(SUM(CASE WHEN ord.status = 3 THEN o.quantity END), 0) * 100.0 / COUNT(o.order_id)) "
-			+ "END) AS cancelRate, " + "ROUND(CASE " + "	WHEN COUNT(o.order_id) = 0 THEN 0 "
-			+ "	ELSE (COALESCE(SUM(CASE WHEN ord.status = 2 THEN o.quantity END), 0) * 100.0 / COUNT(o.order_id)) "
-			+ "END) AS successRate " + "FROM order_details o " + "INNER JOIN products p ON o.product_id = p.product_id "
-			+ "INNER JOIN orders ord ON o.order_id = ord.order_id "
-			+ "LEFT JOIN comments c ON p.product_id = c.product_id "
-			+ "LEFT JOIN favorites f ON p.product_id = f.product_id "
-			+ "GROUP BY p.product_name, productImage, inventory " + "order by totalSold desc ", nativeQuery = true)
+	@Query(value = "SELECT od.product_id AS productId, SUM(od.price * od.quantity) AS totalRevenue, SUM(od.quantity) AS totalSold, "
+			+ "    SUM(CASE WHEN o.status = 2 THEN od.quantity ELSE 0 END) * 100 / NULLIF(SUM(od.quantity), 0) AS successRate, "
+			+ "    SUM(CASE WHEN o.status = 3 THEN od.quantity ELSE 0 END) * 100 / NULLIF(SUM(od.quantity), 0) AS cancelRate "
+			+ "FROM greeny_shop.order_details od "
+			+ "JOIN greeny_shop.orders o ON od.order_id = o.order_id "
+			+ "WHERE o.status IN (2, 3) "
+			+ "GROUP BY od.product_id "
+			+ "ORDER BY totalSold desc; ", nativeQuery = true)
 	public List<ProductStatisticDTO> getProductStatistic();
 
 	// Statistics by category sold
@@ -216,5 +213,13 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
 			+ ") mp ON c.user_id = mp.user_id AND mp.rn = 1 " + "WHERE r.name = 'ROLE_USER' "
 			+ "GROUP BY c.user_id, mp.product_name, mp.total_quantity ", nativeQuery = true)
 	public List<CustomerStatisticDTO> getCustomerStatistic();
+
+	@Query(value = "SELECT EXISTS ( "
+			+ "    SELECT 1 "
+			+ "    FROM greeny_shop.order_details od "
+			+ "    LEFT JOIN greeny_shop.orders o ON od.order_id = o.order_id "
+			+ "    WHERE od.product_id = :productId AND o.status = 2 AND o.user_id = :userId "
+			+ ") AS result ", nativeQuery = true)
+	public Integer getCustomerIsOrderSuccessByProductId(@Param("productId") Long productId, @Param("userId") Long userId);
 
 }

@@ -69,11 +69,6 @@
 							<div class="card-header">
 								<div class="d-flex align-items-center">
 									<h4 class="card-title" style="text-decoration: underline;">Quản lý sản phẩm</h4>
-									<!-- <button class="btn btn-primary btn-round ml-auto" data-toggle="modal" data-target="#addRowModal">
-										<i class="fa fa-plus"></i>
-										Thêm mới
-									</button> -->
-
 									<a class="btn btn-primary btn-round ml-auto" th:href="@{/admin/addProduct}">
 										<i class="fa fa-plus"></i>
 										Thêm mới
@@ -81,95 +76,6 @@
 								</div>
 							</div>
 							<div class="card-body">
-								<!-- Modal -->
-								<div class="modal fade" id="addRowModal" tabindex="-1" role="dialog" aria-hidden="true">
-									<div class="modal-dialog" role="document">
-										<div class="modal-content">
-											<div class="modal-header no-bd">
-												<h5 class="modal-title">
-													<span class="fw-mediumbold" style="text-decoration: underline; color: black;">
-													thêm mới sản phẩm</span> 
-												</h5>
-												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-													<span aria-hidden="true">&times;</span>
-												</button>
-											</div>
-											<div class="modal-body">
-												<form th:action="@{/admin/addProduct}" th:object="${product}" method="post" enctype="multipart/form-data">
-													<div class="row">
-														<div class="col-sm-12">
-															<div class="form-group form-group-default">
-																<label>Tên sản phẩm</label>
-																<input th:field="*{productName}" id="productName" type="text" class="form-control" placeholder="Tên sản phẩm...">
-															</div>
-														</div>
-														<div class="col-sm-6 pr-0">
-															<div class="form-group form-group-default">
-																<label>Mã sản phẩm</label>
-																<input th:field="*{productCode}" id="productCode" type="text" class="form-control" placeholder="Mã sản phẩm">
-															</div>
-														</div>
-														<div class="col-md-6 pr-0">
-															<div class="form-group form-group-default">
-																<label>Thể loại</label>
-																<select class="form-control"
-																	 name="category" th:field="*{category.categoryId}" id="categoryId">
-																	<option th:each="item : ${categoryList}"
-					  													th:value="${item.categoryId}" th:text="${item.categoryName}"
-																		th:selected="${item.categoryId == product.category.categoryId}">
-																		Category Name
-																	</option>
-																</select>
-															</div>
-														</div>
-														
-														<div class="col-md-6 pr-0">
-															<div class="form-group form-group-default">
-																<label>Đơn giá</label>
-																<input th:field="*{price}" id="price" min = 0 type="number" class="form-control" placeholder="Đơn giá">
-															</div>
-														</div>
-														<div class="col-md-6 pr-0">
-															<div class="form-group form-group-default">
-																<label>Số lượng</label>
-																<input th:field="*{quantity}" id="quantity" min = 0 type="number" class="form-control" placeholder="Số lượng">
-															</div>
-														</div>
-														<!-- <div class="col-md-6 pr-0">
-															<div class="form-group form-group-default">
-																<label>Giảm giá</label>
-																<input th:field="*{discount}" id="discount" min = 0 type="number" class="form-control" placeholder="Giảm giá">
-															</div>
-														</div> -->
-														<div class="col-md-6 pr-0">
-															<div class="form-group form-group-default">
-																<label>Ngày thêm</label>
-																<input th:field="*{enteredDate}" id="enteredDate" type="date" class="form-control" placeholder="Ngày thêm">
-															</div>
-														</div>
-														<div class="col-sm-12">
-															<div class="form-group form-group-default">
-																<label>Images</label>
-																<input type="file" id="productImage" name="file" class="form-control">
-															</div>
-														</div>
-														<div class="col-sm-12">
-															<div class="form-group form-group-default">
-																<label>Mô tả sản phẩm</label>
-																<textarea th:field="*{description}" id="description" class="form-control" placeholder="Mô tả sản phẩm"></textarea>
-															</div>
-														</div>
-													</div>
-													<div class="modal-footer no-bd">
-														<button type="submit" id="" class="btn btn-primary">Thêm mới</button>
-														<button type="button" class="btn btn-danger" data-dismiss="modal">Hủy</button>
-													</div>
-												</form>
-											</div>
-										</div>
-									</div>
-								</div>
-
 								<div class="table-responsive">
 									<table id="add-row" class="display table table-striped table-hover" >
 										<thead>

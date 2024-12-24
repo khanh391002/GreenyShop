@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<meta
-    http-equiv="content-type"
-    content="text/html;charset=utf-8"
-  />
+  <meta http-equiv="content-type" content="text/html;charset=utf-8" />
   <head>
     <meta charset="UTF-8" />
     <meta
@@ -30,81 +27,97 @@
     <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="css/main.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-   	<script>
-        $(document).ready(function() {
-            $('.product-add1').click(function(event) {
-                event.preventDefault();
-                
-                var productId = $(this).data('product-id');
-                
-               	$.ajax({
-                    type: "GET",
-                    url: "/api/carts",
-                    dataType: 'json',
-                    success: function(response) {
-                    	let isDuplicate = response.find((item) => item.product.productId === productId);
-                    	if (!isDuplicate) {
-                    		let totalCartItems = Number($('sup[id="totalCartItems"]').text());
-                    		if (!totalCartItems) {
-                    			totalCartItems = 0;
-                    		}
-                        	$('sup[id="totalCartItems"]').text(totalCartItems + 1);
-                    	}
-                    },
-                    error: function() {}
-                });
-                
-                $.ajax({
-                    type: "GET",
-                    url: "/addToCart",
-                    data: {
-                        productId: productId
-                    },
-                    success: function() {},
-                    error: function() {}
-                });
-            });
-            
-            function addToCart() {
-                $.ajax({
-                    type: "GET",
-                    url: "/api/carts",
-                    dataType: 'json',
-                    success: function(response) {
-                    	if (response.length > 0) {
-                    		$('.cart-list').text('')
-                    		response.forEach((item) => {
-                    			let cartItem = `<li class="cart-item"> <div class="cart-media"> <a href="/productDetail?id=${item.product.productId}"> <img src="/loadImage?imageName=${item.product.productImage}" alt="product"> </a> </div> <div class="cart-info-group"> <div class="cart-info"> <h6> <label>Tên sản phẩm :</label> <a href="/productDetail?id=${item.product.productId}" style="color: #119744">${item.product.productName}</a> </h6> <label>Đơn giá :</label> <p>${item.product.price} đ</p> </div> <div class="cart-action-group"> <div class="product-action"> <label>Số lượng :</label> <input class="action-input" title="Quantity Number" type="text" name="quantity" value="${item.quantity}"> </div> <h6>${item.totalPrice} đ</h6> </div> </div> </li>`;
-                    			$('.cart-list').append(cartItem)
-                    		})
-                    	}
-                    },
-                    error: function() {}
-                });
-            }
-            
-            $('#cart-icon').click(function(event) {
-            	$.ajax({
-                    type: "GET",
-                    url: "/api/total-cart-items",
-                    dataType: 'json',
-                    success: function(response) {
-                    	$('#total-cart-items').text('(' + response + ')');
-                    	if (Number(response) > 0) {
-                    		document.getElementById("some-item-1").style.setProperty('display', 'block', 'important');
-                    		document.getElementById("some-item-2").style.setProperty('display', 'block', 'important');
-                    		document.getElementById("nothing-item").style.setProperty('display', 'none', 'important');
-                    		addToCart();
-                    	} else {
-                    		document.getElementById("nothing-item").style.setProperty('display', 'block', 'important');
-                    		document.getElementById("some-item-1").style.setProperty('display', 'none', 'important');
-                    		document.getElementById("some-item-2").style.setProperty('display', 'none', 'important');
-                    	}
-                    },
-                    error: function() {}
-                });
-            });
+    <script>
+      $(document).ready(function () {
+        $(".product-add1").click(function (event) {
+          event.preventDefault();
+
+          var productId = $(this).data("product-id");
+
+          $.ajax({
+            type: "GET",
+            url: "/api/carts",
+            dataType: "json",
+            success: function (response) {
+              let isDuplicate = response.find(
+                (item) => item.product.productId === productId
+              );
+              if (!isDuplicate) {
+                let totalCartItems = Number(
+                  $('sup[id="totalCartItems"]').text()
+                );
+                if (!totalCartItems) {
+                  totalCartItems = 0;
+                }
+                $('sup[id="totalCartItems"]').text(totalCartItems + 1);
+              }
+            },
+            error: function () {},
+          });
+
+          $.ajax({
+            type: "GET",
+            url: "/addToCart",
+            data: {
+              productId: productId,
+            },
+            success: function () {},
+            error: function () {},
+          });
         });
+
+        function addToCart() {
+          $.ajax({
+            type: "GET",
+            url: "/api/carts",
+            dataType: "json",
+            success: function (response) {
+              if (response.length > 0) {
+                $(".cart-list").text("");
+                response.forEach((item) => {
+                  let cartItem = `<li class="cart-item"> <div class="cart-media"> <a href="/productDetail?id=${item.product.productId}"> <img src="/loadImage?imageName=${item.product.productImage}" alt="product"> </a> </div> <div class="cart-info-group"> <div class="cart-info"> <h6> <label>Tên sản phẩm :</label> <a href="/productDetail?id=${item.product.productId}" style="color: #119744">${item.product.productName}</a> </h6> <label>Đơn giá :</label> <p>${item.product.price} đ</p> </div> <div class="cart-action-group"> <div class="product-action"> <label>Số lượng :</label> <input class="action-input" title="Quantity Number" type="text" name="quantity" value="${item.quantity}"> </div> <h6>${item.totalPrice} đ</h6> </div> </div> </li>`;
+                  $(".cart-list").append(cartItem);
+                });
+              }
+            },
+            error: function () {},
+          });
+        }
+
+        $("#cart-icon").click(function (event) {
+          $.ajax({
+            type: "GET",
+            url: "/api/total-cart-items",
+            dataType: "json",
+            success: function (response) {
+              $("#total-cart-items").text("(" + response + ")");
+              if (Number(response) > 0) {
+                document
+                  .getElementById("some-item-1")
+                  .style.setProperty("display", "block", "important");
+                document
+                  .getElementById("some-item-2")
+                  .style.setProperty("display", "block", "important");
+                document
+                  .getElementById("nothing-item")
+                  .style.setProperty("display", "none", "important");
+                addToCart();
+              } else {
+                document
+                  .getElementById("nothing-item")
+                  .style.setProperty("display", "block", "important");
+                document
+                  .getElementById("some-item-1")
+                  .style.setProperty("display", "none", "important");
+                document
+                  .getElementById("some-item-2")
+                  .style.setProperty("display", "none", "important");
+              }
+            },
+            error: function () {},
+          });
+        });
+      });
     </script>
     <link rel="stylesheet" href="css/user-auth.css" />
   </head>
@@ -120,35 +133,52 @@
               <div class="user-form-title">
                 <h2>Xác nhận đăng ký!</h2>
                 <p>Thiết Lập Một Tài Khoản Mới</p>
-                <br>
-                <div class="alert alert-success"
-              		role="alert"
-              		th:if="${message}"
-              		th:text="${message}">
-              	</div>
-              	
-				<div class="alert alert-danger"
-					role="alert"
-					th:if="${error}"
-					th:text="${error}">
-				</div>
+                <br />
+                <div
+                  class="alert alert-success"
+                  role="alert"
+                  th:if="${message}"
+                  th:text="${message}"
+                ></div>
+
+                <div
+                  class="alert alert-danger"
+                  role="alert"
+                  th:if="${error}"
+                  th:text="${error}"
+                ></div>
               </div>
               <div class="user-form-group">
-                
-                <form th:action="@{/confirmOtpRegister}" method="post" th:object="${user}" class="user-form" style="padding-left: 200px; padding-right: 200px;">
-                    <label for="otp" style="font-weight: 700;">Nhập mã OTP để kích hoạt tài khoản</label>
-                    <div class="form-group">
-                        <div class="input-group">
-                        <input type="text" hidden="hidden" th:field="*{email}" />
-						<input type="text" hidden="hidden" th:field="*{password}" />
-						<input type="text" hidden="hidden" th:field="*{name}" />
-						
-                        <input type="text" maxlength="6"
-                                placeholder="Mã xác thực OTP"
-                                name="otp" id="otp"
-                                class="form-control">
-                        </div>
+                <form
+                  th:action="@{/confirmOtpRegister}"
+                  method="post"
+                  th:object="${user}"
+                  class="user-form"
+                  style="padding-left: 200px; padding-right: 200px"
+                >
+                  <label for="otp" style="font-weight: 700"
+                    >Nhập mã OTP để kích hoạt tài khoản</label
+                  >
+                  <div class="form-group">
+                    <div class="input-group">
+                      <input type="text" hidden="hidden" th:field="*{email}" />
+                      <input
+                        type="text"
+                        hidden="hidden"
+                        th:field="*{password}"
+                      />
+                      <input type="text" hidden="hidden" th:field="*{name}" />
+
+                      <input
+                        type="text"
+                        maxlength="6"
+                        placeholder="Mã xác thực OTP"
+                        name="otp"
+                        id="otp"
+                        class="form-control"
+                      />
                     </div>
+                  </div>
                   <div class="form-button">
                     <button type="submit">Xác nhận</button>
                   </div>
@@ -156,10 +186,14 @@
               </div>
             </div>
             <div class="user-form-remind">
-              <p>Bạn đã có tài khoản?<a href="login.html">Đăng nhập tại đây</a></p>
+              <p>
+                Bạn đã có tài khoản?<a href="login.html">Đăng nhập tại đây</a>
+              </p>
             </div>
             <div class="user-form-footer">
-              <p>Greeny | &COPY; Developer by <a href="#">Khanh.NguyenQuoc</a></p>
+              <p>
+                Greeny | &COPY; Developer by <a href="#">Khanh.NguyenQuoc</a>
+              </p>
             </div>
           </div>
         </div>

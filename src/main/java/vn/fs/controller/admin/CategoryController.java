@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,8 +17,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import vn.fs.model.entities.Category;
+import vn.fs.model.entities.Product;
 import vn.fs.model.entities.User;
 import vn.fs.repository.CategoryRepository;
+import vn.fs.repository.ProductRepository;
 import vn.fs.repository.UserRepository;
 
 @Controller
@@ -26,6 +29,9 @@ public class CategoryController {
 
 	@Autowired
 	CategoryRepository categoryRepository;
+	
+	@Autowired
+	ProductRepository productRepository;
 
 	@Autowired
 	UserRepository userRepository;
@@ -89,9 +95,17 @@ public class CategoryController {
 	// delete category
 	@GetMapping("/delete/{id}")
 	public String delCategory(@PathVariable("id") Long id, Model model) {
+		List<Product> products = productRepository.findAllByCategoryCategoryId(id);
+		if(!CollectionUtils.isEmpty(products)) {
+			for(Product product : products) {
+				product.setCategory(null);
+				product.setDeleted(true);
+			}
+			productRepository.saveAll(products);
+		}
 		categoryRepository.deleteById(id);
 
-		model.addAttribute("message", "Delete successful!");
+		model.addAttribute("message", "Xoá thành công!");
 
 		return "redirect:/admin/categories";
 	}

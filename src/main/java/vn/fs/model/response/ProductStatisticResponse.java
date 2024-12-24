@@ -20,7 +20,7 @@ public class ProductStatisticResponse {
 	
 	double rating;
 	
-	int cancelRate;
+	long cancelRate;
 	
-	int successRate;
+	long successRate;
 }

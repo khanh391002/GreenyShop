@@ -58,6 +58,12 @@ public class User implements Serializable{
 	@Size(max = 25, message = "Phone's length should be less than 25 characters")
 	private String phone;
 	
+	@Size(max = 255, message = "District's length should be less than 255 characters")
+	private String district;
+	
+	@Size(max = 255, message = "City's length should be less than 255 characters")
+	private String city;
+	
 	private Boolean status;
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

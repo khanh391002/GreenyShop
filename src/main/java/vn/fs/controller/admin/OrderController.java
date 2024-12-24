@@ -67,7 +67,7 @@ public class OrderController {
 	@GetMapping(value = "/orders")
 	public String orders(Model model, Principal principal) {
 
-		List<Order> orderDetails = orderRepository.findAllByOrderDateDesc();
+		List<Order> orderDetails = orderRepository.findAllByOrderIdDesc();
 		model.addAttribute("orderDetails", orderDetails);
 
 		return "admin/orders";

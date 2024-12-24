@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -72,7 +73,7 @@ public class ProductController {
 	// show list product - table list
 	@ModelAttribute("products")
 	public List<Product> showProduct(Model model) {
-		List<Product> products = productRepository.findAllByOrderByEnteredDateAsc();
+		List<Product> products = productRepository.findAllByIsDeletedIsFalseAndOrderByEnteredDateDesc();
 		model.addAttribute("products", products);
 
 		return products;
@@ -105,16 +106,25 @@ public class ProductController {
 			fos.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-			return "error";
+			return "web/notFound";
 		}
-
 		Product product = new Product();
+		Optional<Product> productOpt = productRepository.findByProductCode(productRequest.getProductCode());
+		if (productOpt.isPresent()) {
+			if (!productOpt.get().isDeleted()) {
+				model.addAttribute("errorCode", "Mã sản phẩm đã tồn tại!");
+				return "redirect:/admin/addProduct";
+			}
+			product = productOpt.get();
+			product.setDeleted(false);
+		}
+		Date currentDate = Date.from(Instant.now());
 		product.setProductCode(productRequest.getProductCode());
 		product.setProductName(productRequest.getProductName());
 		product.setPrice(productRequest.getPrice());
 		product.setDiscount(productRequest.getDiscount());
 		product.setDescription(productRequest.getDescription());
-		product.setEnteredDate(productRequest.getEnteredDate());
+		product.setEnteredDate(currentDate);
 		product.setQuantity(productRequest.getQuantity());
 		product.setCategory(productRequest.getCategory());
 		product.setProductImage(file.getOriginalFilename());
@@ -189,7 +199,7 @@ public class ProductController {
 		} else {
 			productImage = productRequest.getProductImage();
 		}
-		
+
 		Optional<Product> productOptional = productRepository.findById(id);
 		if (!productOptional.isPresent()) {
 			return "error";
@@ -220,7 +230,15 @@ public class ProductController {
 	// delete category
 	@GetMapping("/deleteProduct/{id}")
 	public String delProduct(@PathVariable("id") Long id, Model model) {
-		productRepository.deleteById(id);
+		Optional<Product> productOpt = productRepository.findById(id);
+		if (!productOpt.isPresent()) {
+			model.addAttribute("error", "Sản phẩm không tồn tại!");
+			return "redirect:/admin/products";
+		}
+		Product product = productOpt.get();
+		product.setDeleted(true);
+		product.setCategory(null);
+		productRepository.save(product);
 		model.addAttribute("message", "Delete successful!");
 
 		return "redirect:/admin/products";

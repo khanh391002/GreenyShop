@@ -97,7 +97,7 @@
 											<div class="col-md-6 pr-0">
 												<div class="form-group form-group-default">
 													<label>Tên sản phẩm</label>
-													<input th:field="${productRequest.productName}" id="productName" type="text" class="form-control" placeholder="Tên sản phẩm...">
+													<input th:field="${productRequest.productName}" id="productName" type="text" class="form-control" placeholder="Tên sản phẩm..." required="required">
 												</div>
 											</div>
 											<div class="col-md-6 pr-0">
@@ -116,13 +116,13 @@
 											<div class="col-md-6 pr-0">
 												<div class="form-group form-group-default">
 													<label>Đơn giá</label>
-													<input th:field="${productRequest.price}" id="price" min = 0 type="number" class="form-control" placeholder="Đơn giá">
+													<input th:field="${productRequest.price}" id="price" min = 1000 type="number" class="form-control" placeholder="Đơn giá" required="required">
 												</div>
 											</div>
 											<div class="col-md-6 pr-0">
 												<div class="form-group form-group-default">
 													<label>Số lượng</label>
-													<input th:field="${productRequest.quantity}" id="quantity" min = 0 type="number" class="form-control" placeholder="Số lượng">
+													<input th:field="${productRequest.quantity}" id="quantity" min = 1 type="number" class="form-control" placeholder="Số lượng" required="required">
 												</div>
 											</div>
 											<div class="col-md-6 pr-0" style="display: none;">

@@ -48,4 +48,15 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	
 	@Query(value = "select * FROM greeny_shop.orders order by order_date DESC ", nativeQuery = true)
 	List<Order> findAllByOrderDateDesc();
+	
+	@Query(value = "select * FROM greeny_shop.orders order by order_id DESC ", nativeQuery = true)
+	List<Order> findAllByOrderIdDesc();
+	
+	@Query(value = "SELECT * "
+			+ "FROM greeny_shop.orders "
+			+ "WHERE user_id = :userId  "
+			+ "AND coupon = :coupon "
+			+ "ORDER BY order_id DESC "
+			+ "LIMIT 1; ", nativeQuery = true)
+	Order getOrderByUserAndCoupon(@Param("userId") Long userId, @Param("coupon") String coupon); 
 }

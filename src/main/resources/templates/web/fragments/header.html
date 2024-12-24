@@ -56,7 +56,7 @@ xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 				
 					<th:block th:if="${#request.remoteUser}">
 						<a href="javascript:void(0);" class="header-widget" title="Tên của bạn">
-							<img src="/images/user.png" alt="user" />
+							<img th:src="@{'/loadImage?imageName='+${user.avatar}}" alt="user"/>
 							<span>Hi!<strong><em>  [[${user.name}]]</em></strong></span>
 						</a>
 					</th:block>
@@ -119,6 +119,14 @@ xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 									<a class="navbar-link dropdown-arrow" href="javascript:void(0);">Liên hệ</a>
 									<ul class="dropdown-position-list">
 										<li><a th:href="@{/contact}">Liên hệ</a></li>
+									</ul>
+								</li>
+								<li class="navbar-item dropdown">
+									<a class="navbar-link dropdown-arrow" href="javascript:void(0);">Blogs</a>
+									<ul class="dropdown-position-list">
+										<li th:each="item : ${categoryBlogList}">
+											<a th:href="@{/blogByCategory(id=${item.categoryBlogId})}">[[${item.name}]]</a>
+										</li>
 									</ul>
 								</li>
 								<li class="navbar-item dropdown"><a

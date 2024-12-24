@@ -1,6 +1,9 @@
 package vn.fs.model.dto;
 
 public interface ProductStatisticDTO {
+	
+	Long getProductId();
+	
 	String getProductImage();
 	
 	String getProductName();
@@ -15,7 +18,7 @@ public interface ProductStatisticDTO {
 	
 	double getRating();
 	
-	int getCancelRate();
+	double getCancelRate();
 	
-	int getSuccessRate();
+	double getSuccessRate();
 }

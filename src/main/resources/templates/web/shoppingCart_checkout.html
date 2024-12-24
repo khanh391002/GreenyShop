@@ -1,443 +1,501 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<meta
-    http-equiv="content-type"
-    content="text/html;charset=utf-8"
-  />
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <meta name="author" content="mironcoder" />
-    <meta name="email" content="mironcoder@gmail.com" />
-    <meta name="profile" content="https://themeforest.net/user/mironcoder" />
-    <meta name="template" content="greeny" />
-    <meta name="title" content="greeny - Ecommerce Food Store HTML Template" />
-    <meta
-      name="keywords"
-      content="organic, food, shop, ecommerce, store, html, bootstrap, template, agriculture, vegetables, products, farm, grocery, natural, online"
-    />
-    <title>Nông sản xanh Greeny</title>
-    <link rel="icon" href="images/favicon.png" />
-    <link rel="stylesheet" href="fonts/flaticon/flaticon.css" />
-    <link rel="stylesheet" href="fonts/icofont/icofont.min.css" />
-    <link rel="stylesheet" href="fonts/fontawesome/fontawesome.min.css" />
-    <link rel="stylesheet" href="vendor/venobox/venobox.min.css" />
-    <link rel="stylesheet" href="vendor/slickslider/slick.min.css" />
-    <link rel="stylesheet" href="vendor/niceselect/nice-select.min.css" />
-    <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/main.css" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-   	<script>
-        $(document).ready(function() {
-            $('.product-add1').click(function(event) {
-                event.preventDefault();
-                
-                var productId = $(this).data('product-id');
-                
-               	$.ajax({
-                    type: "GET",
-                    url: "/api/carts",
-                    dataType: 'json',
-                    success: function(response) {
-                    	let isDuplicate = response.find((item) => item.product.productId === productId);
-                    	if (!isDuplicate) {
-                    		let totalCartItems = Number($('sup[id="totalCartItems"]').text());
-                    		if (!totalCartItems) {
-                    			totalCartItems = 0;
-                    		}
-                        	$('sup[id="totalCartItems"]').text(totalCartItems + 1);
-                    	}
-                    },
-                    error: function() {}
-                });
-                
-                $.ajax({
-                    type: "GET",
-                    url: "/addToCart",
-                    data: {
-                        productId: productId
-                    },
-                    success: function() {},
-                    error: function() {}
-                });
-            });
-            
-            function addToCart() {
-                $.ajax({
-                    type: "GET",
-                    url: "/api/carts",
-                    dataType: 'json',
-                    success: function(response) {
-                    	if (response.length > 0) {
-                    		$('.cart-list').text('')
-                    		response.forEach((item) => {
-                    			let cartItem = `<li class="cart-item"> <div class="cart-media"> <a href="/productDetail?id=${item.product.productId}"> <img src="/loadImage?imageName=${item.product.productImage}" alt="product"> </a> </div> <div class="cart-info-group"> <div class="cart-info"> <h6> <label>Tên sản phẩm :</label> <a href="/productDetail?id=${item.product.productId}" style="color: #119744">${item.product.productName}</a> </h6> <label>Đơn giá :</label> <p>${item.product.price} đ</p> </div> <div class="cart-action-group"> <div class="product-action"> <label>Số lượng :</label> <input class="action-input" title="Quantity Number" type="text" name="quantity" value="${item.quantity}"> </div> <h6>${item.totalPrice} đ</h6> </div> </div> </li>`;
-                    			$('.cart-list').append(cartItem)
-                    		})
-                    	}
-                    },
-                    error: function() {}
-                });
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="author" content="mironcoder" />
+  <meta name="email" content="mironcoder@gmail.com" />
+  <meta name="profile" content="https://themeforest.net/user/mironcoder" />
+  <meta name="template" content="greeny" />
+  <meta name="title" content="greeny - Ecommerce Food Store HTML Template" />
+  <meta name="keywords"
+    content="organic, food, shop, ecommerce, store, html, bootstrap, template, agriculture, vegetables, products, farm, grocery, natural, online" />
+  <title>Nông sản xanh Greeny</title>
+  <link rel="icon" href="images/favicon.png" />
+  <link rel="stylesheet" href="fonts/flaticon/flaticon.css" />
+  <link rel="stylesheet" href="fonts/icofont/icofont.min.css" />
+  <link rel="stylesheet" href="fonts/fontawesome/fontawesome.min.css" />
+  <link rel="stylesheet" href="vendor/venobox/venobox.min.css" />
+  <link rel="stylesheet" href="vendor/slickslider/slick.min.css" />
+  <link rel="stylesheet" href="vendor/niceselect/nice-select.min.css" />
+  <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('.product-add1').click(function (event) {
+        event.preventDefault();
+
+        var productId = $(this).data('product-id');
+
+        $.ajax({
+          type: "GET",
+          url: "/api/carts",
+          dataType: 'json',
+          success: function (response) {
+            let isDuplicate = response.find((item) => item.product.productId === productId);
+            if (!isDuplicate) {
+              let totalCartItems = Number($('sup[id="totalCartItems"]').text());
+              if (!totalCartItems) {
+                totalCartItems = 0;
+              }
+              $('sup[id="totalCartItems"]').text(totalCartItems + 1);
             }
-            
-            $('#cart-icon').click(function(event) {
-            	$.ajax({
-                    type: "GET",
-                    url: "/api/total-cart-items",
-                    dataType: 'json',
-                    success: function(response) {
-                    	$('#total-cart-items').text('(' + response + ')');
-                    	if (Number(response) > 0) {
-                    		document.getElementById("some-item-1").style.setProperty('display', 'block', 'important');
-                    		document.getElementById("some-item-2").style.setProperty('display', 'block', 'important');
-                    		document.getElementById("nothing-item").style.setProperty('display', 'none', 'important');
-                    		addToCart();
-                    	} else {
-                    		document.getElementById("nothing-item").style.setProperty('display', 'block', 'important');
-                    		document.getElementById("some-item-1").style.setProperty('display', 'none', 'important');
-                    		document.getElementById("some-item-2").style.setProperty('display', 'none', 'important');
-                    	}
-                    },
-                    error: function() {}
-                });
-            });
+          },
+          error: function () { }
         });
-    </script>
-    <link rel="stylesheet" href="css/checkout.css" />
-  </head>
-  <body>
-    
-    <!--************************************
+
+        $.ajax({
+          type: "GET",
+          url: "/addToCart",
+          data: {
+            productId: productId
+          },
+          success: function () { },
+          error: function () { }
+        });
+      });
+
+      function addToCart() {
+        $.ajax({
+          type: "GET",
+          url: "/api/carts",
+          dataType: 'json',
+          success: function (response) {
+            if (response.length > 0) {
+              $('.cart-list').text('');
+              response.forEach((item) => {
+                let cartItem = `<li class="cart-item">
+                                              <div class="cart-media">
+                                                  <a href="/productDetail?id=${item.product.productId}">
+                                                      <img src="/loadImage?imageName=${item.product.productImage}" alt="product">
+                                                  </a>
+                                              </div>
+                                              <div class="cart-info-group">
+                                                  <div class="cart-info">
+                                                      <h6>
+                                                          <label>Tên sản phẩm :</label>
+                                                          <a href="/productDetail?id=${item.product.productId}" style="color: #119744">${item.product.productName}</a>
+                                                      </h6>
+                                                      <label>Đơn giá :</label>
+                                                      <p>${item.product.price} đ</p>
+                                                  </div>
+                                                  <div class="cart-action-group">
+                                                      <div class="product-action">
+                                                          <label>Số lượng :</label>
+                                                          <button class="btn-num-product-down" data-id="${item.id}" data-quantity="-1">
+                                                              <div class="cl8 hov-btn3 trans-04 flex-c-m">
+                                                                  <i class="fa fa-minus" style="width: 20px; height: 20px; font-size: 10px; line-height: 20px; border-radius: 5px"></i>
+                                                              </div>
+                                                          </button>
+                                                          <input class="action-input" title="Quantity Number" type="text" name="quantity" value="${item.quantity}" style="width: 25px; height: 25px;">
+                                                          <button class="btn-num-product-up" data-id="${item.id}" data-quantity="1">
+                                                              <div class="cl8 hov-btn3 trans-04 flex-c-m">
+                                                                  <i class="fa fa-plus" style="width: 20px; height: 20px; font-size: 10px; line-height: 20px; border-radius: 5px"></i>
+                                                              </div>
+                                                          </button>
+                                                      </div>
+                                                      <h6>${item.totalPrice} đ</h6>
+                                                  </div>
+                                              </div>
+                                          </li>`;
+                $('.cart-list').append(cartItem);
+              });
+
+              // Gán sự kiện click cho các nút thay đổi số lượng
+              // Lưu ý chỉ gán sự kiện một lần cho các button
+              $('.btn-num-product-down').off('click').on('click', function () {
+                const itemId = $(this).data('id');         // Lấy id từ data-id
+                const newQuantity = $(this).data('quantity');  // Lấy quantity từ data-quantity
+                console.log('itemId:', itemId, 'newQuantity:', newQuantity);  // Kiểm tra lại giá trị
+                updateCart(itemId, newQuantity);          // Gọi hàm updateCart
+              });
+
+              $('.btn-num-product-up').off('click').on('click', function () {
+                const itemId = $(this).data('id');         // Lấy id từ data-id
+                const newQuantity = $(this).data('quantity');  // Lấy quantity từ data-quantity
+                console.log('itemId:', itemId, 'newQuantity:', newQuantity);  // Kiểm tra lại giá trị
+                updateCart(itemId, newQuantity);          // Gọi hàm updateCart
+              });
+            }
+          },
+          error: function () {
+            alert("Cập nhật giỏ hàng thất bại!");
+          }
+        });
+      }
+
+      function updateCart(itemId, quantity) {
+        console.log('Update cart with:', itemId);  // In ra để kiểm tra
+        $.ajax({
+          type: "GET",
+          url: "/update-cart",  // Đảm bảo đường dẫn là chính xác
+          data: {               // Truyền tham số qua query string
+            id: itemId,         // Tham số 'id'
+            quantity: quantity  // Tham số 'quantity'
+          },
+          success: function (response) {
+            console.log("Cart updated successfully:", response);
+            addToCart();  // Reload giỏ hàng sau khi cập nhật thành công
+          },
+          error: function (xhr, status, error) {
+            console.error('Cập nhật giỏ hàng thất bại:', status, error);
+            alert("Cập nhật giỏ hàng thất bại!");
+          }
+        });
+      }
+
+      $('#cart-icon').click(function (event) {
+        $.ajax({
+          type: "GET",
+          url: "/api/total-cart-items",
+          dataType: 'json',
+          success: function (response) {
+            $('#total-cart-items').text('(' + response + ')');
+            if (Number(response) > 0) {
+              document.getElementById("some-item-1").style.setProperty('display', 'block', 'important');
+              document.getElementById("some-item-2").style.setProperty('display', 'block', 'important');
+              document.getElementById("nothing-item").style.setProperty('display', 'none', 'important');
+              addToCart();
+            } else {
+              document.getElementById("nothing-item").style.setProperty('display', 'block', 'important');
+              document.getElementById("some-item-1").style.setProperty('display', 'none', 'important');
+              document.getElementById("some-item-2").style.setProperty('display', 'none', 'important');
+            }
+          },
+          error: function () { }
+        });
+      });
+    });
+  </script>
+  <link rel="stylesheet" href="css/checkout.css" />
+</head>
+
+<body>
+
+  <!--************************************
 				Header Start
 		*************************************-->
-		<header th:replace="~{/web/fragments/header :: header}"></header>
-		<!--************************************
+  <header th:replace="~{/web/fragments/header :: header}"></header>
+  <!--************************************
 				Header End
 		*************************************-->
 
-    <section
-      class="inner-section single-banner"
-      style="background: url(images/single-banner.jpg) no-repeat center">
-      <div class="container">
-        <h2>Thông tin đơn hàng</h2>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
-        </ol>
-      </div>
-    </section>
-    <section class="inner-section checkout-part">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12">
-            <!-- <div class="alert-info">
+  <section class="inner-section single-banner" style="background: url(images/single-banner.jpg) no-repeat center">
+    <div class="container">
+      <h2>Thông tin đơn hàng</h2>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
+      </ol>
+    </div>
+  </section>
+  <section class="inner-section checkout-part">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <!-- <div class="alert-info">
               <p>
                 Phản hồi khách hàng? <a href="javascript:void(0);">Đăng nhập</a>
               </p>
             </div> -->
-          </div>
-          <div class="col-lg-12">
-            <div class="account-card">
-              <div class="account-title"><h4>Đơn Đặt Hàng Của Bạn</h4></div>
-              <div th:unless="${totalCartItems!=0}" class="text-center">
-					<h3 style="color: #119744" class="mt-5">Hiện tại bạn chưa có sản phẩm nào trong giỏ hàng!</h3>
-					<h4 style="color: #119744">Hãy mua sắm đi nào!</h4>
-					<a th:href="@{/products}" style="text-decoration: underline;">Click tại đây!</a>
-				</div>
-              <div class="account-content">
-                <div class="table-scroll">
-                  <table class="table-list" th:if="${totalCartItems!=0}">
-                    <thead>
-                      <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Sản phẩm</th>
-                        <th scope="col">Tên sản phẩm</th>
-                        <th scope="col">Đơn giá</th>
-                        <th scope="col">Thể loại</th>
-                        <th scope="col">Số lượng</th>
-                        <th scope="col">Tổng giá tiền</th>
-                        <th scope="col">Hành động</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    
-                      <tr th:each="item,State : ${cartItems}">
-                        <td class="table-serial"><h6>[[${State.index + 1}]]</h6></td>
-                        <td class="table-image">
-                          <img  th:src="@{'/loadImage?imageName='+${item.product.productImage}}" alt="product" />
-                        </td>
-                        <td class="table-name"><h6>[[${item.product.productName}]]</h6></td>
-                        <td class="table-price">
-                          <h6>[[${#numbers.formatDecimal(item.product.price, 1, 'DEFAULT', 0, 'DEFAULT')} +' vnđ']]<small>/kg</small></h6>
-                        </td>
-                        <td class="table-brand"><h6>[[${item.product.category.categoryName}]]</h6></td>
-                        <td class="table-quantity"><h6>[[${item.quantity}]]</h6></td>
-                        <td class="table-price">
-                          <h6>[[${#numbers.formatDecimal(item.totalPrice, 1, 'DEFAULT', 0, 'DEFAULT')} +' vnđ']]</h6>
-                        </td>
-                        <td class="table-action">
-                          <a
-                            class="view"
-                            th:href="@{/productDetail(id=${item.product.productId})}"
-                            title="Chi tiết sản phẩm">
-                            <i class="fas fa-eye"></i>
-                            </a>
-                            
-                            <a class="trash" href="javascript:void(0);" title="Xóa sản phẩm" th:data-id="${item.product.productId}" th:data-name="${item.product.productName}"
-										onclick="showConfigModalDialog(this.getAttribute('data-id'), this.getAttribute('data-name'))">
-                            	<i class="icofont-trash"></i>
-                            </a>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+        </div>
+        <div class="col-lg-12">
+          <div class="account-card">
+            <div class="account-title">
+              <h4>Đơn Đặt Hàng Của Bạn</h4>
+            </div>
+            <!-- Kiểm tra nếu có lỗi (errorProduct), nếu có thì hiển thị thông báo lỗi kiểu alert-danger -->
+            <div th:if="${errorProduct}" class="alert alert-danger" role="alert">
+              <p th:text="${errorProduct}"></p>
+            </br>
+            </div>
+            <div th:if="${errorCoupon}" class="alert alert-danger" role="alert">
+              <p th:text="${errorCoupon}"></p>
+            </br>
+            </div>
+            <div th:unless="${totalCartItems!=0}" class="text-center">
+              <h3 style="color: #119744" class="mt-5">Hiện tại bạn chưa có sản phẩm nào trong giỏ hàng!</h3>
+              <h4 style="color: #119744">Hãy mua sắm đi nào!</h4>
+              <a th:href="@{/products}" style="text-decoration: underline;">Click tại đây!</a>
+            </div>
+            <div class="account-content">
+              <div class="table-scroll">
+                <table class="table-list" th:if="${totalCartItems!=0}">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Sản phẩm</th>
+                      <th scope="col">Tên sản phẩm</th>
+                      <th scope="col">Đơn giá</th>
+                      <th scope="col">Thể loại</th>
+                      <th scope="col">Số lượng</th>
+                      <th scope="col">Tổng giá tiền</th>
+                      <th scope="col">Hành động</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    <tr th:each="item,State : ${cartItems}">
+                      <td class="table-serial">
+                        <h6>[[${State.index + 1}]]</h6>
+                      </td>
+                      <td class="table-image">
+                        <img th:src="@{'/loadImage?imageName='+${item.product.productImage}}" alt="product" />
+                      </td>
+                      <td class="table-name">
+                        <h6>[[${item.product.productName}]]</h6>
+                      </td>
+                      <td class="table-price">
+                        <h6>[[${#numbers.formatDecimal(item.product.price, 1, 'DEFAULT', 0, 'DEFAULT')} +'
+                          vnđ']]<small>/kg</small></h6>
+                      </td>
+                      <td class="table-brand">
+                        <h6>[[${item.product.category.categoryName}]]</h6>
+                      </td>
+                      <td class="table-quantity">
+                        <h6>[[${item.quantity}]]</h6>
+                      </td>
+                      <td class="table-price">
+                        <h6>[[${#numbers.formatDecimal(item.totalPrice, 1, 'DEFAULT', 0, 'DEFAULT')} +' vnđ']]</h6>
+                      </td>
+                      <td class="table-action">
+                        <a class="view" th:href="@{/productDetail(id=${item.product.productId})}"
+                          title="Chi tiết sản phẩm">
+                          <i class="fas fa-eye"></i>
+                        </a>
+
+                        <a class="trash" href="javascript:void(0);" title="Xóa sản phẩm"
+                          th:data-id="${item.product.productId}" th:data-name="${item.product.productName}"
+                          onclick="showConfigModalDialog(this.getAttribute('data-id'), this.getAttribute('data-name'))">
+                          <i class="icofont-trash"></i>
+                        </a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <th:block th:if="${totalCartItems!=0}">
+                <div class="col-md-7 col-lg-6 col-xl-6" style="margin-left: auto; margin-right: 0;">
+                  <form class="news-form" method="post" th:action="@{/coupon-cart}">
+                    <input id="couponInput" name="coupon" type="text" 
+                      placeholder="Nhập mã giảm giá"
+                      th:value="${session.couponCode != null ? session.couponCode : ''}"
+                      style="border: 1px solid #119744; padding: 5px; border-radius: 8px;" />
+                    <button
+                    id="applyCouponBtn"
+                    th:disabled="${session.couponCode != null}"
+                    type="submit">
+                    <span>Áp dụng</span>
+                  </button>
+                  </form>
                 </div>
-                <th:block th:if="${totalCartItems!=0}">
-                  <div class="col-md-7 col-lg-6 col-xl-6" style="margin-left: auto; margin-right: 0;">
-                    <form class="news-form" method="post" th:action="@{/coupon-cart}">
-                      <input id="couponInput" name="coupon"
-                        type="text"
-                        placeholder="Nhập mã giảm giá"
-                        style="border: 1px solid #119744; padding: 5px; border-radius: 8px;"
-                      /><button id="applyCouponBtn">
-                        <span>Áp dụng</span>
-                      </button>
-                    </form>
-                  </div>
-                  <div class="chekout-coupon">
-                    <h4>Tổng tiền thanh toán</h4>
-                  </div>
-                  <div class="checkout-charge">
-                    <ul>
-                      <li>
-                        <span>Tổng tiền thanh toán<small>(Incl. VAT)</small></span>
-                        <span>[[${#numbers.formatDecimal(totalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}+ ' vnđ']]</span>
-                      </li>
-                    </ul>
-                  </div>
-                </th:block>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-12" th:if="${totalCartItems!=0}">
-            <div class="account-card mb-0">
-              <div class="account-title">
-                <h4>Thông tin nhận hàng</h4>
-              </div>
-              <div class="account-content">
-                <div class="row">
-                    <form class="user-form" th:action="@{/checkout}" th:object="${order}" method="post">
-                        <div class="form-group">
-                            <input
-                                type="email"
-                                th:value="${user.email}"
-                                class="form-control"
-                                placeholder="Email"
-                                readonly="readonly"
-                            />
-                        </div>
-                      
-                        <div class="form-group">
-                            <input
-                                type="text"
-                                th:value="${user.name}"
-                                class="form-control"
-                                placeholder="Họ tên"
-                                readonly="readonly"
-                            />
-                        </div>
-
-                        <div class="form-group">
-                            <input
-                                type="text"
-                                th:field="*{address}"
-                                class="form-control"
-                                placeholder="Địa chỉ"
-                                required="required"
-                            />
-                        </div>
-                      
-                        <div class="form-group">
-                            <input
-                                type="tel"
-                                th:field="*{phone}"
-                                class="form-control"
-                                placeholder="Số điện thoại"
-                                required="required"
-                            />
-                        </div>
-
-                        <div class="form-group">
-                            <input
-                                type="text"
-                                th:field="*{note}"
-                                class="form-control"
-                                placeholder="Ghi chú"
-                                
-                            />
-                        </div>
-
-                        <div class="form-group">
-                            <div class="account-title">
-                                <h4>Chọn phương thức thanh toán</h4>
-                              </div>
-                            <div class="radio">
-                                <label style="color: #119744"><input type="radio" value="cod" name="checkOut" checked> <strong><em>Ship COD ( Thanh toán khi nhận hàng )</em></strong></label>
-                            </div>
-                            <div class="radio">
-                                <label style="color: #119744"><input type="radio" value="paypal" name="checkOut"> <strong><em>Thanh Toán Với Paypal</em></strong></label>
-                            </div>
-                        </div>
-                        <div class="checkout-proced">
-                            <button type="submit" class="btn btn-inline">Đặt hàng</button>
-                        </div>
-                    </form>
+                <div class="chekout-coupon">
+                  <h4>Tổng tiền thanh toán</h4>
                 </div>
+                <div class="checkout-charge">
+                  <ul>
+                    <li>
+                      <span>Tổng tiền thanh toán<small>(Incl. VAT)</small></span>
+                      <span>[[${#numbers.formatDecimal(totalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}+ ' vnđ']]</span>
+                    </li>
+                  </ul>
+                </div>
+              </th:block>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-12" th:if="${totalCartItems!=0}">
+          <div class="account-card mb-0">
+            <div class="account-title">
+              <h4>Thông tin nhận hàng</h4>
+            </div>
+            <div class="account-content">
+              <div class="row">
+                <form class="user-form" th:action="@{/checkout}" th:object="${order}" method="post">
+                  <div class="form-group">
+                    <input type="email" th:value="${user.email}" class="form-control" placeholder="Email"
+                      readonly="readonly" />
+                  </div>
+
+                  <div class="form-group">
+                    <input type="text" th:value="${user.name}" class="form-control" placeholder="Họ tên"
+                      readonly="readonly" />
+                  </div>
+
+                  <div class="form-group">
+                    <input type="text" th:field="${user.address}" class="form-control" placeholder="Địa chỉ"
+                      required="required" />
+                  </div>
+
+                  <div class="form-group">
+                    <input type="tel" th:field="${user.phone}" class="form-control" placeholder="Số điện thoại"
+                      required="required" />
+                  </div>
+
+                  <div class="form-group">
+                    <input type="text" th:field="*{note}" class="form-control" placeholder="Ghi chú" />
+                  </div>
+
+                  <div class="form-group">
+                    <div class="account-title">
+                      <h4>Chọn phương thức thanh toán</h4>
+                    </div>
+                    <div class="radio">
+                      <label style="color: #119744"><input type="radio" value="cod" name="checkOut" checked>
+                        <strong><em>Ship COD ( Thanh toán khi nhận hàng )</em></strong></label>
+                    </div>
+                    <div class="radio">
+                      <label style="color: #119744"><input type="radio" value="paypal" name="checkOut">
+                        <strong><em>Thanh Toán Với Paypal</em></strong></label>
+                    </div>
+                  </div>
+                  <div class="checkout-proced">
+                    <button type="submit" class="btn btn-inline" th:disabled="${errorProduct != null}">Đặt hàng</button>
+                  </div>
+                </form>
               </div>
-              
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="news-part" style="background: url(images/newsletter.jpg) no-repeat center">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-5 col-lg-6 col-xl-7">
+          <div class="news-text">
+            <h2>Nhận Nhiều Ưu Đãi Cho Người Mới Đăng Ký</h2>
+						<p>Nhận Nhiều Ưu Đãi Cho Người Mới Đăng Ký</p>
+          </div>
+        </div>
+        <div class="col-md-7 col-lg-6 col-xl-5">
+          <form class="news-form">
+            <input type="text" placeholder="Enter Your Email Address" /><button>
+              <span><i class="icofont-ui-email"></i>Subscribe</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="intro-part">
+    <div class="container">
+      <div class="row intro-content">
+        <div class="col-sm-6 col-lg-3">
+          <div class="intro-wrap">
+            <div class="intro-icon"><i class="fas fa-truck"></i></div>
+            <div class="intro-content">
+              <h5>Giao Hàng Tận Nhà Miễn Phí</h5>
+              <p>Giao hàng nhanh chóng, đảm bảo chất lượng hàng còn tươi.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <div class="intro-wrap">
+            <div class="intro-icon"><i class="fas fa-sync-alt"></i></div>
+            <div class="intro-content">
+              <h5>Chính Sách Hoàn Trả</h5>
+              <p>Nếu có bất kỳ dấu hiệu nào của sản phẩm bị hỏng, không còn tươi, chúng tôi cam kết hoàn
+								trả 100%.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <div class="intro-wrap">
+            <div class="intro-icon"><i class="fas fa-headset"></i></div>
+            <div class="intro-content">
+              <h5>Hệ Thống Hỗ Trợ</h5>
+              <p>Nhân viên hỗ trợ nhanh chóng, nhiệt tình, hotline 24/24.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <div class="intro-wrap">
+            <div class="intro-icon"><i class="fas fa-lock"></i></div>
+            <div class="intro-content">
+              <h5>Cách Thanh Toán An Toàn</h5>
+              <p>Thanh toán tiện lợi với hình thức trực tuyến hoặc nhận hàng tận tay rồi thanh toán.</p>
             </div>
           </div>
         </div>
       </div>
-    </section>
-    
-    <section
-      class="news-part"
-      style="background: url(images/newsletter.jpg) no-repeat center">
-      <div class="container">
-        <div class="row align-items-center">
-          <div class="col-md-5 col-lg-6 col-xl-7">
-            <div class="news-text">
-              <h2>Nhận chiết khấu 20% cho người đăng ký</h2>
-              <p>Nhận chiết khấu 20% cho người đăng ký</p>
-            </div>
-          </div>
-          <div class="col-md-7 col-lg-6 col-xl-5">
-            <form class="news-form">
-              <input
-                type="text"
-                placeholder="Enter Your Email Address"
-              /><button>
-                <span><i class="icofont-ui-email"></i>Subscribe</span>
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section class="intro-part">
-      <div class="container">
-        <div class="row intro-content">
-          <div class="col-sm-6 col-lg-3">
-            <div class="intro-wrap">
-              <div class="intro-icon"><i class="fas fa-truck"></i></div>
-              <div class="intro-content">
-                <h5>Giao Hàng Tận Nhà Miễn Phí</h5>
-                <p>Lorem ipsum dolor sit amet adipisicing elit nobis.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-6 col-lg-3">
-            <div class="intro-wrap">
-              <div class="intro-icon"><i class="fas fa-sync-alt"></i></div>
-              <div class="intro-content">
-                <h5>Chính Sách Hoàn Trả</h5>
-                <p>Lorem ipsum dolor sit amet adipisicing elit nobis.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-6 col-lg-3">
-            <div class="intro-wrap">
-              <div class="intro-icon"><i class="fas fa-headset"></i></div>
-              <div class="intro-content">
-                <h5>Hệ Thống Hỗ Trợ</h5>
-                <p>Lorem ipsum dolor sit amet adipisicing elit nobis.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-6 col-lg-3">
-            <div class="intro-wrap">
-              <div class="intro-icon"><i class="fas fa-lock"></i></div>
-              <div class="intro-content">
-                <h5>Cách Thanh Toán An Toàn</h5>
-                <p>Lorem ipsum dolor sit amet adipisicing elit nobis.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    
-    	<script>
-		function showConfigModalDialog(id, name) {
-			$('#productName').text(name);
-			$('#yesOption').attr('href', '/remove/'+id);
-			$('#configmationId').modal('show');
-		}
-		</script>
-    <script>
-      document.getElementById("applyCouponBtn").addEventListener("click", function (event) {
-          var couponInput = document.getElementById("couponInput");
-          var couponValue = couponInput.value;
-  
-          if (couponValue === null || couponValue.trim() === "") {
-              event.preventDefault();
-              couponInput.focus();
-              alert("Coupon value not null");
-          }
-      });
+    </div>
+  </section>
+
+  <script>
+    function showConfigModalDialog(id, name) {
+      $('#productName').text(name);
+      $('#yesOption').attr('href', '/remove/' + id);
+      $('#configmationId').modal('show');
+    }
   </script>
-		
-		<!-- Modal -->
-		<div class="modal" id="configmationId">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content">
-					<button class="modal-close" data-bs-dismiss="modal">
-		            	<i class="icofont-close"></i>
-		          	</button>
-					<div class="modal-form">
-						<h5 class="modal-title">Xác nhận</h5>
-						<div class="modal-body">
-						<p>
-							Bạn có muốn xoá sản phẩm " <span style="color: #119744" id="productName"></span> "
-							ra khỏi giỏ hàng không ?
-						</p>
-					</div>
-					<div class="modal-footer">
-						<a id="yesOption" type="button" class="btn btn-success">Có</a>
-					</div>
-					</div>
-					
-				</div>
-			</div>
-		</div>
-    
-    
-    <!--************************************
+  <script>
+    document.getElementById("applyCouponBtn").addEventListener("click", function (event) {
+      var couponInput = document.getElementById("couponInput");
+      var couponValue = couponInput.value;
+
+      if (couponValue === null || couponValue.trim() === "") {
+        event.preventDefault();
+        couponInput.focus();
+        alert("Coupon value not null");
+      }
+    });
+  </script>
+
+  <!-- Modal -->
+  <div class="modal" id="configmationId">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <button class="modal-close" data-bs-dismiss="modal">
+          <i class="icofont-close"></i>
+        </button>
+        <div class="modal-form">
+          <h5 class="modal-title">Xác nhận</h5>
+          <div class="modal-body">
+            <p>
+              Bạn có muốn xoá sản phẩm " <span style="color: #119744" id="productName"></span> "
+              ra khỏi giỏ hàng không ?
+            </p>
+          </div>
+          <div class="modal-footer">
+            <a id="yesOption" type="button" class="btn btn-success">Có</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!--************************************
 				Footer Start
 		*************************************-->
-		<footer th:replace="~{/web/fragments/footer :: footer}"></footer>
-				
-		<!--************************************
+  <footer th:replace="~{/web/fragments/footer :: footer}"></footer>
+
+  <!--************************************
 				Footer End
 		*************************************-->
-		
-		
-    <script src="vendor/bootstrap/jquery-1.12.4.min.js"></script>
-    <script src="vendor/bootstrap/popper.min.js"></script>
-    <script src="vendor/bootstrap/bootstrap.min.js"></script>
-    <script src="vendor/countdown/countdown.min.js"></script>
-    <script src="vendor/niceselect/nice-select.min.js"></script>
-    <script src="vendor/slickslider/slick.min.js"></script>
-    <script src="vendor/venobox/venobox.min.js"></script>
-    <script src="js/nice-select.js"></script>
-    <script src="js/countdown.js"></script>
-    <script src="js/accordion.js"></script>
-    <script src="js/venobox.js"></script>
-    <script src="js/slick.js"></script>
-    <script src="js/main.js"></script>
-  </body>
+
+
+  <script src="vendor/bootstrap/jquery-1.12.4.min.js"></script>
+  <script src="vendor/bootstrap/popper.min.js"></script>
+  <script src="vendor/bootstrap/bootstrap.min.js"></script>
+  <script src="vendor/countdown/countdown.min.js"></script>
+  <script src="vendor/niceselect/nice-select.min.js"></script>
+  <script src="vendor/slickslider/slick.min.js"></script>
+  <script src="vendor/venobox/venobox.min.js"></script>
+  <script src="js/nice-select.js"></script>
+  <script src="js/countdown.js"></script>
+  <script src="js/accordion.js"></script>
+  <script src="js/venobox.js"></script>
+  <script src="js/slick.js"></script>
+  <script src="js/main.js"></script>
+</body>
+
 </html>

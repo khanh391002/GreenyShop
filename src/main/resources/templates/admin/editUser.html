@@ -102,23 +102,23 @@
 											<div class="col-md-12 pr-0">
 												<div class="form-group form-group-default">
 													<label>Avatar</label>
-													<img id="avatarPreview" th:src="@{'/images/' + ${userDto.avatar}}" alt="Avatar" width="150">
+													<img id="avatarPreview" th:src="@{'/images/avatar/' + ${userDto.avatar}}" alt="Avatar" width="150">
 													<input type="hidden" th:field="${userDto.avatar}" class="form-control" readonly>
-													<input type="file" id="avatar" name="file" class="form-control" accept="image/*" onchange="previewImage(event)">
+													<input type="file" id="avatar" name="file" class="form-control" accept="image/*" onchange="previewImage(event)" required="required">
 												</div>
 											</div>
 											
 											<div class="col-md-6 pr-0">
 												<div class="form-group form-group-default">
 													<label>Tên Người Dùng</label>
-													<input th:field="${userDto.name}" id="name" type="text" class="form-control" placeholder="Tên người dùng" readonly>
+													<input th:field="${userDto.name}" id="name" type="text" class="form-control" placeholder="Tên người dùng" required="required">
 												</div>
 											</div>
 											
 											<div class="col-md-6 pr-0">
 												<div class="form-group form-group-default">
 													<label>Email</label>
-													<input th:field="${userDto.email}" id="email" type="text" class="form-control" placeholder="Email người dùng">
+													<input th:field="${userDto.email}" id="email" type="text" class="form-control" placeholder="Email người dùng" readonly>
 												</div>
 											</div>
 										
@@ -133,6 +133,18 @@
 												<div class="form-group form-group-default">
 													<label>Số điện thoại</label>
 													<input th:field="${userDto.phone}" id="phone" type="text" class="form-control" placeholder="Số điện thoại">
+												</div>
+											</div>
+											<div class="col-md-6 pr-0">
+												<div class="form-group form-group-default">
+													<label>Quận huyện</label>
+													<input th:field="${userDto.district}" id="district" type="text" class="form-control" placeholder="Quận huyện">
+												</div>
+											</div>
+											<div class="col-md-6 pr-0">
+												<div class="form-group form-group-default">
+													<label>Thành phố</label>
+													<input th:field="${userDto.city}" id="city" type="text" class="form-control" placeholder="Thành phố">
 												</div>
 											</div>
 											<div class="col-md-6 pr-0">

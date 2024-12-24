@@ -26,6 +26,10 @@ public class UserResponse {
 	
 	private String phone;
 	
+	private String district;
+	
+	private String city;
+	
 	private Boolean status;
 
 	private List<Role> roles;

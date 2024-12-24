@@ -41,7 +41,7 @@ public class FavoriteController extends CommomController {
 		Product product = productRepository.findById(id).orElse(null);
 		favorite.setProduct(product);
 		favorite.setUser(user);
-		product.setFavorite(true);
+//		product.setFavorite(true);
 		favoriteRepository.save(favorite);
 		commomDataService.commonData(model, user);
 		return "redirect:/products";
@@ -51,7 +51,7 @@ public class FavoriteController extends CommomController {
 	public String doUnFavorite(Model model, Product product, User user, @RequestParam("id") Long id) {
 		Optional<Favorite> favorite = favoriteRepository.selectSaves(id, user.getUserId());
 		product = productRepository.findById(id).orElse(null);
-		product.setFavorite(false);
+//		product.setFavorite(false);
 		if (favorite.isPresent()) {
 			favoriteRepository.delete(favorite.get());
 		}

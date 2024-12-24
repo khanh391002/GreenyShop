@@ -114,14 +114,14 @@
                                                       <div class="product-action">
                                                           <label>Số lượng :</label>
                                                           <button class="btn-num-product-down" data-id="${item.id}" data-quantity="-1">
-                                                              <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-                                                                  <i class="fa fa-minus"></i>
+                                                              <div class="cl8 hov-btn3 trans-04 flex-c-m">
+                                                                  <i class="fa fa-minus" style="width: 20px; height: 20px; font-size: 10px; line-height: 20px; border-radius: 5px"></i>
                                                               </div>
                                                           </button>
                                                           <input class="action-input" title="Quantity Number" type="text" name="quantity" value="${item.quantity}" style="width: 25px; height: 25px;">
                                                           <button class="btn-num-product-up" data-id="${item.id}" data-quantity="1">
-                                                              <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-                                                                  <i class="fa fa-plus"></i>
+                                                              <div class="cl8 hov-btn3 trans-04 flex-c-m">
+                                                                  <i class="fa fa-plus" style="width: 20px; height: 20px; font-size: 10px; line-height: 20px; border-radius: 5px"></i>
                                                               </div>
                                                           </button>
                                                       </div>
@@ -156,7 +156,7 @@
       }
 
       function updateCart(itemId, quantity) {
-        console.log('Update cart with:', itemId, newQuantity);  // In ra để kiểm tra
+        console.log('Update cart with:', itemId);  // In ra để kiểm tra
         $.ajax({
           type: "GET",
           url: "/update-cart",  // Đảm bảo đường dẫn là chính xác
@@ -309,11 +309,9 @@
                   </div>
                   <div class="product-content">
                     <div class="product-rating" th:attr="data-evaluate=${item.evaluate}">
-                      <!-- <i class="active icofont-star"></i>
-                      <i class="active icofont-star"></i>
-                      <i class="active icofont-star"></i>
-                      <i class="active icofont-star"></i>
-                      <i class="icofont-star"></i> -->
+                      <!-- logic hiển thị sao đánh giá -->
+                      <i th:each="starIndex : ${#numbers.sequence(1, 5)}"
+                        th:class="${starIndex <= item.evaluate} ? 'active icofont-star' : 'icofont-star'"></i>
                     </div>
                     <h6 class="product-name">
                       <a href="javascript:void(0);">[[${item.productName}]]</a>
@@ -364,8 +362,8 @@
       <div class="row align-items-center">
         <div class="col-md-5 col-lg-6 col-xl-7">
           <div class="news-text">
-            <h2>Nhận Chiết Khấu 20% Cho Người Đăng Ký</h2>
-            <p>Nhận Chiết Khấu 20% Cho Người Đăng Ký</p>
+            <h2>Nhận Nhiều Ưu Đãi Cho Người Mới Đăng Ký</h2>
+						<p>Nhận Nhiều Ưu Đãi Cho Người Mới Đăng Ký</p>
           </div>
         </div>
         <div class="col-md-7 col-lg-6 col-xl-5">
@@ -389,7 +387,7 @@
             </div>
             <div class="intro-content">
               <h5>Giao Hàng Tận Nhà Miễn Phí</h5>
-              <p>Lorem ipsum dolor sit amet adipisicing elit nobis.</p>
+              <p>Giao hàng nhanh chóng, đảm bảo chất lượng hàng còn tươi.</p>
             </div>
           </div>
         </div>
@@ -400,7 +398,8 @@
             </div>
             <div class="intro-content">
               <h5>Chính Sách Hoàn Trả</h5>
-              <p>Lorem ipsum dolor sit amet adipisicing elit nobis.</p>
+              <p>Nếu có bất kỳ dấu hiệu nào của sản phẩm bị hỏng, không còn tươi, chúng tôi cam kết hoàn
+								trả 100%.</p>
             </div>
           </div>
         </div>
@@ -411,7 +410,7 @@
             </div>
             <div class="intro-content">
               <h5>Hệ Thống Hỗ Trợ</h5>
-              <p>Lorem ipsum dolor sit amet adipisicing elit nobis.</p>
+              <p>Nhân viên hỗ trợ nhanh chóng, nhiệt tình, hotline 24/24.</p>
             </div>
           </div>
         </div>
@@ -422,82 +421,13 @@
             </div>
             <div class="intro-content">
               <h5>Cách Thanh Toán An Toàn</h5>
-              <p>Lorem ipsum dolor sit amet adipisicing elit nobis.</p>
+              <p>Thanh toán tiện lợi với hình thức trực tuyến hoặc nhận hàng tận tay rồi thanh toán.</p>
             </div>
           </div>
         </div>
       </div>
     </div>
   </section>
-
-  <script>
-    // Hàm renderRating để tạo sao động từ giá trị evaluate
-    function renderRating(evaluate, ratingContainer) {
-      // Xóa nội dung cũ
-      ratingContainer.innerHTML = '';
-  
-      // Tính số sao vàng (full stars)
-      var fullStars = Math.floor(evaluate);  // Sao vàng đầy (phần nguyên)
-      
-      // Kiểm tra phần thập phân, nếu từ .1 đến .9 thì có sao nửa vàng
-      var halfStar = (evaluate % 1) >= 0.1 && (evaluate % 1) < 1 ? 1 : 0;
-      
-      // Tính số sao xám (5 sao - số sao vàng - sao nửa vàng)
-      var emptyStars = 5 - fullStars - halfStar;
-  
-      // Thêm sao vàng
-      for (var i = 0; i < fullStars; i++) {
-        var star = document.createElement('i');
-        star.classList.add('active', 'icofont-star');
-        ratingContainer.appendChild(star);
-      }
-  
-      // Thêm sao nửa vàng nếu có
-      if (halfStar === 1) {
-        var halfStarElement = document.createElement('i');
-        halfStarElement.classList.add('half-star');
-        ratingContainer.appendChild(halfStarElement);
-      }
-  
-      // Thêm sao xám
-      for (var j = 0; j < emptyStars; j++) {
-        var emptyStar = document.createElement('i');
-        emptyStar.classList.add('icofont-star');
-        ratingContainer.appendChild(emptyStar);
-      }
-    }
-  
-    // Thêm sự kiện để render số sao khi trang được tải
-    document.addEventListener('DOMContentLoaded', function () {
-      var ratingElements = document.querySelectorAll('.product-rating');
-      ratingElements.forEach(function (ratingElement) {
-        var evaluate = parseFloat(ratingElement.getAttribute('data-evaluate'));  // Lấy giá trị từ data attribute
-        renderRating(evaluate, ratingElement);  // Gọi hàm renderRating với evaluate và container
-      });
-    });
-  </script>
-  
-  <style>
-    /* CSS cho sao nửa vàng nửa xám */
-    .half-star {
-      background: linear-gradient(to right, #ffab10 50%, gray 50%);
-      width: 16px;  /* Đảm bảo chiều rộng của sao nửa vàng */
-      height: 16px; /* Đảm bảo chiều cao của sao */
-      display: inline-block;
-      /* clip-path: inset(0 50% 0 0);  Cắt sao nửa bên trái để tạo ra phần sao nửa vàng */
-      position: relative;
-    }
-  
-    /* Đảm bảo sao đầy là vàng */
-    .active.icofont-star {
-      color: #ffab10;
-    }
-  
-    /* Sao xám */
-    .icofont-star {
-      color: gray;
-    }
-  </style>
 
   <!--************************************
 				Footer Start

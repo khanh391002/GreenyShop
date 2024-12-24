@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import vn.fs.commom.CommomDataService;
+import vn.fs.commom.utils.Utils;
 import vn.fs.model.dto.ProductDTO;
 import vn.fs.model.entities.Favorite;
 import vn.fs.model.entities.Product;
@@ -26,6 +27,8 @@ import vn.fs.model.entities.User;
 import vn.fs.model.response.ProductResponse;
 import vn.fs.repository.FavoriteRepository;
 import vn.fs.repository.ProductRepository;
+import vn.fs.service.BlogService;
+import vn.fs.service.CategoryBlogService;
 
 @Controller
 public class ShopController extends CommomController {
@@ -37,6 +40,12 @@ public class ShopController extends CommomController {
 	FavoriteRepository favoriteRepository;
 
 	@Autowired
+	CategoryBlogService categoryBlogService;
+
+	@Autowired
+	BlogService blogService;
+
+	@Autowired
 	CommomDataService commomDataService;
 
 	@GetMapping(value = "/products")
@@ -46,7 +55,7 @@ public class ShopController extends CommomController {
 		int currentPage = page.orElse(1);
 		int pageSize = size.orElse(12);
 
-		Page<ProductResponse> productPage = findPaginated(PageRequest.of(currentPage - 1, pageSize));
+		Page<ProductResponse> productPage = findPaginated(PageRequest.of(currentPage - 1, pageSize), user);
 
 		int totalPages = productPage.getTotalPages();
 		if (totalPages > 0) {
@@ -60,12 +69,13 @@ public class ShopController extends CommomController {
 		return "web/shop";
 	}
 
-	public Page<ProductResponse> findPaginated(Pageable pageable) {
+	public Page<ProductResponse> findPaginated(Pageable pageable, User user) {
 
 //		List<Product> productPage = productRepository.findAll();
 		List<ProductDTO> productDTOs = productRepository.findAllProductAndAvgRating();
+		List<Long> productFavorites = favoriteRepository.getProductIdByUserId(user.getUserId());
 		List<ProductResponse> productResponses = new ArrayList<>();
-		buildProductResponses(productDTOs, productResponses);
+		Utils.buildProductResponses(productDTOs, productResponses, productFavorites);
 
 		int pageSize = pageable.getPageSize();
 		int currentPage = pageable.getPageNumber();
@@ -83,28 +93,6 @@ public class ShopController extends CommomController {
 				productResponses.size());
 
 		return productPages;
-	}
-
-	private void buildProductResponses(List<ProductDTO> productDTOs, List<ProductResponse> productResponses) {
-		for(ProductDTO dto : productDTOs) {
-			ProductResponse productResponse = new ProductResponse();
-			productResponse.setProductId(dto.getProductId());
-			productResponse.setProductName(dto.getProductName());
-			productResponse.setProductCode(dto.getProductCode());
-			productResponse.setQuantity(dto.getQuantity());
-			productResponse.setPrice(dto.getPrice());
-			productResponse.setDiscount(dto.getDiscount());
-			productResponse.setProductImage(dto.getProductImage());
-			productResponse.setDescription(dto.getDescription());
-			productResponse.setEnteredDate(dto.getEnteredDate());
-			productResponse.setStatus(dto.getStatus());
-			productResponse.setFavorite(dto.getFavorite());
-			productResponse.setDeleted(dto.getIsDeleted());
-			productResponse.setCategoryId(dto.getCategoryId());
-			productResponse.setCategoryName(dto.getCategoryName());
-			productResponse.setEvaluate(dto.getEvaluate());
-			productResponses.add(productResponse);
-		}
 	}
 
 	// search product
@@ -154,22 +142,25 @@ public class ShopController extends CommomController {
 	// list books by category
 	@GetMapping(value = "/productByCategory")
 	public String listProductbyid(Model model, @RequestParam("id") Long id, User user) {
-		List<Product> products = productRepository.listProductByCategory(id);
+		List<ProductDTO> products = productRepository.listProductByCategory(id);
+		List<Long> productFavorites = favoriteRepository.getProductIdByUserId(user.getUserId());
+		List<ProductResponse> productResponses = new ArrayList<>();
+		Utils.buildProductResponses(products, productResponses, productFavorites);
 
-		List<Product> listProductNew = new ArrayList<>();
+		List<ProductResponse> listProductNew = new ArrayList<>();
 
-		for (Product product : products) {
+		for (ProductResponse product : productResponses) {
 
-			Product productEntity = new Product();
+			ProductResponse productEntity = new ProductResponse();
 
 			BeanUtils.copyProperties(product, productEntity);
 
 			Optional<Favorite> save = favoriteRepository.selectSaves(productEntity.getProductId(), user.getUserId());
 
 			if (save.isPresent()) {
-				productEntity.favorite = true;
+				productEntity.setFavorite(true);
 			} else {
-				productEntity.favorite = false;
+				productEntity.setFavorite(false);
 			}
 			listProductNew.add(productEntity);
 		}
@@ -178,5 +169,4 @@ public class ShopController extends CommomController {
 		commomDataService.commonData(model, user);
 		return "web/shop";
 	}
-
 }

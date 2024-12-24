@@ -64,7 +64,7 @@ public class CouponController {
     @PostMapping("/new")
     public String add(@ModelAttribute("coupon") Coupon coupon, Model model) {
         couponService.add(coupon, model);
-        return "admin/coupon";
+        return "redirect:/admin/coupon";
     }
     
     @GetMapping(value = "/update/{id}")
@@ -81,7 +81,7 @@ public class CouponController {
     public String update(@PathVariable("id") Long id, @ModelAttribute("coupon") Coupon coupon, Model model) {
         couponService.update(id, coupon, model);
         model.addAttribute("coupons", couponService.getAll());
-        return "admin/coupon";
+        return "redirect:/admin/coupon";
     }
 
     @GetMapping("/delete/{id}")

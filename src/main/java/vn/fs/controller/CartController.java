@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +31,7 @@ import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
 
 import vn.fs.commom.CommomDataService;
+import vn.fs.commom.Constants;
 import vn.fs.commom.utils.Utils;
 import vn.fs.config.PaypalPaymentIntent;
 import vn.fs.config.PaypalPaymentMethod;
@@ -42,9 +45,9 @@ import vn.fs.repository.OrderDetailRepository;
 import vn.fs.repository.OrderRepository;
 import vn.fs.service.CouponService;
 import vn.fs.service.PaypalService;
+import vn.fs.service.SendMailService;
 import vn.fs.service.ShoppingCartService;
 import vn.fs.service.UserService;
-
 
 @Controller
 public class CartController extends CommomController {
@@ -66,12 +69,15 @@ public class CartController extends CommomController {
 
 	@Autowired
 	OrderDetailRepository orderDetailRepository;
-	
+
 	@Autowired
 	CouponService couponService;
-	
+
 	@Autowired
 	UserService userService;
+
+	@Autowired
+	SendMailService sendMailService;
 
 	public Order orderFinal = new Order();
 
@@ -117,15 +123,16 @@ public class CartController extends CommomController {
 		}
 		session.setAttribute("cartItems", cartItems);
 		model.addAttribute("totalCartItems", shoppingCartService.getCount());
-		
+
 		return "redirect:/products";
 	}
-	
+
 	@GetMapping("/update-cart")
-    public String updateToCart(@RequestParam(name = "id") Long id, @RequestParam(name = "quantity") int quantity, HttpServletRequest request, Model model) {
+	public String updateToCart(@RequestParam(name = "id") Long id, @RequestParam(name = "quantity") int quantity,
+			HttpServletRequest request, Model model) {
 		model.addAttribute("totalCartItems", shoppingCartService.getCount());
-        return shoppingCartService.updateCart(id, quantity, request);
-    }
+		return shoppingCartService.updateCart(id, quantity, request);
+	}
 
 	// delete cartItem
 	@SuppressWarnings("unlikely-arg-type")
@@ -155,6 +162,17 @@ public class CartController extends CommomController {
 		model.addAttribute("order", order);
 
 		Collection<CartItem> cartItems = shoppingCartService.getCartItems();
+		List<CartItem> cartItemList = new ArrayList<>(cartItems);
+		List<String> productInvalids = cartItemList.stream()
+				.filter(cartItem -> cartItem.getQuantity() > cartItem.getProduct().getQuantity()) // Kiểm tra điều kiện
+				.map(cartItem -> cartItem.getProduct().getProductName()) // Lấy tên của sản phẩm
+				.collect(Collectors.toList());
+		if (!CollectionUtils.isEmpty(productInvalids)) {
+			String productNameInvalid = String.join(", ", productInvalids);
+			model.addAttribute("errorProduct", "Sản phẩm (" + productNameInvalid
+					+ ") không còn đủ số lượng trong kho, hãy thay đổi số lượng hoặc lựa chọn sản phẩm khác đang có trong shop.");
+		}
+
 		model.addAttribute("cartItems", cartItems);
 		model.addAttribute("total", shoppingCartService.getAmount());
 		model.addAttribute("NoOfItems", shoppingCartService.getCount());
@@ -163,11 +181,15 @@ public class CartController extends CommomController {
 			double price = cartItem.getQuantity() * cartItem.getProduct().getPrice();
 			totalPrice += price;
 		}
-
-		session.setAttribute("totalPrice", totalPrice);
-		session.setAttribute("totalCartItems", shoppingCartService.getCount());
+		if (session != null) {
+			session.setAttribute("totalPrice", totalPrice);
+			session.setAttribute("totalCartItems", shoppingCartService.getCount());
+		}
 		model.addAttribute("totalPrice", totalPrice);
 		model.addAttribute("totalCartItems", shoppingCartService.getCount());
+		if (session != null) {
+			session.removeAttribute("couponCode");
+		}
 		commomDataService.commonData(model, user);
 
 		return "web/shoppingCart_checkout";
@@ -181,18 +203,9 @@ public class CartController extends CommomController {
 
 		session = request.getSession();
 		String checkOut = request.getParameter("checkOut");
-		Integer totalOfCart = (Integer) session.getAttribute("totalOfCart");
-        Double totalPrice = (Double) session.getAttribute("totalPrice");
-        String couponCode = (String) session.getAttribute("couponCode");
-
+		Double totalPrice = (Double) session.getAttribute("totalPrice");
+		String couponCode = (String) session.getAttribute("couponCode");
 		Collection<CartItem> cartItems = shoppingCartService.getCartItems();
-
-//		double totalPrice = 0;
-//		for (CartItem cartItem : cartItems) {
-//			double price = cartItem.getQuantity() * cartItem.getProduct().getPrice();
-//			totalPrice += price;
-//		}
-
 		BeanUtils.copyProperties(order, orderFinal);
 		if (StringUtils.equals(checkOut, "paypal")) {
 
@@ -210,31 +223,29 @@ public class CartController extends CommomController {
 			} catch (PayPalRESTException e) {
 				log.error(e.getMessage());
 			}
-
 		}
 
 		Date date = new Date();
 		order.setOrderDate(date);
 		order.setStatus(0);
 		order.getOrderId();
-
 		order.setAmount(totalPrice);
 		order.setUser(user);
-
+		order.setCoupon(couponCode);
 		orderRepository.save(order);
-
 		List<OrderDetail> orderDetails = new ArrayList<>();
+		Coupon couponObj = null;
+		if (!StringUtils.isEmpty(couponCode)) {
+			couponObj = couponService.findCode(couponCode);
+		}
 		for (CartItem cartItem : cartItems) {
 			OrderDetail orderDetail = new OrderDetail();
 			orderDetail.setQuantity(cartItem.getQuantity());
 			orderDetail.setOrder(order);
 			orderDetail.setProduct(cartItem.getProduct());
 			double unitPrice = cartItem.getProduct().getPrice();
-			if (!StringUtils.isEmpty(couponCode)) {
-				Coupon couponObj = couponService.findCode(couponCode);
-				if (!Objects.isNull(couponObj)) {
-					unitPrice = unitPrice - (unitPrice * couponObj.getDiscount() / 100);
-				}
+			if (!Objects.isNull(couponObj)) {
+				unitPrice = unitPrice - (unitPrice * couponObj.getDiscount() / 100);
 			}
 			orderDetail.setPrice(unitPrice);
 			cartItem.setUnitPrice(unitPrice);
@@ -254,9 +265,21 @@ public class CartController extends CommomController {
 						"Đơn Hàng Mới Cần Xác Nhận", user, order, admin);
 			}
 		}
+		if (StringUtils.isEmpty(couponCode) && Constants.TOTAL_PRICE_500K < totalPrice) {
+			String body = "<div>\r\n" + "<h2>Xin chào, <span style=\"color: #119744\" font-weight: bold;>"
+					+ user.getName() + "</span></h2>\r\n" 
+					+ "<p>Chúc mừng bạn đã nhận được voucher giảm giá!</p>\r\n"
+					+ "<h3>Với đơn hàng có giá trị từ 500.000 VNĐ trở lên, cửa hàng xin gửi tặng mã giảm giá 50%, áp dụng cho một trong những đơn hàng tiếp theo. "
+					+ "Mã giảm giá sẽ hết hạn sau 1 tháng kể từ ngày nhận: <span style=\"color:#119744; font-weight: bold;\">"
+					+ Constants.COUPON_DISCOUNT_50 + "</span></h3>\r\n" + "</div>";
+			sendMailService.queue(user.getEmail(), "Tặng voucher với đơn hàng đầu tiên có hoá đơn trên 500.000 VNĐ",
+					body);
+		}
 
 		shoppingCartService.clear();
 		session.removeAttribute("cartItems");
+		session.removeAttribute("totalPrice");
+		session.removeAttribute("couponCode");
 		model.addAttribute("orderId", order.getOrderId());
 
 		return "redirect:/checkout_success";
@@ -333,9 +356,10 @@ public class CartController extends CommomController {
 
 		return "web/checkout_paypal_success";
 	}
-	
+
 	@PostMapping("/coupon-cart")
-    public String coupon(@RequestParam(name = "coupon") String coupon, Model model, User user, HttpServletRequest request) {
+	public String coupon(@RequestParam(name = "coupon") String coupon, Model model, User user,
+			HttpServletRequest request) {
 		Order order = new Order();
 		model.addAttribute("order", order);
 		session = request.getSession();
@@ -350,11 +374,30 @@ public class CartController extends CommomController {
 			totalPrice += price;
 		}
 		if (!StringUtils.isEmpty(coupon)) {
-			Coupon couponObj = couponService.findCode(coupon);
-			if (!Objects.isNull(couponObj)) {
-				totalPrice = totalPrice - (totalPrice * couponObj.getDiscount() / 100);
-				session.setAttribute("couponCode", couponObj.getCode());
+			if ((Constants.COUPON_NEW_MEMBER.equals(coupon) || Constants.COUPON_DISCOUNT_50.equals(coupon))
+					&& !ObjectUtils.isEmpty(user)) {
+				Order orderCoupon = orderRepository.getOrderByUserAndCoupon(user.getUserId(), coupon);
+				if (ObjectUtils.isEmpty(orderCoupon)) {
+					Coupon couponObj = couponService.findCode(coupon);
+					if (!Objects.isNull(couponObj)) {
+						totalPrice = totalPrice - (totalPrice * couponObj.getDiscount() / 100);
+						session.setAttribute("couponCode", couponObj.getCode());
+					} else {
+						model.addAttribute("errorCoupon", "Mã giảm giá không hợp lệ!");
+					}
+				} else {
+					model.addAttribute("errorCoupon", "Bạn đã sử dụng mã giảm giá này trước đây!");
+				}
+			} else {
+				Coupon couponObj = couponService.findCode(coupon);
+				if (!Objects.isNull(couponObj)) {
+					totalPrice = totalPrice - (totalPrice * couponObj.getDiscount() / 100);
+					session.setAttribute("couponCode", couponObj.getCode());
+				} else {
+					model.addAttribute("errorCoupon", "Mã giảm giá không hợp lệ!");
+				}
 			}
+
 		}
 		model.addAttribute("totalPrice", totalPrice);
 		model.addAttribute("totalCartItems", shoppingCartService.getCount());
@@ -363,6 +406,6 @@ public class CartController extends CommomController {
 		commomDataService.commonData(model, user);
 
 		return "web/shoppingCart_checkout";
-    }
-	
+	}
+
 }

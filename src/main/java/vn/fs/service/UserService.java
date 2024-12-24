@@ -17,6 +17,8 @@ public interface UserService {
     List<User> getAllUserIsAdmin();
 
     void update(Long id, UserResponse user, Model model);
+    
+    void updateProfile(String email, UserResponse user, Model model);
 
     void delete(Long id);
 

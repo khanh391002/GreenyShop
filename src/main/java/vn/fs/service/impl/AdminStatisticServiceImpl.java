@@ -10,8 +10,11 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import vn.fs.model.dto.CategoryStatisticDTO;
+import vn.fs.model.dto.CountFavoriteProductUserDTO;
 import vn.fs.model.dto.CountProductOfCategoryDTO;
 import vn.fs.model.dto.CustomerStatisticDTO;
 import vn.fs.model.dto.MonthStatisticDTO;
@@ -19,8 +22,10 @@ import vn.fs.model.dto.OrderStatisticDTO;
 import vn.fs.model.dto.OrderYearStatisticDTO;
 import vn.fs.model.dto.ProductStatisticDTO;
 import vn.fs.model.dto.QuarterStatisticDTO;
+import vn.fs.model.dto.RatingProductDTO;
 import vn.fs.model.dto.YearStatisticDTO;
 import vn.fs.model.entities.Category;
+import vn.fs.model.entities.Product;
 import vn.fs.model.response.CategoryStatisticResponse;
 import vn.fs.model.response.CustomerStatisticResponse;
 import vn.fs.model.response.OrderStatisticResponse;
@@ -28,6 +33,7 @@ import vn.fs.model.response.ProductStatisticResponse;
 import vn.fs.model.response.TimeStatisticResponse;
 import vn.fs.repository.CategoryRepository;
 import vn.fs.repository.CommentRepository;
+import vn.fs.repository.FavoriteRepository;
 import vn.fs.repository.OrderDetailRepository;
 import vn.fs.repository.OrderRepository;
 import vn.fs.repository.ProductRepository;
@@ -51,21 +57,43 @@ public class AdminStatisticServiceImpl implements AdminStatisticService {
 	@Autowired
 	private ProductRepository productRepository;
 
+	@Autowired
+	private FavoriteRepository favoriteRepository;
+
 	@Override
 	public List<ProductStatisticResponse> getProductStatistics() {
 		List<ProductStatisticResponse> productStatisticResponses = new ArrayList<>();
+		List<Product> products = productRepository.findAll();
+		List<CountFavoriteProductUserDTO> countFavoriteProductUsers = favoriteRepository.countFavoriteProductUser();
+		List<RatingProductDTO> ratingProductDTOs = commentRepository.getAverateRatingByProduct();
+		Map<Long, Product> productMaps = products.stream()
+				.collect(Collectors.toMap(Product::getProductId, product -> product));
+		Map<Long, Integer> productFavoriteMaps = countFavoriteProductUsers.stream().collect(Collectors
+				.toMap(CountFavoriteProductUserDTO::getProductId, CountFavoriteProductUserDTO::getCountUsers));
+		Map<Long, Double> ratingMaps = ratingProductDTOs.stream()
+				.collect(Collectors.toMap(RatingProductDTO::getProductId, RatingProductDTO::getRating));
 		List<ProductStatisticDTO> productStatisticDTOs = orderDetailRepository.getProductStatistic();
 		for (ProductStatisticDTO dto : productStatisticDTOs) {
 			ProductStatisticResponse productStatisticResponse = new ProductStatisticResponse();
-			productStatisticResponse.setProductImage(dto.getProductImage());
-			productStatisticResponse.setProductName(dto.getProductName());
+			if (!CollectionUtils.isEmpty(productMaps)) {
+				productStatisticResponse.setProductImage(productMaps.get(dto.getProductId()).getProductImage());
+				productStatisticResponse.setProductName(productMaps.get(dto.getProductId()).getProductName());
+				productStatisticResponse.setInventory(productMaps.get(dto.getProductId()).getQuantity());
+			}
+			if (!CollectionUtils.isEmpty(productFavoriteMaps) && !ObjectUtils.isEmpty(productFavoriteMaps.get(dto.getProductId()))) {
+				productStatisticResponse.setFavorite(productFavoriteMaps.get(dto.getProductId()));
+			} else {
+				productStatisticResponse.setFavorite(0);
+			}
+			if (!CollectionUtils.isEmpty(ratingMaps) && !ObjectUtils.isEmpty(ratingMaps.get(dto.getProductId()))) {
+				productStatisticResponse.setRating(roundToOneDecimal(ratingMaps.get(dto.getProductId())));
+			} else {
+				productStatisticResponse.setRating(5.0);
+			}
 			productStatisticResponse.setTotalSold(dto.getTotalSold());
 			productStatisticResponse.setTotalRevenue(dto.getTotalRevenue());
-			productStatisticResponse.setInventory(dto.getInventory());
-			productStatisticResponse.setFavorite(dto.getFavorite());
-			productStatisticResponse.setRating(roundToOneDecimal(dto.getRating()));
-			productStatisticResponse.setCancelRate(dto.getCancelRate());
-			productStatisticResponse.setSuccessRate(dto.getSuccessRate());
+			productStatisticResponse.setCancelRate(Math.round(dto.getCancelRate()));
+			productStatisticResponse.setSuccessRate(Math.round(dto.getSuccessRate()));
 			productStatisticResponses.add(productStatisticResponse);
 		}
 		return productStatisticResponses;
@@ -149,7 +177,7 @@ public class AdminStatisticServiceImpl implements AdminStatisticService {
 			yearStatisticResponse.setBestSellingProduct(dto.getBestSellingProduct());
 			yearStatisticResponse.setBestSellingCategory(dto.getBestSellingCategory());
 			// tính trung bình đánh giá trong năm
-			yearStatisticResponse.setRating(commentRepository.getRatingOfTheYear(dto.getYear()));
+			yearStatisticResponse.setRating(roundToOneDecimal(commentRepository.getRatingOfTheYear(dto.getYear())));
 			// Lấy thông tin số đơn thành công, bị huỷ trong năm
 			OrderYearStatisticDTO orderYearStatisticDTO = orderRepository.getOrderStatisticByYear(dto.getYear());
 			if (!Objects.isNull(orderYearStatisticDTO)) {
@@ -177,7 +205,7 @@ public class AdminStatisticServiceImpl implements AdminStatisticService {
 			monthStatisticResponse.setBestSellingProduct(dto.getBestSellingProduct());
 			monthStatisticResponse.setBestSellingCategory(dto.getBestSellingCategory());
 			// tính trung bình đánh giá trong năm
-			monthStatisticResponse.setRating(commentRepository.getRatingOfTheMonth(dto.getMonth()));
+			monthStatisticResponse.setRating(roundToOneDecimal(commentRepository.getRatingOfTheMonth(dto.getMonth())));
 			// Lấy thông tin số đơn thành công, bị huỷ trong năm
 			OrderYearStatisticDTO orderMonthStatisticDTO = orderRepository.getOrderStatisticByMonth(dto.getMonth());
 			if (!Objects.isNull(orderMonthStatisticDTO)) {
@@ -205,7 +233,8 @@ public class AdminStatisticServiceImpl implements AdminStatisticService {
 			quarterStatisticResponse.setBestSellingProduct(dto.getBestSellingProduct());
 			quarterStatisticResponse.setBestSellingCategory(dto.getBestSellingCategory());
 			// tính trung bình đánh giá trong năm
-			quarterStatisticResponse.setRating(commentRepository.getRatingOfTheQuarter(dto.getQuarter()));
+			quarterStatisticResponse
+					.setRating(roundToOneDecimal(commentRepository.getRatingOfTheQuarter(dto.getQuarter())));
 			// Lấy thông tin số đơn thành công, bị huỷ trong năm
 			OrderYearStatisticDTO orderQuarterStatisticDTO = orderRepository
 					.getOrderStatisticByQuarter(dto.getQuarter());

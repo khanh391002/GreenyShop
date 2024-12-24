@@ -12,40 +12,52 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import vn.fs.commom.CommomDataService;
+import vn.fs.commom.utils.Utils;
+import vn.fs.model.dto.CommentDTO;
+import vn.fs.model.dto.ProductDTO;
 import vn.fs.model.entities.Favorite;
-import vn.fs.model.entities.Product;
 import vn.fs.model.entities.User;
+import vn.fs.model.response.CommentResponse;
+import vn.fs.model.response.ProductResponse;
+import vn.fs.repository.CommentRepository;
 import vn.fs.repository.FavoriteRepository;
 import vn.fs.repository.ProductRepository;
 
 @Controller
 public class HomeController extends CommomController {
-	
+
 	@Autowired
 	ProductRepository productRepository;
-	
+
 	@Autowired
 	CommomDataService commomDataService;
-	
+
 	@Autowired
 	FavoriteRepository favoriteRepository;
+	
+	@Autowired
+	CommentRepository commentRepository;
 
 	@GetMapping(value = "/")
 	public String home(Model model, User user) {
 
 		commomDataService.commonData(model, user);
 		bestSaleProduct20(model, user);
+		lastestComments(model);
 		return "web/home";
 	}
-	
+
 	// list product ở trang chủ limit 10 sản phẩm mới nhất
 	@ModelAttribute("listProduct10")
-	public List<Product> listproduct10(Model model) {
-		List<Product> productList = productRepository.listProductNew20();
-		model.addAttribute("productList", productList);
-		return productList;
+	public List<ProductResponse> listproduct10(Model model) {
+//		List<Product> productList = productRepository.listProductNew20();
+		List<ProductDTO> productList = productRepository.listProductNew20();
+		List<ProductResponse> productResponses = new ArrayList<>();
+		Utils.buildProductResponses(productList, productResponses, new ArrayList<>());
+		model.addAttribute("productList", productResponses);
+		return productResponses;
 	}
-	
+
 	// Top 20 best sale.
 	public void bestSaleProduct20(Model model, User customer) {
 		List<Object[]> productList = productRepository.bestSaleProduct20();
@@ -55,22 +67,27 @@ public class HomeController extends CommomController {
 				String id = String.valueOf(productList.get(i)[0]);
 				listIdProductArrayList.add(Integer.valueOf(id));
 			}
-			List<Product> listProducts = productRepository.findByInventoryIds(listIdProductArrayList);
+//			List<Product> listProducts = productRepository.findByInventoryIds(listIdProductArrayList);
+			List<ProductDTO> productDTOs = productRepository.findByInventoryIds(listIdProductArrayList);
+			List<ProductResponse> listProducts = new ArrayList<>();
+			Utils.buildProductResponses(productDTOs, listProducts, new ArrayList<>());
 
-			List<Product> listProductNew = new ArrayList<>();
+			List<ProductResponse> listProductNew = new ArrayList<>();
+//			List<Product> listProductNew = new ArrayList<>();
 
-			for (Product product : listProducts) {
+			for (ProductResponse product : listProducts) {
 
-				Product productEntity = new Product();
+				ProductResponse productEntity = new ProductResponse();
 
 				BeanUtils.copyProperties(product, productEntity);
 
-				Optional<Favorite> save = favoriteRepository.selectSaves(productEntity.getProductId(), customer.getUserId());
+				Optional<Favorite> save = favoriteRepository.selectSaves(productEntity.getProductId(),
+						customer.getUserId());
 
 				if (save.isPresent()) {
-					productEntity.favorite = true;
+					productEntity.setFavorite(true);
 				} else {
-					productEntity.favorite = false;
+					productEntity.setFavorite(false);
 				}
 				listProductNew.add(productEntity);
 
@@ -80,5 +97,14 @@ public class HomeController extends CommomController {
 		}
 	}
 
+	// Top 5 latest comments .
+	@ModelAttribute("lastestComments")
+	public List<CommentResponse> lastestComments(Model model) {
+		List<CommentDTO> commentDTOs = commentRepository.getTopLastestComments(5);
+		List<CommentResponse> commentResponses = new ArrayList<>();
+		Utils.buildCommentResponses(commentDTOs, commentResponses);
+		model.addAttribute("lastestComments", commentResponses);
+		return commentResponses;
+	}
 
 }

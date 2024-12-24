@@ -19,30 +19,35 @@ import org.thymeleaf.context.Context;
 import vn.fs.model.entities.CartItem;
 import vn.fs.model.entities.Order;
 import vn.fs.model.entities.User;
+import vn.fs.repository.BlogRepository;
 import vn.fs.repository.FavoriteRepository;
 import vn.fs.repository.ProductRepository;
 import vn.fs.service.ShoppingCartService;
 
 @Service
 public class CommomDataService {
-	
+
 	@Autowired
 	FavoriteRepository favoriteRepository;
-	
+
 	@Autowired
 	ShoppingCartService shoppingCartService;
-	
+
 	@Autowired
 	ProductRepository productRepository;
 	
 	@Autowired
+	BlogRepository blogRepository;
+
+	@Autowired
 	public JavaMailSender emailSender;
-	
+
 	@Autowired
 	TemplateEngine templateEngine;
 
 	public void commonData(Model model, User user) {
 		listCategoryByProductName(model);
+		listCategoryByBlogName(model);
 		Integer totalSave = 0;
 		// get count yêu thích
 		if (user != null) {
@@ -59,15 +64,21 @@ public class CommomDataService {
 		model.addAttribute("cartItems", cartItems);
 
 	}
-	
+
 	// count product by category
 	public void listCategoryByProductName(Model model) {
 
 		List<Object[]> coutnProductByCategory = productRepository.listCategoryByProductName();
 		model.addAttribute("coutnProductByCategory", coutnProductByCategory);
 	}
-	
-	//sendEmail by order success
+
+	// count blog by category
+	public void listCategoryByBlogName(Model model) {
+		List<Object[]> countBlogByCategory = blogRepository.listCategoryByBlogName();
+		model.addAttribute("countBlogByCategory", countBlogByCategory);
+	}
+
+	// sendEmail by order success
 	public void sendSimpleEmail(String email, String subject, String contentEmail, Collection<CartItem> cartItems,
 			double totalPrice, Order orderFinal) throws MessagingException {
 		Locale locale = LocaleContextHolder.getLocale();
@@ -91,9 +102,10 @@ public class CommomDataService {
 		emailSender.send(mimeMessage);
 
 	}
-	
+
 	// sendEmail to admin order success
-	public void sendEmailToAdmin(String email, String subject, String contentEmail, User user, Order orderFinal, User admin) throws MessagingException {
+	public void sendEmailToAdmin(String email, String subject, String contentEmail, User user, Order orderFinal,
+			User admin) throws MessagingException {
 		Locale locale = LocaleContextHolder.getLocale();
 
 		// Prepare the evaluation context
