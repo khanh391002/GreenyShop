@@ -36,4 +36,7 @@ public class Category implements Serializable{
 	@Column(name = "category_image", length = 2048)
 	private String categoryImage;
 
+//	@OneToMany(mappedBy = "category")
+//	private List<Product> products;
+	
 }

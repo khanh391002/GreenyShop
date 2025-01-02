@@ -47,4 +47,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long>{
 			+ "FROM greeny_shop.comments "
 			+ "GROUP BY product_id; ", nativeQuery = true)
 	List<RatingProductDTO> getAverateRatingByProduct();
+
+	@Query(value = "SELECT AVG(rating) AS rating "
+			+ "FROM greeny_shop.comments "
+			+ "WHERE product_id IN (:productIds) ", nativeQuery = true)
+	Long getAverateRatingByProductIds(@Param("productIds") List<Long> productIds);
 }

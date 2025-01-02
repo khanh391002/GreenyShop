@@ -198,6 +198,20 @@
 			// Add Row
 			$('#add-row').DataTable({
 				"pageLength": 5,
+				"order": [[0, 'asc']],  // Sắp xếp theo cột đầu tiên (cột chứa dữ liệu tháng/năm)
+				"columnDefs": [
+					{
+						"targets": 0,  // Chỉ định cột cần sắp xếp
+						"render": function (data, type, row) {
+							if (type === 'sort') {
+								// Chuyển chuỗi "1/2024" thành ngày (Date) để DataTable có thể sắp xếp đúng
+								var dateParts = data.split('/');
+								return new Date(dateParts[1], dateParts[0] - 1);  // Tạo đối tượng Date (Tháng bắt đầu từ 0)
+							}
+							return data;  // Trả về dữ liệu gốc khi không phải sắp xếp
+						}
+					}
+				]
 			});
 
 			var action = '<td> <div class="form-button-action"> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';

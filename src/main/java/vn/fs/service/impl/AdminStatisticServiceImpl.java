@@ -15,7 +15,6 @@ import org.springframework.util.ObjectUtils;
 
 import vn.fs.model.dto.CategoryStatisticDTO;
 import vn.fs.model.dto.CountFavoriteProductUserDTO;
-import vn.fs.model.dto.CountProductOfCategoryDTO;
 import vn.fs.model.dto.CustomerStatisticDTO;
 import vn.fs.model.dto.MonthStatisticDTO;
 import vn.fs.model.dto.OrderStatisticDTO;
@@ -80,7 +79,8 @@ public class AdminStatisticServiceImpl implements AdminStatisticService {
 				productStatisticResponse.setProductName(productMaps.get(dto.getProductId()).getProductName());
 				productStatisticResponse.setInventory(productMaps.get(dto.getProductId()).getQuantity());
 			}
-			if (!CollectionUtils.isEmpty(productFavoriteMaps) && !ObjectUtils.isEmpty(productFavoriteMaps.get(dto.getProductId()))) {
+			if (!CollectionUtils.isEmpty(productFavoriteMaps)
+					&& !ObjectUtils.isEmpty(productFavoriteMaps.get(dto.getProductId()))) {
 				productStatisticResponse.setFavorite(productFavoriteMaps.get(dto.getProductId()));
 			} else {
 				productStatisticResponse.setFavorite(0);
@@ -88,7 +88,7 @@ public class AdminStatisticServiceImpl implements AdminStatisticService {
 			if (!CollectionUtils.isEmpty(ratingMaps) && !ObjectUtils.isEmpty(ratingMaps.get(dto.getProductId()))) {
 				productStatisticResponse.setRating(roundToOneDecimal(ratingMaps.get(dto.getProductId())));
 			} else {
-				productStatisticResponse.setRating(5.0);
+				productStatisticResponse.setRating(0.0);
 			}
 			productStatisticResponse.setTotalSold(dto.getTotalSold());
 			productStatisticResponse.setTotalRevenue(dto.getTotalRevenue());
@@ -108,38 +108,36 @@ public class AdminStatisticServiceImpl implements AdminStatisticService {
 	@Override
 	public List<CategoryStatisticResponse> getCategoryStatistics() {
 		List<CategoryStatisticResponse> categoryStatisticResponses = new ArrayList<>();
-		List<CategoryStatisticDTO> categoryStatisticDTOs = orderDetailRepository.getCategoryStatistic();
 		List<Category> categories = categoryRepository.findAll();
-		List<Long> categoryIds = categories.stream().map(Category::getCategoryId).distinct()
-				.collect(Collectors.toList());
-		List<CountProductOfCategoryDTO> productOfCategoryDTOs = productRepository
-				.countProductByCategoryIdsByIsDeletedIsFalse(categoryIds);
-		// Map product count of category
-		Map<Long, Integer> categoryProductMap = productOfCategoryDTOs.stream().collect(
-				Collectors.toMap(CountProductOfCategoryDTO::getCategoryId, category -> category.getTotalProduct()));
-
-		// Map quantity product of category
-		Map<Long, Integer> categoryQuantityMap = (Map<Long, Integer>) productOfCategoryDTOs.stream().collect(
-				Collectors.toMap(CountProductOfCategoryDTO::getCategoryId, category -> category.getQuantity()));
-
-		for (CategoryStatisticDTO dto : categoryStatisticDTOs) {
+		List<Long> categoryIds = categories.stream().map(Category::getCategoryId).collect(Collectors.toList());
+		List<Product> products = productRepository.findAllByCategoryCategoryIdIn(categoryIds);
+		Map<Long, List<Product>> categoryProductMaps = products.stream().collect(Collectors.groupingBy(p -> p.getCategory().getCategoryId()));
+		for (Category category : categories) {
+			List<Long> productIds = categoryProductMaps.get(category.getCategoryId()) != null
+					? categoryProductMaps.get(category.getCategoryId()).stream().map(Product::getProductId).collect(Collectors.toList())
+					: new ArrayList<>();
+			CategoryStatisticDTO categoryStatisticDTO = orderDetailRepository
+					.getCategoryStatisticByProductIds(productIds);
 			CategoryStatisticResponse categoryStatisticResponse = new CategoryStatisticResponse();
-			categoryStatisticResponse.setCategoryName(dto.getCategoryName());
-			categoryStatisticResponse.setTotalSold(dto.getTotalSold());
-			categoryStatisticResponse.setTotalRevenue(dto.getTotalRevenue());
-			if (categoryProductMap.containsKey(dto.getId()) && categoryProductMap.get(dto.getId()) != null) {
-				categoryStatisticResponse.setProductCount(categoryProductMap.get(dto.getId()));
+			categoryStatisticResponse.setCategoryName(category.getCategoryName());
+
+			if (!ObjectUtils.isEmpty(categoryStatisticDTO)) {
+				categoryStatisticResponse.setTotalSold(categoryStatisticDTO.getTotalSold());
+				categoryStatisticResponse.setTotalRevenue(categoryStatisticDTO.getTotalRevenue());
+				categoryStatisticResponse.setCancelRate(categoryStatisticDTO.getCancelRate());
+				categoryStatisticResponse.setSuccessRate(categoryStatisticDTO.getSuccessRate());
+			}
+			if (categoryProductMaps.get(category.getCategoryId()) != null) {
+				categoryStatisticResponse.setProductCount(categoryProductMaps.get(category.getCategoryId()).size());
+				int totalQuantity = categoryProductMaps.get(category.getCategoryId()).stream().mapToInt(Product::getQuantity).sum();
+				categoryStatisticResponse.setInventory(totalQuantity);
 			} else {
 				categoryStatisticResponse.setProductCount(0);
-			}
-			if (categoryQuantityMap.containsKey(dto.getId()) && categoryQuantityMap.get(dto.getId()) != null) {
-				categoryStatisticResponse.setInventory(categoryQuantityMap.get(dto.getId()));
-			} else {
 				categoryStatisticResponse.setInventory(0);
 			}
-			categoryStatisticResponse.setRating(roundToOneDecimal(dto.getRating()));
-			categoryStatisticResponse.setCancelRate(dto.getCancelRate());
-			categoryStatisticResponse.setSuccessRate(dto.getSuccessRate());
+			Long ratingCategory = commentRepository.getAverateRatingByProductIds(productIds);
+			categoryStatisticResponse.setRating(roundToOneDecimal(ratingCategory == null ? 0 : ratingCategory));
+
 			categoryStatisticResponses.add(categoryStatisticResponse);
 		}
 		return categoryStatisticResponses;
@@ -198,7 +196,7 @@ public class AdminStatisticServiceImpl implements AdminStatisticService {
 		List<MonthStatisticDTO> monthStatisticDTOs = orderDetailRepository.getMonthStatistic();
 		for (MonthStatisticDTO dto : monthStatisticDTOs) {
 			TimeStatisticResponse monthStatisticResponse = new TimeStatisticResponse();
-			monthStatisticResponse.setTime(dto.getMonth());
+			monthStatisticResponse.setTime(String.join("/", dto.getMonth(), dto.getYear()));
 			monthStatisticResponse.setQuantitySold(dto.getQuantitySold());
 			monthStatisticResponse.setRevenue(dto.getRevenue());
 			monthStatisticResponse.setTopCustomer(dto.getTopCustomer());
@@ -226,7 +224,7 @@ public class AdminStatisticServiceImpl implements AdminStatisticService {
 		List<QuarterStatisticDTO> quarterStatisticDTOs = orderDetailRepository.getQuarterStatistic();
 		for (QuarterStatisticDTO dto : quarterStatisticDTOs) {
 			TimeStatisticResponse quarterStatisticResponse = new TimeStatisticResponse();
-			quarterStatisticResponse.setTime(dto.getQuarter());
+			quarterStatisticResponse.setTime(String.join("/", dto.getQuarter(), dto.getYear()));
 			quarterStatisticResponse.setQuantitySold(dto.getQuantitySold());
 			quarterStatisticResponse.setRevenue(dto.getRevenue());
 			quarterStatisticResponse.setTopCustomer(dto.getTopCustomer());

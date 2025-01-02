@@ -59,4 +59,17 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 			+ "ORDER BY order_id DESC "
 			+ "LIMIT 1; ", nativeQuery = true)
 	Order getOrderByUserAndCoupon(@Param("userId") Long userId, @Param("coupon") String coupon); 
+	
+	@Query(value = "SELECT SUM(amount) "
+			+ "FROM greeny_shop.orders "
+			+ "WHERE DATE(order_date) = CURDATE() AND status = 2; ", nativeQuery = true)
+	Long getDailySales();
+	
+	@Query(value = "SELECT ROUND((COUNT(CASE WHEN DATE(order_date) = CURDATE() THEN 1 END) / COUNT(*)) * 100, 1) AS ratio "
+			+ "FROM orders; ", nativeQuery = true)
+	Double getNewOrderRatio();
+	
+	@Query(value = "SELECT COUNT(*) "
+			+ "FROM orders; ", nativeQuery = true)
+	Long getTotalOrder();
 }
