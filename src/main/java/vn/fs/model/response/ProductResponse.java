@@ -4,6 +4,7 @@ import java.util.Date;
 
 import lombok.Getter;
 import lombok.Setter;
+import vn.fs.model.entities.Category;
 
 @Getter
 @Setter
@@ -35,6 +36,8 @@ public class ProductResponse {
 	Long categoryId;
 	
 	String categoryName;
+	
+	Category category;
 	
 	double evaluate;
 }

@@ -79,7 +79,7 @@
 											<div class="col-md-6 pr-0">
 												<div class="form-group form-group-default">
 													<label>Mã Blog</label>
-													<input th:field="${blog.code}" id="code" type="text" class="form-control" placeholder="Mã Blog" required="required">
+													<input th:field="${blog.code}" id="code" type="text" class="form-control" placeholder="Mã Blog" required="required" oninput="formatInput(this)">
 												</div>
 											</div>
 											<div class="col-md-6 pr-0">
@@ -171,6 +171,15 @@
 	
 
 	</div>
+	<script>
+		function formatInput(inputElement) {
+			inputElement.value = inputElement.value
+				.toUpperCase()        // Chuyển thành chữ in hoa
+				.replace(/\s+/g, '_') // Thay khoảng trắng bằng dấu gạch dưới
+				.normalize("NFD")     // Chuẩn hóa chuỗi (phân tách ký tự và dấu)
+				.replace(/[\u0300-\u036f]/g, ''); // Loại bỏ dấu
+		}
+	</script>
 	<!--   Core JS Files   -->
 	<script src="/assets/js/core/jquery.3.2.1.min.js"></script>
 	<script src="/assets/js/core/popper.min.js"></script>

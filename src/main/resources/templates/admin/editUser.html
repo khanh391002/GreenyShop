@@ -104,7 +104,7 @@
 													<label>Avatar</label>
 													<img id="avatarPreview" th:src="@{'/images/avatar/' + ${userDto.avatar}}" alt="Avatar" width="150">
 													<input type="hidden" th:field="${userDto.avatar}" class="form-control" readonly>
-													<input type="file" id="avatar" name="file" class="form-control" accept="image/*" onchange="previewImage(event)" required="required">
+													<input type="file" id="avatar" name="file" class="form-control" accept="image/*" onchange="previewImage(event)">
 												</div>
 											</div>
 											

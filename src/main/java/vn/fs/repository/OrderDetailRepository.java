@@ -238,8 +238,13 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
 	public Integer getCustomerIsOrderSuccessByProductId(@Param("productId") Long productId,
 			@Param("userId") Long userId);
 
-	@Query(value = "SELECT product_id " + "FROM greeny_shop.order_details " + "GROUP BY product_id "
-			+ "ORDER BY SUM(quantity) DESC " + "LIMIT 3; ", nativeQuery = true)
+	@Query(value = "SELECT product_id "
+			+ "FROM greeny_shop.order_details od "
+			+ "LEFT JOIN greeny_shop.orders o ON od.order_id = o.order_id "
+			+ "WHERE o.status = 2 "
+			+ "GROUP BY product_id "
+			+ "ORDER BY SUM(quantity) DESC "
+			+ "LIMIT 3; ", nativeQuery = true)
 	public List<Long> getTop3BestSellProduct();
 
 }

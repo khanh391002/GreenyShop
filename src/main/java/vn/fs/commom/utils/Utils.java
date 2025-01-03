@@ -8,6 +8,7 @@ import org.springframework.util.CollectionUtils;
 
 import vn.fs.model.dto.CommentDTO;
 import vn.fs.model.dto.ProductDTO;
+import vn.fs.model.entities.Product;
 import vn.fs.model.response.CommentResponse;
 import vn.fs.model.response.ProductResponse;
 
@@ -73,6 +74,25 @@ public class Utils {
 		productResponse.setCategoryId(productDTO.getCategoryId());
 		productResponse.setCategoryName(productDTO.getCategoryName());
 		productResponse.setEvaluate(productDTO.getEvaluate());
+	}
+	
+	public static void buildProductResponse(Product product, ProductResponse productResponse) {
+		productResponse.setProductId(product.getProductId());
+		productResponse.setProductName(product.getProductName());
+		productResponse.setProductCode(product.getProductCode());
+		productResponse.setQuantity(product.getQuantity());
+		productResponse.setPrice(product.getPrice());
+		productResponse.setDiscount(product.getDiscount());
+		productResponse.setProductImage(product.getProductImage());
+		productResponse.setDescription(product.getDescription());
+		productResponse.setEnteredDate(product.getEnteredDate());
+		productResponse.setStatus(product.getStatus());
+		productResponse.setFavorite(product.isFavorite());
+		productResponse.setDeleted(product.isDeleted());
+		productResponse.setCategoryId(product.getCategory().getCategoryId());
+		productResponse.setCategoryName(product.getCategory().getCategoryName());
+		productResponse.setCategory(product.getCategory());
+//		productResponse.setEvaluate(product.getEvaluate());
 	}
 
 	public static void buildCommentResponses(List<CommentDTO> commentDTOs, List<CommentResponse> commentResponses) {

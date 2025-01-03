@@ -37,6 +37,13 @@
 
 			return true;  // Nếu mọi thứ hợp lệ, submit form
 		}
+		function formatInput(inputElement) {
+        inputElement.value = inputElement.value
+            .toUpperCase()        // Chuyển thành chữ in hoa
+            .replace(/\s+/g, '_') // Thay khoảng trắng bằng dấu gạch dưới
+			.normalize("NFD")     // Chuẩn hóa chuỗi (phân tách ký tự và dấu)
+            .replace(/[\u0300-\u036f]/g, ''); // Loại bỏ dấu
+    	}
 	</script>
 
 	<!-- CSS Files -->
@@ -106,7 +113,7 @@
 											<div class="col-md-6 pr-0">
 												<div class="form-group form-group-default">
 													<label>Mã sản phẩm</label>
-													<input th:field="${productRequest.productCode}" id="productCode" type="text" class="form-control" placeholder="Mã sản phẩm" required="required">
+													<input th:field="${productRequest.productCode}" id="productCode" type="text" class="form-control" placeholder="Mã sản phẩm" required="required" oninput="formatInput(this)">
 													<p th::if="${#fields.hasErrors('productCode')}" th:errorclass="text-danger" th:errors="${productRequest.productCode}"></p>
 												</div>
 											</div>

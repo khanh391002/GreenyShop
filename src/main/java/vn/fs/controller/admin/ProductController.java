@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -29,10 +30,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import vn.fs.commom.utils.Utils;
 import vn.fs.model.entities.Category;
 import vn.fs.model.entities.Product;
 import vn.fs.model.entities.User;
 import vn.fs.model.request.ProductRequest;
+import vn.fs.model.response.ProductResponse;
 import vn.fs.repository.CategoryRepository;
 import vn.fs.repository.ProductRepository;
 import vn.fs.repository.UserRepository;
@@ -74,7 +77,16 @@ public class ProductController {
 	@ModelAttribute("products")
 	public List<Product> showProduct(Model model) {
 		List<Product> products = productRepository.findAllByIsDeletedIsFalseAndOrderByEnteredDateDesc();
-		model.addAttribute("products", products);
+		List<ProductResponse> productResponses = new ArrayList<>();
+		for(Product product : products) {
+			ProductResponse productResponse = new ProductResponse();
+			Utils.buildProductResponse(product, productResponse);
+			if (product.getDescription().length() > 100) {
+				productResponse.setDescription(product.getDescription().substring(0, 100) + "...");
+            }
+			productResponses.add(productResponse);
+		}
+		model.addAttribute("products", productResponses);
 
 		return products;
 	}

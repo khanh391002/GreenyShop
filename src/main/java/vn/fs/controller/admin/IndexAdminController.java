@@ -1,7 +1,10 @@
 package vn.fs.controller.admin;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import vn.fs.model.entities.Product;
 import vn.fs.model.entities.User;
 import vn.fs.repository.CategoryRepository;
 import vn.fs.repository.OrderDetailRepository;
@@ -33,7 +37,7 @@ public class IndexAdminController {
 
 	@Autowired
 	OrderRepository orderRepository;
-	
+
 	@Autowired
 	OrderDetailRepository orderDetailRepository;
 
@@ -62,7 +66,22 @@ public class IndexAdminController {
 		model.addAttribute("newOrderRatio", orderRepository.getNewOrderRatio());
 		model.addAttribute("totalOrder", orderRepository.getTotalOrder());
 		List<Long> topProductIds = orderDetailRepository.getTop3BestSellProduct();
-		model.addAttribute("top3BestSellProducts", productRepository.findAllByProductIdIn(topProductIds));
+		List<Product> products = productRepository.findAllByProductIdIn(topProductIds);
+		List<Product> top3BestSellProducts = new ArrayList<>();
+		Map<Integer, Long> idTopMaps = new HashMap<>();
+		Map<Long, Product> productTopMaps = new HashMap<>();
+		Integer top = 1;
+		for (Long id : topProductIds) {
+			idTopMaps.put(top, id);
+			top++;
+		}
+		for (Product product : products) {
+			productTopMaps.put(product.getProductId(), product);
+		}
+		for (Map.Entry<Integer, Long> entry : idTopMaps.entrySet()) {
+			top3BestSellProducts.add(productTopMaps.get(entry.getValue()));
+		}
+		model.addAttribute("top3BestSellProducts", top3BestSellProducts);
 		return "admin/index";
 	}
 }
